@@ -1,4 +1,5 @@
 from UserDict import DictMixin
+from ZPublisher.HTTPRequest import HTTPRequest, FileUpload
 from yafowil.base import factory
 
 class Zope2RequestAdapter(DictMixin):
@@ -7,20 +8,18 @@ class Zope2RequestAdapter(DictMixin):
         if isinstance(request, self.__class__):
             # for some rare cases this makes sense             
             request = request.request 
-        # XXX 
-        if not isinstance(request, BaseRequest):
+        if not isinstance(request, HTTPRequest):
             raise ValueError(\
-                'Expecting object based on webob.request.BaseRequest') 
+                'Expecting request based on ZPublisher.HTTPRequest.HTTPRequest') 
         self.request = request
         
     def __getitem__(self, key):
-        value = self.mixed[key]
-        # XXX
-        if isinstance(value, cgi.FieldStorage):
+        value = self.request.form[key]
+        if isinstance(value, FileUpload):
             fvalue = dict()
             fvalue['file'] = value.file
             fvalue['filename'] = value.filename
-            fvalue['mimetype'] = value.type
+            #fvalue['mimetype'] = value.type
             fvalue['headers'] = value.headers
             fvalue['original'] = value
             return fvalue
