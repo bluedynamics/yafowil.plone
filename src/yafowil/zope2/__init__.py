@@ -17,9 +17,9 @@ class Zope2RequestAdapter(DictMixin):
         value = self.request.form[key]
         if isinstance(value, FileUpload):
             fvalue = dict()
-            fvalue['file'] = value.file
+            fvalue['file'] = value
             fvalue['filename'] = value.filename
-            #fvalue['mimetype'] = value.type
+            fvalue['mimetype'] = value.headers.get('content-type', '')
             fvalue['headers'] = value.headers
             fvalue['original'] = value
             return fvalue
@@ -34,9 +34,9 @@ class Zope2RequestAdapter(DictMixin):
     def __delitem__(self, key):
         raise AttributeError('read only, __delitem__ is not supported')
     
-def zope2_preprocessor(uname, data, properties):
-    if not isinstance(data['request'], Zope2RequestAdapter):
-        data['request'] = Zope2RequestAdapter(data['request'])
+def zope2_preprocessor(widget, data):
+    if not isinstance(data.request, (dict, Zope2RequestAdapter)):
+        data.request = Zope2RequestAdapter(data.request)
     return data
 
 factory.register_global_preprocessors([zope2_preprocessor])
