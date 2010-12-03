@@ -6,16 +6,12 @@ from yafowil.base import factory
 
 class Zope2RequestAdapter(DictMixin):
     
-    def __init__(self, context):
-        if isinstance(context, HTTPRequest):
-            raise ValueError, 'In Zope 2 pass in the context, not the request!'
-        if isinstance(context, self.__class__):
+    def __init__(self, request):
+        if isinstance(request, self.__class__):
             # for some rare cases this makes sense             
-            self.zrequest = context.zrequest
-            self.context = context.context 
+            self.zrequest = request.zrequest
         else:
-            self.zrequest = context.REQUEST
-            self.context = context 
+            self.zrequest = request.REQUEST
         if not isinstance(self.zrequest, HTTPRequest):
             raise ValueError(\
                 'Expecting request based on ZPublisher.HTTPRequest.HTTPRequest') 
@@ -44,12 +40,12 @@ class Zope2RequestAdapter(DictMixin):
 class ZopeTranslation(object):
     
     def __init__(self, data):
-        self.context = data.request.context
+        self.zrequest = data.request.zrequest
         
     def __call__(self, msg):
         if not isinstance(msg, Message):
             return msg            
-        return translate(msg, context=self.context)
+        return translate(msg, context=self.zrequest)
     
 def zope2_preprocessor(widget, data):
     if not isinstance(data.request, (dict, Zope2RequestAdapter)):
