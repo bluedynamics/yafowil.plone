@@ -1,5 +1,5 @@
-This is the **Zope2 integration for `YAFOWIL 
-<http://pypi.python.org/pypi/yafowil>`_** - Yet Another Form WIdget Library.
+This is the **Zope2 integration** for `YAFOWIL 
+<http://pypi.python.org/pypi/yafowil>`_ - Yet Another Form WIdget Library.
 
 This package registers a global preprocessor for YAFOWIL. It
  
@@ -44,3 +44,4 @@ Contributors
 ============
 
 - Jens W. Klein <jens@bluedynamics.com> - maintainer
+
