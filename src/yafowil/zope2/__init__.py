@@ -55,3 +55,7 @@ def zope2_preprocessor(widget, data):
     return data
 
 factory.register_global_preprocessors([zope2_preprocessor])
+
+factory.defaults['form.class'] = 'enableUnloadProtection enableAutoFocus enableFormTabbing edit-form'
+
+factory.defaults['label.class'] = "formQuestion"
