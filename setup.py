@@ -5,7 +5,7 @@ version = '1.0-beta'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
-shortdesc = 'YAFOWIL - Yet Another Form Widget Lib: Integration with Zope 2'
+shortdesc = 'Zope2/ Plone Integration with YAFOWIL'
 tests_require = ['interlude']
 
 setup(name='yafowil.zope2',
@@ -35,12 +35,11 @@ setup(name='yafowil.zope2',
       zip_safe=True,
       install_requires=[
           'setuptools',
-          #'Zope2',
+          'Zope2',
           'yafowil',
       ],
-      #tests_require=tests_require,
-      #test_suite="yafowil.zope2.tests.test_suite",
-      #extras_require = dict(
-      #    tests=tests_require,
-      #),
+      entry_points="""
+      [yafowil.plugin]
+      register = yafowil.zope2:register
+      """,
 )
