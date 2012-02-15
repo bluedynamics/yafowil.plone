@@ -1,0 +1,12 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+<browser:page
+    for="*"
+    name="example"
+    permission="zope.Public"
+    class=".example.ExampleView"
+    template="example.pt"
+    />
+</configure>
