@@ -25,6 +25,5 @@ for module_name in get_plugin_names('resourcedir'):
 
 def register():
     factory.register_global_preprocessors([zope2_preprocessor])  
-    
-
-        
+    factory.defaults['form.class'] = 'edit-form enableUnloadProtection enableAutoFocus enableFormTabbing'    
+    factory.defaults['label.class'] = "formQuestion"
