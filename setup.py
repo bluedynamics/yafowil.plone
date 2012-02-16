@@ -39,6 +39,9 @@ setup(name='yafowil.zope2',
           'yafowil',
       ],
       entry_points="""
+      [z3c.autoinclude.plugin]
+      target = plone
+
       [yafowil.plugin]
       register = yafowil.zope2:register
       """,

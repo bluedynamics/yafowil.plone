@@ -1,12 +1,19 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:browser="http://namespaces.zope.org/browser">
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:meta="http://namespaces.zope.org/meta"
+    xmlns:yafowil="http://namespaces.zope.org/yafowil">
 
-<browser:page
+  <include package="." file="meta.zcml" />
+
+  <browser:page
     for="*"
     name="example"
     permission="zope.Public"
     class=".example.ExampleView"
     template="example.pt"
-    />
+  />
+
+  <yafowil:resources />
+
 </configure>
