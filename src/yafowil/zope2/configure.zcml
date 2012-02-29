@@ -11,7 +11,7 @@
 
   <browser:page
     for="*"
-    name="example"
+    name="yafowil_example_form"
     permission="zope.Public"
     class=".example.ExampleView"
     template="example.pt"

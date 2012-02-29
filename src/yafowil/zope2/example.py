@@ -13,7 +13,7 @@ class ExampleView(BrowserView):
 
 
     def _form_action(self, widget, data):
-        return '%s/@@example' % self.context.absolute_url()
+        return '%s/@@yafowil_example_form' % self.context.absolute_url()
 
     def _form_handler(self, widget, data):
         self.searchterm = data['searchterm'].extracted
