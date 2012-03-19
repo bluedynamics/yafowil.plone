@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.0-beta'
+version = '1.0'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
@@ -13,8 +13,7 @@ setup(name='yafowil.zope2',
       description=shortdesc,
       long_description=longdesc,
       classifiers=[
-            #'Development Status :: 5 - Production/Stable',
-            'Development Status :: 4 - Beta',
+            'Development Status :: 5 - Production/Stable',
             'Operating System :: OS Independent',
             'Programming Language :: Python',
             'Topic :: Software Development',

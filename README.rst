@@ -14,6 +14,15 @@ be accessed from the webbrowser. The schema is
 is available its javascript can be accessed with
 ``http://localhost:8080/Plone/++resource++yafowil.widget.autocomplete/widget.js``.
 
+Integration with Plone and GenericSetup
+---------------------------------------
+
+There a profile ``YAFOWIL`` available registering all browser resources in css 
+and javascript registries.
+
+The resources are registred without any thridparty dependencies (i.e. dependend
+javascript libraries).
+
 Integration with Translation
 ----------------------------
 
