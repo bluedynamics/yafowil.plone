@@ -42,6 +42,6 @@ setup(name='yafowil.plone',
       target = plone
 
       [yafowil.plugin]
-      register = yafowil.zope2:register
+      register = yafowil.plone:register
       """,
 )
