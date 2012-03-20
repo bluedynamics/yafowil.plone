@@ -49,7 +49,7 @@ class ZopeTranslation(object):
             return msg            
         return translate(msg, context=self.zrequest)
     
-def zope2_preprocessor(widget, data):
+def plone_preprocessor(widget, data):
     if not isinstance(data.request, (dict, Zope2RequestAdapter)):
         data.request = Zope2RequestAdapter(data.request)
     if not isinstance(data.translate_callable, ZopeTranslation):

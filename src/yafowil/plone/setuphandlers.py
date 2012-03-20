@@ -9,7 +9,7 @@ def setup_resource_registries(context):
     """
     context: Products.GenericSetup.context.DirectoryImportContext instance
     """
-    if not context.readDataFile('yafowil.zope2.txt'):
+    if not context.readDataFile('yafowil.plone.txt'):
         return
     msg = ''
     js = []

@@ -1,4 +1,4 @@
-import yafowil.zope2
+import yafowil.plone
 import yafowil.loader
 from yafowil.base import factory, UNSET
 from yafowil.controller import Controller

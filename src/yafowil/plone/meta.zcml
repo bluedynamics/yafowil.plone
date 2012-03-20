@@ -7,8 +7,8 @@
   
     <directive
         name="resources"
-        schema="yafowil.zope2.meta.IYAFOWILResourceDirective"
-        handler="yafowil.zope2.meta.yafowil_resource_directive"
+        schema="yafowil.plone.meta.IYAFOWILResourceDirective"
+        handler="yafowil.plone.meta.yafowil_resource_directive"
     />
   
   </directives>    

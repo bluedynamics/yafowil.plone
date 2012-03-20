@@ -5,7 +5,7 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:yafowil="http://namespaces.zope.org/yafowil"
     xmlns:i18n="http://namespaces.zope.org/i18n"
-    i18n:domain="yafowil.zope2">
+    i18n:domain="yafowil.plone">
 
   <include package="." file="meta.zcml" />
 
@@ -28,7 +28,7 @@
   />
  
   <genericsetup:importStep
-    name="yafowil.zope2"
+    name="yafowil.plone"
     title="YAFOWIL: resource registries import handlers"
     description="Registers all resources (css/js) provided by YAFOWIL and its plugins"
     handler=".setuphandlers.setup_resource_registries" />
