@@ -1,4 +1,5 @@
 parts
+dist
 bin
 eggs
 downloads
