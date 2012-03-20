@@ -2,6 +2,19 @@
 History
 =======
 
+1.2
+---
+
+- rename to yafowil.plone - seems a 2 at the end of a package name confuses 
+  easy_install. wtf!?
+  [jensens, 2012-03-20]
+
+1.1
+---
+
+- depend on yafowil 1.3 in setup.py and bump version.
+  [jensens, 2012-03-20]
+
 1.0
 ---
 

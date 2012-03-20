@@ -1,14 +1,14 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.0'
+version = '1.2'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
-shortdesc = 'Zope2/ Plone Integration with YAFOWIL'
+shortdesc = 'Plone Integration with YAFOWIL'
 tests_require = ['interlude']
 
-setup(name='yafowil.zope2',
+setup(name='yafowil.plone',
       version=version,
       description=shortdesc,
       long_description=longdesc,
@@ -22,7 +22,7 @@ setup(name='yafowil.zope2',
             'Framework :: Plone',
             'License :: OSI Approved :: BSD License',                        
       ],
-      keywords='zope2 request response html input widgets',
+      keywords='zope2 plone request response html input widgets',
       author='BlueDynamics Alliance',
       author_email='dev@bluedynamics.com',
       url=u'http://packages.python.org/yafowil.zope2',
@@ -35,7 +35,7 @@ setup(name='yafowil.zope2',
       install_requires=[
           'setuptools',
           'Zope2',
-          'yafowil',
+          'yafowil>=1.3',
       ],
       entry_points="""
       [z3c.autoinclude.plugin]
