@@ -3,6 +3,7 @@ import yafowil.loader
 from yafowil.base import factory, UNSET
 from yafowil.controller import Controller
 from zope.i18nmessageid import MessageFactory
+from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
@@ -28,7 +29,7 @@ class ExampleView(BrowserView):
         form['searchterm'] = factory(
             'field:label:error:text',
             props={
-                'label': _(u'Search term:'),                          
+                'label': _(u'Search term:'),
                 'size': '20',
         })
         form['submit'] = factory(
@@ -43,7 +44,7 @@ class ExampleView(BrowserView):
         return controller.rendered
 
     def results(self):
-        if not hasattr(self,'searchterm') or not self.searchterm:
+        if not hasattr(self, 'searchterm') or not self.searchterm:
             return []
 
         cat = getToolByName(self.context, 'portal_catalog')
@@ -53,5 +54,4 @@ class ExampleView(BrowserView):
         if qterm:
             qterm = '%s' % (qterm)
             query['SearchableText'] = qterm.decode('utf-8')
-        print query
         return cat(**query)
