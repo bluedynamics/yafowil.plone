@@ -7,11 +7,13 @@ from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
+
 _ = MessageFactory('Example')
 
 
 class ExampleView(BrowserView):
-
+    """XXX: outdated -> see ``yafowil.plone.form``
+    """
 
     def _form_action(self, widget, data):
         return '%s/@@yafowil_example_form' % self.context.absolute_url()
@@ -20,7 +22,6 @@ class ExampleView(BrowserView):
         self.searchterm = data['searchterm'].extracted
 
     def form(self):
-
         form = factory('form',
             name='search',
             props={
@@ -39,7 +40,6 @@ class ExampleView(BrowserView):
                 'handler': self._form_handler,
                 'action': 'search'
         })
-
         controller = Controller(form, self.request)
         return controller.rendered
 

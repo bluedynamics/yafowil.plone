@@ -2,7 +2,7 @@
 <zope:configure
     xmlns:zope="http://namespaces.zope.org/zope" 
     xmlns="http://namespaces.zope.org/meta">
-    
+  
   <directives namespace="http://namespaces.zope.org/yafowil">
   
     <directive
@@ -12,5 +12,5 @@
     />
   
   </directives>    
-    
+
 </zope:configure>

@@ -5,9 +5,9 @@ from yafowil.utils import (
 )
 from Products.CMFCore.utils import getToolByName
 
+
 def setup_resource_registries(context):
-    """
-    context: Products.GenericSetup.context.DirectoryImportContext instance
+    """context: Products.GenericSetup.context.DirectoryImportContext instance
     """
     if not context.readDataFile('yafowil.plone.txt'):
         return
@@ -32,11 +32,10 @@ def setup_resource_registries(context):
             continue      
         msg += ' registered'
         regcss.registerStylesheet(resource_id, expression='', media='screen',
-                           rel='stylesheet', title='', rendering='link',
-                           enabled=1, cookable=True, compression='safe',
-                           cacheable=True, conditionalcomment='',
-                           authenticated=False, skipCooking=False,
-                           applyPrefix=False)
+            rel='stylesheet', title='', rendering='link', enabled=1,
+            cookable=True, compression='safe', cacheable=True,
+            conditionalcomment='', authenticated=False, skipCooking=False,
+            applyPrefix=False)
     regjs  = getToolByName(site, 'portal_javascripts')
     msg += '<br /><br />Javascripts (JS)'
     for resource_id in sorted(js):
@@ -45,8 +44,7 @@ def setup_resource_registries(context):
             msg += ' skipped'
             continue      
         msg += ' registered'
-        regjs.registerScript(resource_id, expression='', inline=False, enabled=True,
-                       cookable=True, compression='safe', cacheable=True,
-                       conditionalcomment='', authenticated=False,
-                       skipCooking=False)
+        regjs.registerScript(resource_id, expression='', inline=False,
+            enabled=True, cookable=True, compression='safe', cacheable=True,
+            conditionalcomment='', authenticated=False, skipCooking=False)
     return msg

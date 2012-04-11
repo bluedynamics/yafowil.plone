@@ -6,9 +6,12 @@ from yafowil.utils import (
     get_plugin_names,
 )
 
+
 class IYAFOWILResourceDirective(Interface):
-    """Loader for plugin resources"""
-    
+    """Loader for plugin resources.
+    """
+
+
 def yafowil_resource_directive(_context):
     for module_name in get_plugin_names('resourcedir'):
         res_dir = get_resource_directory(module_name)

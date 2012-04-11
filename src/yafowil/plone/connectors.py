@@ -6,6 +6,7 @@ from ZPublisher.HTTPRequest import (
     FileUpload,
 )
 
+
 class Zope2RequestAdapter(DictMixin):
     
     def __init__(self, request):
@@ -38,7 +39,8 @@ class Zope2RequestAdapter(DictMixin):
     
     def __delitem__(self, key):
         raise AttributeError('read only, __delitem__ is not supported')
-    
+
+
 class ZopeTranslation(object):
     
     def __init__(self, data):
@@ -48,7 +50,8 @@ class ZopeTranslation(object):
         if not isinstance(msg, Message):
             return msg            
         return translate(msg, context=self.zrequest)
-    
+
+
 def plone_preprocessor(widget, data):
     if not isinstance(data.request, (dict, Zope2RequestAdapter)):
         data.request = Zope2RequestAdapter(data.request)
