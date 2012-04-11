@@ -87,7 +87,7 @@ Concrete implementation may look like::
 
 Convenience for creating YAML forms::
 
-    >>> from zope.i18nmessage import MessageFactory
+    >>> from zope.i18nmessageid import MessageFactory
     >>> from yafowil.plone.form import YAMLForm
     
     >>> class MyYAMLForm(YAMLForm):
