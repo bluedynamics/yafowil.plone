@@ -2,8 +2,11 @@
 History
 =======
 
-1.3dev
-------
+1.3
+---
+
+- GS profile marker - fix wrong filename.
+  [rnix, 2012-04-11]
 
 - Add ``yafowil.plone.form`` module containing base classes.
   [rnix, 2012-04-11]
