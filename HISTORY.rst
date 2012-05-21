@@ -5,6 +5,9 @@ History
 1.3.1
 -----
 
+- Simplify base forms for plone.
+  [jensens, 2012-05-21]
+
 - Not ZIP safe!
   [jensens, 2012-04-15]
 

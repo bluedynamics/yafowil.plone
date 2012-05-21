@@ -65,6 +65,24 @@ Base Forms
 
 This package ships with base forms to be extended.
 
+The following form base classes are available:
+
+```yafowil.plone.form.BaseForm```
+    does not define a ```__call__``` method: define a template in ZCML or a
+    ```__call__``` method. It provides a method named ```render_form```
+    which processes and renders the form.
+
+```yafowil.plone.form.Form```
+    renders the naked form on ```__call__```.
+
+```yafowil.plone.form.YAMLBaseForm```
+    similar to ```BaseForm``` above. Expects properties ```form_template```
+    pointing to a YAML file and ```message_factory``` providing the message
+    factory used for YAML message strings.
+
+```yafowil.plone.form.YAMLForm```
+    similar to ```YAMLBaseForm``` renders the naked YAML form on ```__call__```.
+
 Concrete implementation may look like::
     
     >>> from yafowil.base import factory
@@ -85,29 +103,31 @@ Concrete implementation may look like::
     ... 
     ...         self.form = form
 
+
 Convenience for creating YAML forms::
 
     >>> from zope.i18nmessageid import MessageFactory
-    >>> from yafowil.plone.form import YAMLForm
+    >>> from yafowil.plone.form import YAMLBaseForm
     
-    >>> class MyYAMLForm(YAMLForm):
+    >>> class MyYAMLForm(YAMLBaseForm):
     ...     action_resource = '@@view_name_callable_by_browser'
     ...     form_template = 'package.name:forms/myform.yaml'
     ...     message_factory = MessageFactory('package.name')
 
-Both base form classes inherit from ``Products.Five.BrowserPage``, thus they
+Form classes inherit from ``Products.Five.BrowserPage``, thus they
 must be registered via ZCML ``browser:page`` directive::
 
     <browser:page
       for="*"
       name="form_registration_name"
       class=".forms.MyYAMLForm"
+      template="myyamlform.pt"
       permission="cmf.ModifyPortalContent"
     />
 
-Forms build with this base form classes are rendered without any wrapper, in
-order to insert such a form in a layout it must be called inside a
-wrapper template (plone example)::
+Forms build with this base form classes need a template in
+order to insert such a form in a layout. It must be called inside a
+wrapper template ```myform.yaml```::
 
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
           xmlns:tal="http://xml.zope.org/namespaces/tal"
@@ -119,7 +139,7 @@ wrapper template (plone example)::
       <body>
         <metal:content-core fill-slot="content-core">
           <metal:block define-macro="content-core">
-            <tal:form replace="structure context/@@form_registration_name" />
+            <tal:form replace="structure view/render_form" />
           </metal:block>
         </metal:content-core>
       </body>
