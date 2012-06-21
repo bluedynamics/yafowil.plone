@@ -1,3 +1,5 @@
+import sys
+from operator import itemgetter
 from yafowil.utils import (
     get_javascripts,
     get_stylesheets,
@@ -6,45 +8,53 @@ from yafowil.utils import (
 from Products.CMFCore.utils import getToolByName
 
 
+def _extract_resources(domain, get_method):
+    result = list()
+    for plugin_name in get_plugin_names(domain):
+        for record in get_method(plugin_name):
+            if record.get('thirdparty', True):
+                continue
+            if 'order' not in record:
+                record['order'] = sys.maxint
+            if record['resource'].startswith('http'):
+                record['url'] = record['resource']
+            else:
+                resdirname = '++resource++%s' % plugin_name
+                record['url'] = '%s/%s' % (resdirname, record['resource'])
+            result.append(record)
+    return sorted(result, key=itemgetter('order'))
+
+
 def setup_resource_registries(context):
     """context: Products.GenericSetup.context.DirectoryImportContext instance
     """
     if not context.readDataFile('yafowil.plone.txt'):
         return
-    msg = ''
-    js = []
-    for module_name in get_plugin_names('javascripts'):
-        prefix = '++resource++%s/' % module_name    
-        js += [(prefix + _) for _ in get_javascripts(module_name, 
-                                                     thirdparty=False)]
-    css = []
-    for module_name in get_plugin_names('stylesheets'):
-        prefix = '++resource++%s/' % module_name
-        css += [(prefix + _) for _ in get_stylesheets(module_name, 
-                                                      thirdparty=False)]
     site = context.getSite()
+    msg = 'Stylesheets (CSS)'
     regcss = getToolByName(site, 'portal_css')
-    msg += 'Stylesheets (CSS)'
-    for resource_id in sorted(css):
-        msg += '<br />%s' % resource_id
-        if [_ for _ in regcss.getResources() if resource_id == _.getId()]:
+    for record in _extract_resources('stylesheets', get_stylesheets):
+        merge = record.get('merge', True)
+        msg += '<br />%s' % record['resource']
+        if [_ for _ in regcss.getResources() if record['url'] == _.getId()]:
             msg += ' skipped'
-            continue      
+            continue
         msg += ' registered'
-        regcss.registerStylesheet(resource_id, expression='', media='screen',
+        regcss.registerStylesheet(record['url'], expression='', media='screen',
             rel='stylesheet', title='', rendering='link', enabled=1,
-            cookable=True, compression='safe', cacheable=True,
+            cookable=merge, compression='safe', cacheable=True,
             conditionalcomment='', authenticated=False, skipCooking=False,
             applyPrefix=False)
-    regjs  = getToolByName(site, 'portal_javascripts')
     msg += '<br /><br />Javascripts (JS)'
-    for resource_id in sorted(js):
-        msg += '<br />%s' % resource_id
-        if [_ for _ in regjs.getResources() if resource_id == _.getId()]:
+    regjs = getToolByName(site, 'portal_javascripts')
+    for record in _extract_resources('javascripts', get_javascripts):
+        merge = record.get('merge', True)
+        msg += '<br />%s' % record['resource']
+        if [_ for _ in regjs.getResources() if record['url'] == _.getId()]:
             msg += ' skipped'
-            continue      
+            continue
         msg += ' registered'
-        regjs.registerScript(resource_id, expression='', inline=False,
-            enabled=True, cookable=True, compression='safe', cacheable=True,
+        regjs.registerScript(record['url'], expression='', inline=False,
+            enabled=True, cookable=merge, compression='safe', cacheable=True,
             conditionalcomment='', authenticated=False, skipCooking=False)
     return msg

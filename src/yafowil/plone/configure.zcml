@@ -21,9 +21,9 @@
   
   <genericsetup:registerProfile
     name="default"
-    title="YAFOWIL"
+    title="YAFOWIL Form Library"
     directory="profiles/default"
-    description="Extension profile for YAFOWIL."
+    description="YAFOWIL - Yet Another Form Widget Library - Integration for Plone."
     provides="Products.GenericSetup.interfaces.EXTENSION"
   />
  

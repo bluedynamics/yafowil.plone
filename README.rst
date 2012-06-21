@@ -1,4 +1,4 @@
-This is the **Zope2 integration** for `YAFOWIL
+This is the **Plone Integration** for `YAFOWIL
 <http://pypi.python.org/pypi/yafowil>`_
 
 

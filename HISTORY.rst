@@ -2,6 +2,11 @@
 History
 =======
 
+2.0
+---
+
+- ..
+
 1.3.1
 -----
 
@@ -24,7 +29,7 @@ History
 1.2
 ---
 
-- Rename to yafowil.plone - seems a 2 at the end of a package name confuses 
+- Rename to yafowil.plone - seems a 2 at the end of a package name confuses
   easy_install. wtf!?
   [jensens, 2012-03-20]
 
@@ -41,8 +46,8 @@ History
 
 - Resources are registered using the new plugin infrastructure.
   Theres now an import step for generic setup registering all javascripts and
-  stylesheets provided by the plugins. They are registred without any 
-  thirdparty dependencies. If a resource is already registered its registration 
+  stylesheets provided by the plugins. They are registred without any
+  thirdparty dependencies. If a resource is already registered its registration
   is skipped. Such its possible to register or overide the defaults using xml
   files.
   [jensens, 2012-02-01]

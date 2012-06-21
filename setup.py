@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.3.1'
+version = '2.0dev'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
@@ -34,8 +34,8 @@ setup(name='yafowil.plone',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'Zope2',
-          'yafowil>=1.3',
+          'Plone',
+          'yafowil>=2.0dev',
           'yafowil.yaml>=1.0.2',
       ],
       entry_points="""
