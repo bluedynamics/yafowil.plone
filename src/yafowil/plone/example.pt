@@ -9,15 +9,7 @@
   
     <metal:main fill-slot="main">
       <tal:main-macro metal:define-macro="main">
-        <div tal:content="structure python:view.form()">form</div>
-        <ul>
-          <tal:block repeat="item python:view.results()">
-            <li>
-              <a tal:content="item/Title"
-                 tal:attributes="href item/getURL|item/absolute_url"></a>
-            </li>
-          </tal:block>
-        </ul>
+        <div tal:content="structure python:view.render_form()">form</div>
       </tal:main-macro>
     </metal:main>
   

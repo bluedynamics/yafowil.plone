@@ -13,7 +13,7 @@
     for="*"
     name="yafowil_example_form"
     permission="zope.Public"
-    class=".example.ExampleView"
+    class=".example.ExampleForm"
     template="example.pt"
   />
 

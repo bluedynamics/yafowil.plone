@@ -1,4 +1,3 @@
-from yafowil.base import factory
 from yafowil.controller import Controller
 from yafowil.yaml import parse_from_YAML
 from Products.Five import BrowserView
@@ -22,6 +21,7 @@ class BaseForm(BrowserView):
         raise NotImplementedError(u"Abstract Form does not implement "
                                   u"``prepare``.")
 
+
 class Form(BaseForm):
 
     def __call__(self):
@@ -35,6 +35,7 @@ class YAMLBaseForm(BaseForm):
     def prepare(self):
         self.form = parse_from_YAML(
             self.form_template, self, self.message_factory)
+
 
 class YAMLForm(YAMLBaseForm):
 

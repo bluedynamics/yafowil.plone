@@ -1,9 +1,38 @@
 from yafowil.base import factory
 from .connectors import plone_preprocessor
 
+PLONE_MAKROS = {
+    'form': {
+        'chain': 'form',
+        'props': {
+            'form.class': 'enableUnloadProtection enableAutoFocus '
+                          'enableFormTabbing edit-form',
+        }
+    },
+    'field': {
+        'chain': 'field:label:help:error',
+        'props': {
+            'field.class': 'field',
+            'label.class': 'formQuestion',
+            'help.class': 'formHelp',
+            'error.class': 'fieldErrorBox',
+            'error.render_empty': True,
+            'error.position': 'before',
+        }
+    },
+    'button': {
+        'chain': 'field:submit',
+        'props': {
+            'field.class': 'formControls',
+            'submit.class': 'context',
+        }
+    },
+}
+
 
 def register():
-    factory.register_global_preprocessors([plone_preprocessor])  
-    factory.defaults['form.class'] = \
-        'edit-form enableUnloadProtection enableAutoFocus'    
-    factory.defaults['label.class'] = "formQuestion"
+    factory.register_global_preprocessors([plone_preprocessor])
+    for name, value in PLONE_MAKROS.items():
+        factory.register_macro(name, value['chain'], value['props'])
+    factory.defaults['select.label_radio_class'] = 'radioType'
+    factory.defaults['select.label_checkbox_class'] = 'checkboxType'
