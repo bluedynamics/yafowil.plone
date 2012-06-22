@@ -1,7 +1,7 @@
 from yafowil.base import factory
 from .connectors import plone_preprocessor
 
-PLONE_MAKROS = {
+PLONE_MACROS = {
     'form': {
         'chain': 'form',
         'props': {
@@ -32,7 +32,7 @@ PLONE_MAKROS = {
 
 def register():
     factory.register_global_preprocessors([plone_preprocessor])
-    for name, value in PLONE_MAKROS.items():
+    for name, value in PLONE_MACROS.items():
         factory.register_macro(name, value['chain'], value['props'])
     factory.defaults['select.label_radio_class'] = 'radioType'
     factory.defaults['select.label_checkbox_class'] = 'checkboxType'
