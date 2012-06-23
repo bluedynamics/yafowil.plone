@@ -20,8 +20,10 @@
             </li>
           </tal:loop>
         </ul>
-        <div tal:condition="view/example_name"
-             tal:content="structure python:'bla'">form</div>
+        <div tal:condition="view/example_name">
+             <div tal:repeat="form view/forms"
+                  tal:content="structure form">form</div>
+        </div>
       </tal:main-macro>
     </metal:main>
   

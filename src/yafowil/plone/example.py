@@ -2,6 +2,7 @@ from zExceptions import NotFound
 from Products.Five import BrowserView
 import yafowil.loader
 from yafowil.base import factory
+from yafowil.controller import Controller
 from yafowil.utils import get_example, get_example_names
 
 
@@ -35,27 +36,25 @@ class ExampleView(BrowserView):
         if hasattr(self, '_route'):
             return self._route
 
-    def _form_action(self, widget, data):
-        return '%s/@@yafowil_example_form' % self.context.absolute_url()
-
-    def _form_handler(self, widget, data):
-        self.searchterm = data['searchterm'].extracted
-
-    def prepare(self):
-        self.form = factory(
-            u'form',
-            name=self.example_name.replace('.', '-'),
-            props={
-                'action': 'yafowil_examples/%s' % self.example_name})
+    def forms(self):
+        result = list()
         for part in self.example:
             widget = part['widget']
-            self.form[widget.name] = widget
-        self.form['submit'] = factory(
-            'submit',
-            props={
-                'label': 'submit',
-                'action': 'save',
-                'handler': lambda widget, data: None})
+            form = factory(
+                u'form',
+                name='form-%s' % widget.name,
+                props={
+                    'action': 'yafowil_examples/%s' % self.example_name})
+            form[widget.name] = widget
+            form['submit'] = factory(
+                'submit',
+                props={
+                    'label': 'submit',
+                    'action': 'save',
+                    'handler': lambda widget, data: None})
+            controller = Controller(form, self.request)
+            result.append(controller.rendered)
+        return result
 
     def publishTraverse(self, request, name):
         if self.example_name:
