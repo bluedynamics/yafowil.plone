@@ -8,9 +8,10 @@ from yafowil.utils import get_example, get_example_names
 class ExampleResponseView(BrowserView):
 
     def __call__(self):
-        for header in self.route.get('header', []):
-            self.request.reponse.setHeader(*header)
-        return self.route.get('body', '')
+        route = self.route(self.request['URL'])
+        for header in route.get('header', []):
+            self.request.response.setHeader(*header)
+        return route.get('body', '')
 
 
 class ExampleView(BrowserView):
@@ -61,8 +62,11 @@ class ExampleView(BrowserView):
             view = ExampleResponseView(self.context, self.request)
             view.routes = dict()
             for part in self.example:
-                view.routes.update(part.get('routes', {}))
-            return view
+                routes = part.get('routes', [])
+                if name in routes:
+                    view.route = routes[name]
+                    return view
+            raise NotFound()
         if name not in self.example_names:
             raise NotFound()
         self._example_name = name
