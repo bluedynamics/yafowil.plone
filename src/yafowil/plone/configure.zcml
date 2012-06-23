@@ -11,10 +11,10 @@
 
   <browser:page
     for="*"
-    name="yafowil_example_form"
-    permission="zope.Public"
-    class=".example.ExampleForm"
+    name="yafowil_examples"
     template="example.pt"
+    permission="zope.Public"
+    class=".example.ExampleView"
   />
 
   <yafowil:resources />
