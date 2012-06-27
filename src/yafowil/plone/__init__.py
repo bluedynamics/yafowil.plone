@@ -27,6 +27,12 @@ PLONE_MACROS = {
             'submit.class': 'context',
         }
     },
+    
+    # yafowil.widget.array
+    'array': {
+        'chain': 'array',
+        'props': {},
+    },
 }
 
 

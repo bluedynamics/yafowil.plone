@@ -1,17 +1,17 @@
 import sys
 from operator import itemgetter
-from yafowil.utils import (
-    get_javascripts,
-    get_stylesheets,
-    get_plugin_names,
-)
+from yafowil.base import factory
+from yafowil.utils import get_plugin_names
 from Products.CMFCore.utils import getToolByName
 
 
-def _extract_resources(domain, get_method):
+def _extract_resources(which):
     result = list()
-    for plugin_name in get_plugin_names(domain):
-        for record in get_method(plugin_name):
+    for plugin_name in get_plugin_names():
+        resources = factory.resources_for(plugin_name)
+        if not resources:
+            continue
+        for record in resources[which]:
             if record.get('thirdparty', True):
                 continue
             if 'order' not in record:
@@ -33,7 +33,7 @@ def setup_resource_registries(context):
     site = context.getSite()
     msg = 'Stylesheets (CSS)'
     regcss = getToolByName(site, 'portal_css')
-    for record in _extract_resources('stylesheets', get_stylesheets):
+    for record in _extract_resources('css'):
         merge = record.get('merge', True)
         msg += '<br />%s' % record['resource']
         if [_ for _ in regcss.getResources() if record['url'] == _.getId()]:
@@ -47,7 +47,7 @@ def setup_resource_registries(context):
             applyPrefix=False)
     msg += '<br /><br />Javascripts (JS)'
     regjs = getToolByName(site, 'portal_javascripts')
-    for record in _extract_resources('javascripts', get_javascripts):
+    for record in _extract_resources('js'):
         merge = record.get('merge', True)
         msg += '<br />%s' % record['resource']
         if [_ for _ in regjs.getResources() if record['url'] == _.getId()]:
