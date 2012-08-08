@@ -36,7 +36,7 @@ def plone_label_renderer(widget, data):
         if widget.attrs['title']:
             label_attrs['title'] = widget.attrs['title']
     label_contents = label_text
-    if widget.attrs['required']:
+    if widget.attrs.get(widget.attrs['required_bullet_trigger']):
         label_contents += data.tag('span', '&nbsp;',
                                    class_='required',
                                    title=_('required', 'Required'))
@@ -74,6 +74,12 @@ factory.doc['props']['plonelabel.for'] = """\
 Optional dottedpath of widget to be labled
 """
 
+factory.defaults['plonelabel.required_bullet_trigger'] = 'required'
+factory.doc['props']['plonelabel.required_bullet_trigger'] = """\
+Attribute name which triggers rendering of required bullet. Defaults to
+'required'.
+"""
+
 
 PLONE_MACROS = {
     'form': {
@@ -87,6 +93,7 @@ PLONE_MACROS = {
         'chain': 'field:plonelabel:error',
         'props': {
             'field.class': 'field',
+            'field.error_class': 'error',
             'error.class': 'fieldErrorBox',
             'error.render_empty': True,
             'error.position': 'before',
