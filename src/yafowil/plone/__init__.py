@@ -36,7 +36,8 @@ def plone_label_renderer(widget, data):
         if widget.attrs['title']:
             label_attrs['title'] = widget.attrs['title']
     label_contents = label_text
-    if widget.attrs.get(widget.attrs['required_bullet_trigger']):
+    if widget.attrs.get(widget.attrs['required_bullet_trigger']) \
+      and data.mode == 'edit':
         label_contents += data.tag('span', '&nbsp;',
                                    class_='required',
                                    title=_('required', 'Required'))
