@@ -35,7 +35,7 @@ setup(name='yafowil.plone',
       install_requires=[
           'setuptools',
           'Plone',
-          'yafowil>=2.0dev',
+          'yafowil>1.99',
           'yafowil.yaml>=1.0.2',
       ],
       entry_points="""
