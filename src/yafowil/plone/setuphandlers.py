@@ -12,8 +12,10 @@ def _extract_resources(which):
         if not resources:
             continue
         for record in resources[which]:
-            if record.get('thirdparty', True):
-                continue
+            # XXX: discuss how to configure resources already shipped
+            #      with plone.
+            #if record.get('thirdparty', True):
+            #    continue
             if 'order' not in record:
                 record['order'] = sys.maxint
             if record['resource'].startswith('http'):
