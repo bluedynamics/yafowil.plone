@@ -43,8 +43,11 @@ def plone_label_renderer(widget, data):
                                    title=_('required', 'Required'))
     label_contents += data.tag('span', help_text, class_='formHelp')
     rendered = data.rendered is not UNSET and data.rendered or u''
+    position = widget.attrs['position']
+    if callable(position):
+        position = position(widget, data)
     return generic_positional_rendering_helper(
-        'label', label_contents, label_attrs, rendered, 'before', tag)
+        'label', label_contents, label_attrs, rendered, position, tag)
 
 
 factory.register(
@@ -55,6 +58,8 @@ factory.register(
 factory.doc['blueprint']['plonelabel'] = """\
 Label for Plone blueprint.
 """
+
+factory.defaults['plonelabel.position'] = 'before'
 
 factory.doc['props']['plonelabel.label'] = """\
 Text to be displayed as a label.
