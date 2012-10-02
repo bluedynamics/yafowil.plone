@@ -103,7 +103,6 @@ Concrete implementation may look like::
     ... 
     ...         self.form = form
 
-
 Convenience for creating YAML forms::
 
     >>> from zope.i18nmessageid import MessageFactory
