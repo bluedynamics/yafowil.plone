@@ -38,6 +38,11 @@ setup(name='yafowil.plone',
           'yafowil>1.99',
           'yafowil.yaml>=1.0.2',
       ],
+      extras_require={
+          'addons': [
+              'collective.js.jqueryui',
+          ]
+      },
       entry_points="""
       [z3c.autoinclude.plugin]
       target = plone

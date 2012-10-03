@@ -26,11 +26,21 @@
     description="YAFOWIL - Yet Another Form Widget Library - Integration for Plone."
     provides="Products.GenericSetup.interfaces.EXTENSION"
   />
+  
+  <genericsetup:registerProfile
+    name="demo"
+    title="YAFOWIL Form Library Demo Profile"
+    directory="profiles/demo"
+    description="YAFOWIL - Yet Another Form Widget Library - Demo Setup."
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
  
   <genericsetup:importStep
     name="yafowil.plone"
     title="YAFOWIL: resource registries import handlers"
     description="Registers all resources (css/js) provided by YAFOWIL and its plugins"
-    handler=".setuphandlers.setup_resource_registries" />
+    handler=".setuphandlers.setup_resource_registries">
+    <depends name="plone.app.registry" />
+  </genericsetup:importStep>
 
 </configure>

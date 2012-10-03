@@ -1,21 +1,28 @@
 import sys
+import logging
 from operator import itemgetter
 from yafowil.base import factory
 from yafowil.utils import get_plugin_names
 from Products.CMFCore.utils import getToolByName
+from zope.component import getUtility
+from plone.registry.interfaces import IRegistry
+
+
+logger = logging.getLogger('yafowil.plone')
 
 
 def _extract_resources(which):
     result = list()
+    registry = getUtility(IRegistry)
     for plugin_name in get_plugin_names():
         resources = factory.resources_for(plugin_name)
         if not resources:
             continue
         for record in resources[which]:
-            # XXX: discuss how to configure resources already shipped
-            #      with plone.
-            #if record.get('thirdparty', True):
-            #    continue
+            if not registry.get(record['group']):
+                logger.warning("Skipping resource '%s' for group '%s'" % (
+                               record['resource'], record['group']))
+                continue
             if 'order' not in record:
                 record['order'] = sys.maxint
             if record['resource'].startswith('http'):
@@ -24,6 +31,8 @@ def _extract_resources(which):
                 resdirname = '++resource++%s' % plugin_name
                 record['url'] = '%s/%s' % (resdirname, record['resource'])
             result.append(record)
+            logger.info("Activate resource '%s' for group '%s'" % (
+                        record['resource'], record['group']))
     return sorted(result, key=itemgetter('order'))
 
 
