@@ -110,6 +110,13 @@
     <value>False</value>
   </record>
   
+  <record name="yafowil.widget.richtext.jquery">
+    <field type="plone.registry.field.Bool">
+      <title>Richtext widget jquery integration resources</title>
+    </field>
+    <value>True</value>
+  </record>
+  
   <record name="yafowil.widget.richtext.common">
     <field type="plone.registry.field.Bool">
       <title>Richtext widget common resources</title>
@@ -118,6 +125,7 @@
   </record>
   
   <!-- yafowil.widget.wysihtml -->
+  <!--
   <record name="yafowil.widget.wysihtml.dependencies">
     <field type="plone.registry.field.Bool">
       <title>WYSIHTML5 widget dependency resources</title>
@@ -131,5 +139,6 @@
     </field>
     <value>False</value>
   </record>
+  -->
 
 </registry>

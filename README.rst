@@ -5,12 +5,13 @@ This is the **Plone Integration** for `YAFOWIL
 Functionality
 =============
 
+
 Browser Resources
 -----------------
 
 Plugins may provide custom javascript, css, images (and so on). This package
-registers the directory containing them as a resource-directory. Thus they can
-be accessed from the webbrowser. The schema is
+registers the directories containing them as a resource-directory. Thus they
+can be accessed from the webbrowser. The schema is
 ``+++resource++MODULENAME/filename.ext``. I.e. if
 ``yafowil.widget.autocomplete`` is available its javascript can be accessed
 with
@@ -23,15 +24,28 @@ Integration with Plone and GenericSetup
 There is a profile ``YAFOWIL`` available registering all browser resources in
 css and javascript registries.
 
-The resources are registred without any thridparty dependencies (i.e. dependend
-javascript libraries).
+To control which resources are registered, add relevant resource groups to
+``registry.xml`` of your profile, e.g.::
+
+    <!-- yafowil.widget.array -->
+    <record name="yafowil.widget.array.common">
+      <field type="plone.registry.field.Bool">
+        <title>Array widget common resources</title>
+      </field>
+      <value>True</value>
+    </record>
+
+The record ``name`` maps to the YAFOWIL resource group name. Take a look into
+``registry.xml`` of the ``demo`` profile for more examples or consider the
+referring resource providing code inside the addon widgets in order to check
+defined resource groups.
 
 
 Integration with Translation
 ----------------------------
 
-The package adds an translation method for Zope2 i18n messages. Its added using
-a global preprocessor
+The package adds an translation method for Zope2 i18n messages. It's added
+using by defining a global preprocessor
 
 
 Request wrapper
@@ -44,19 +58,19 @@ Spezial behaviors:
 - File Uploads provided by Zope2 as ``ZPublisher.HTTPRequest.Fileupload``
   objects are turned into Dicts with the keys:
 
-  file
+  **file**
       file-like object to read data from
 
-  filename
+  **filename**
       submitted name of the upload
 
-  mimetype
+  **mimetype**
       type of the upload
 
-  headers
+  **headers**
       all headers
 
-  original
+  **original**
       keeps the original ``ZPublisher.HTTPRequest.Fileupload`` object
 
 
@@ -99,7 +113,7 @@ Concrete implementation may look like::
     ...                 'action': self.form_action,
     ...             })
     ... 
-    ...         # form field manufactoring here...
+    ...         # form widgets creation here...
     ... 
     ...         self.form = form
 

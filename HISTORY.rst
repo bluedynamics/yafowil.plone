@@ -5,7 +5,8 @@ History
 2.0
 ---
 
-- ..
+- YAFOWIL resource including configuration via generic setup.
+  [rnix, 2012-10-03]
 
 1.3.1
 -----
