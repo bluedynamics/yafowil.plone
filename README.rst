@@ -55,23 +55,23 @@ This package registers a global preprocessor for YAFOWIL. It wraps the Zope2
 request by an own request instance providing the behavior expected by YAFOWIL.
 Spezial behaviors:
 
-- File Uploads provided by Zope2 as ``ZPublisher.HTTPRequest.Fileupload``
-  objects are turned into Dicts with the keys:
+File Uploads provided by Zope2 as ``ZPublisher.HTTPRequest.Fileupload``
+objects are turned into Dicts with the keys:
 
-  **file**
-      file-like object to read data from
+**file**
+    file-like object to read data from
 
-  **filename**
-      submitted name of the upload
+**filename**
+    submitted name of the upload
 
-  **mimetype**
-      type of the upload
+**mimetype**
+    type of the upload
 
-  **headers**
-      all headers
+**headers**
+    all headers
 
-  **original**
-      keeps the original ``ZPublisher.HTTPRequest.Fileupload`` object
+**original**
+    keeps the original ``ZPublisher.HTTPRequest.Fileupload`` object
 
 
 Base Forms
@@ -157,6 +157,14 @@ wrapper template ```myform.yaml```::
         </metal:content-core>
       </body>
     </html>
+
+
+Detailed Documentation
+======================
+
+If you're interested to dig deeper: The
+`detailed YAFOWIL documentation <http://yafowil.info>`_ is available.
+Read it and learn how to create your example application with YAFOWIL.
 
 
 Source Code

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '2.0dev'
+version = '2.0'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
@@ -13,7 +13,6 @@ setup(name='yafowil.plone',
       description=shortdesc,
       long_description=longdesc,
       classifiers=[
-            'Development Status :: 5 - Production/Stable',
             'Operating System :: OS Independent',
             'Programming Language :: Python',
             'Topic :: Software Development',
@@ -25,8 +24,8 @@ setup(name='yafowil.plone',
       keywords='zope2 plone request response html input widgets',
       author='BlueDynamics Alliance',
       author_email='dev@bluedynamics.com',
-      url=u'http://packages.python.org/yafowil.plone',
-      license='Simplified BSD',
+      url=u'http://pypi.python.org/pypi/yafowil.plone',
+      license='BSD',
       packages=find_packages('src'),
       package_dir={'': 'src'},
       namespace_packages=['yafowil'],
