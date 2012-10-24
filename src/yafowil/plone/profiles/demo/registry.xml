@@ -1,7 +1,7 @@
 <registry>
 
   <!-- collective.js.jqueryui - enable required base resources -->
-  <records interface="collective.js.jqueryui.interfaces.IJQueryUIPlugins">
+  <records interface="collective.js.jqueryui.controlpanel.IJQueryUIPlugins">
     <value key="ui_core">True</value>
     <value key="ui_widget">True</value>
     <value key="ui_mouse">True</value>
