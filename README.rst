@@ -6,26 +6,23 @@ Functionality
 =============
 
 
-Browser Resources
------------------
-
-Plugins may provide custom javascript, css, images (and so on). This package
-registers the directories containing them as a resource-directory. Thus they
-can be accessed from the webbrowser. The schema is
-``+++resource++MODULENAME/filename.ext``. I.e. if
-``yafowil.widget.autocomplete`` is available its javascript can be accessed
-with
-``http://localhost:8080/Plone/++resource++yafowil.widget.autocomplete/widget.js``.
-
-
-Integration with Plone and GenericSetup
+Resources Integration with GenericSetup
 ---------------------------------------
 
-There is a profile ``YAFOWIL`` available registering all browser resources in
-css and javascript registries.
+Addon widgets may provide custom javascripts, CSS, images and so on.
 
-To control which resources are registered, add relevant resource groups to
-``registry.xml`` of your profile, e.g.::
+This package registers the directories containing these assets as
+resource directories. Thus they can be accessed from the webbrowser.
+The registration schema is ``++resource++MODULENAME/...``. 
+
+The "YAFOWIL Form Library" GS profile registers all resources related to
+so called "resource groups" in the CSS and javascript registries.
+
+This resource groups must be enabled explicitly(!). The resource groups
+configuration happens via the portal registry. 
+
+You need to provide a Generic setup profile containing a ``registry.xml`` with
+the resource groups configuration, e.g.::
 
     <!-- yafowil.widget.array -->
     <record name="yafowil.widget.array.common">
@@ -35,10 +32,21 @@ To control which resources are registered, add relevant resource groups to
       <value>True</value>
     </record>
 
-The record ``name`` maps to the YAFOWIL resource group name. Take a look into
-``registry.xml`` of the ``demo`` profile for more examples or consider the
-referring resource providing code inside the addon widgets in order to check
-defined resource groups.
+The record ``name`` maps to the resource group name.
+
+.. note::
+
+    The profile to register the resoures in resource registries (the default
+    profile) must run AFTER the resource groups have been configured. Thus you
+    are forced to use 2 profiles; one registering the resource groups, and one
+    depending on the resource groups profile and the yafowil profile in it's
+    metadata.xml.
+
+Take a look into ``registry.xml`` of the
+``yafowil.plone:profiles/demoresources`` profile for more examples or consider
+the referring resource providing code inside the addon widgets, usually
+contained in the packages ``__init__.py`` file to get available resource
+groups.
 
 
 Integration with Translation

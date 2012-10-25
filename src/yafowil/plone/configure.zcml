@@ -20,23 +20,28 @@
   -->
 
   <yafowil:resources />
-  
+
   <genericsetup:registerProfile
     name="default"
     title="YAFOWIL Form Library"
     directory="profiles/default"
     description="YAFOWIL - Yet Another Form Widget Library - Integration for Plone."
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-  />
-  
+    provides="Products.GenericSetup.interfaces.EXTENSION" />
+
+  <genericsetup:registerProfile
+    name="demoresources"
+    title="YAFOWIL Form Library Demo Resource Integration Profile"
+    directory="profiles/demoresources"
+    description="YAFOWIL - Yet Another Form Widget Library - Demo Resources."
+    provides="Products.GenericSetup.interfaces.EXTENSION" />
+
   <genericsetup:registerProfile
     name="demo"
     title="YAFOWIL Form Library Demo Profile"
     directory="profiles/demo"
     description="YAFOWIL - Yet Another Form Widget Library - Demo Setup."
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-  />
- 
+    provides="Products.GenericSetup.interfaces.EXTENSION" />
+
   <genericsetup:importStep
     name="yafowil.plone"
     title="YAFOWIL: resource registries import handlers"
