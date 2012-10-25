@@ -9,7 +9,6 @@
 
   <include package="." file="meta.zcml" />
 
-  <!--
   <browser:page
     for="*"
     name="yafowil_examples"
@@ -17,7 +16,6 @@
     permission="zope.Public"
     class=".example.ExampleView"
   />
-  -->
 
   <yafowil:resources />
 
