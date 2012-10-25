@@ -40,7 +40,9 @@ The record ``name`` maps to the resource group name.
     profile) must run AFTER the resource groups have been configured. Thus you
     are forced to use 2 profiles; one registering the resource groups, and one
     depending on the resource groups profile and the yafowil profile in it's
-    ``metadata.xml``.
+    ``metadata.xml``. In other words, if you add a plugin (like yafowil.widget.autocomplete)
+    ``after yafowil.plone installation`` you MUST re-install yafowil.plone in order
+    to get new plugin's resources registered.
 
 Take a look into ``registry.xml`` of the
 ``yafowil.plone:profiles/demoresources`` profile for more examples or consider
