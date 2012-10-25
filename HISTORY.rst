@@ -2,6 +2,13 @@
 History
 =======
 
+2.0.1dev
+--------
+
+- Provdide default ``title`` attribute value for ``richtext`` blueprint of
+  ``yafowil.widget.richtext`` addon widget in order to provide ``TinyMCE``
+  configuration as expected by plone integration.
+
 2.0
 ---
 
