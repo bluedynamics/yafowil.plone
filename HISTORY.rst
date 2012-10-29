@@ -2,8 +2,8 @@
 History
 =======
 
-2.0.1dev
---------
+2.0.1
+-----
 
 - Provdide default ``title`` attribute value for ``richtext`` blueprint of
   ``yafowil.widget.richtext`` addon widget in order to provide ``TinyMCE``
