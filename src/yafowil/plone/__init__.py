@@ -1,11 +1,9 @@
 from zope.component import getUtility
-from zope.app.component.hooks import getSite
+from zope.component.hooks import getSite
 from yafowil.base import factory
 from yafowil.common import generic_positional_rendering_helper
 from yafowil.utils import (
     UNSET,
-    cssclasses,
-    css_managed_props,
     cssid,
     managedprops,
 )
