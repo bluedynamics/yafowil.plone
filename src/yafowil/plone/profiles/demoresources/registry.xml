@@ -126,14 +126,14 @@
   
   <!-- yafowil.widget.wysihtml -->
   <!--
-  <record name="yafowil.widget.wysihtml.dependencies">
+  <record name="yafowil.widget.wysihtml5.dependencies">
     <field type="plone.registry.field.Bool">
       <title>WYSIHTML5 widget dependency resources</title>
     </field>
     <value>False</value>
   </record>
   
-  <record name="yafowil.widget.wysihtml.common">
+  <record name="yafowil.widget.wysihtml5.common">
     <field type="plone.registry.field.Bool">
       <title>WYSIHTML5 widget common resources</title>
     </field>
