@@ -2,6 +2,13 @@
 History
 =======
 
+2.0.2
+-----
+
+- fix resource group names [thet]
+
+- correct getSite import, cleanup [thet]
+
 2.0.1
 -----
 
