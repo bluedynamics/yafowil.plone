@@ -1,6 +1,5 @@
 from zExceptions import NotFound
 from Products.Five import BrowserView
-import yafowil.loader
 from yafowil.base import factory
 from yafowil.controller import Controller
 from yafowil.utils import get_example, get_example_names
