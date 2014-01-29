@@ -3,9 +3,7 @@ from Products.Five import BrowserView
 from yafowil.base import factory
 from yafowil.controller import Controller
 from yafowil.utils import get_example, get_example_names
-import yafowil.loader  # loads registry
-
-yafowil.loader  # pep 8
+import yafowil.loader  # nopep8  # loads registry
 
 
 class ExampleResponseView(BrowserView):
