@@ -2,12 +2,20 @@
 History
 =======
 
+2.1dev
+------
+
+- Integrate translations.
+  [rnix, 2014-05-01]
+
 2.0.2
 -----
 
-- fix resource group names [thet]
+- fix resource group names
+  [thet]
 
-- correct getSite import, cleanup [thet]
+- correct getSite import, cleanup
+  [thet]
 
 2.0.1
 -----
@@ -15,6 +23,7 @@ History
 - Provdide default ``title`` attribute value for ``richtext`` blueprint of
   ``yafowil.widget.richtext`` addon widget in order to provide ``TinyMCE``
   configuration as expected by plone integration.
+  [rnix]
 
 2.0
 ---

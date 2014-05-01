@@ -4,6 +4,8 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:yafowil="http://namespaces.zope.org/yafowil"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="yafowil.plone">
 
   <include package="." file="meta.zcml" />
@@ -13,10 +15,28 @@
     name="yafowil_examples"
     template="example.pt"
     permission="zope.Public"
-    class=".example.ExampleView"
-  />
+    class=".example.ExampleView" />
 
   <yafowil:resources />
+
+  <configure package="yafowil.i18n">
+    <i18n:registerTranslations directory="locales" />
+  </configure>
+
+  <configure package="yafowil.widget.image"
+             zcml:condition="installed yafowil.widget.image">
+    <i18n:registerTranslations directory="locales" />
+  </configure>
+
+  <configure package="yafowil.widget.dict"
+             zcml:condition="installed yafowil.widget.dict">
+    <i18n:registerTranslations directory="locales" />
+  </configure>
+
+  <configure package="yafowil.widget.datetime"
+             zcml:condition="installed yafowil.widget.datetime">
+    <i18n:registerTranslations directory="locales" />
+  </configure>
 
   <genericsetup:registerProfile
     name="default"

@@ -1,12 +1,17 @@
-from setuptools import setup, find_packages
 import os
+from setuptools import (
+    setup,
+    find_packages,
+)
 
-version = '2.0.2'
+
+version = '2.1dev'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
 shortdesc = 'Plone Integration with YAFOWIL'
 tests_require = ['interlude']
+
 
 setup(name='yafowil.plone',
       version=version,
@@ -34,8 +39,8 @@ setup(name='yafowil.plone',
       install_requires=[
           'setuptools',
           'Plone',
-          'yafowil>1.99',
-          'yafowil.yaml>=1.0.2',
+          'yafowil>2.0.99',
+          'yafowil.yaml>=1.0.4',
       ],
       extras_require={
           'addons': [

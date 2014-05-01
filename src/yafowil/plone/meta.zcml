@@ -1,16 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<zope:configure
-    xmlns:zope="http://namespaces.zope.org/zope" 
-    xmlns="http://namespaces.zope.org/meta">
-  
+<zope:configure xmlns:zope="http://namespaces.zope.org/zope"
+                xmlns="http://namespaces.zope.org/meta">
+
   <directives namespace="http://namespaces.zope.org/yafowil">
-  
+
     <directive
-        name="resources"
-        schema="yafowil.plone.meta.IYAFOWILResourceDirective"
-        handler="yafowil.plone.meta.yafowil_resource_directive"
-    />
-  
-  </directives>    
+      name="resources"
+      schema="yafowil.plone.meta.IYAFOWILResourceDirective"
+      handler="yafowil.plone.meta.yafowil_resource_directive" />
+
+  </directives>
 
 </zope:configure>
