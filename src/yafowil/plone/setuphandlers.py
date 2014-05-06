@@ -55,7 +55,7 @@ def setup_resource_registries(context):
             rel='stylesheet', title='', rendering='link', enabled=1,
             cookable=merge, compression='safe', cacheable=True,
             conditionalcomment='', authenticated=False, skipCooking=False,
-            applyPrefix=False)
+            applyPrefix=True)
     msg += '<br /><br />Javascripts (JS)'
     regjs = getToolByName(site, 'portal_javascripts')
     for record in _extract_resources('js'):

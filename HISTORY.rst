@@ -5,6 +5,10 @@ History
 2.1dev
 ------
 
+- Set applyPrefix for CSS resources to True, so that referenced images can
+  still be found.
+  [thet, 2014-05-06]
+
 - Integrate translations.
   [rnix, 2014-05-01]
 
