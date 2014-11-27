@@ -38,7 +38,7 @@ setup(name='yafowil.plone',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'Plone',
+          'Products.CMFPlone',
           'yafowil>2.0.99',
           'yafowil.yaml>=1.0.4',
       ],
