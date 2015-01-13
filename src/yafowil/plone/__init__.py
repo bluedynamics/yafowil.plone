@@ -9,28 +9,32 @@ from yafowil.utils import (
 )
 from .connectors import plone_preprocessor
 from Products.CMFPlone import PloneMessageFactory as _
-from Products.TinyMCE.interfaces.utility import ITinyMCE
+
+try:
+    from Products.TinyMCE.interfaces.utility import ITinyMCE
+except ImportError:
+    ITinyMCE = None
 
 
-def tinymce_config(widget, data):
-    request = data.request.zrequest
-    path = request.physicalPathFromURL(request.getURL())
-    context = getSite()
-    # query object by path, if not found, context is site
-    for i in range(1, len(path)):
-        brains = context.portal_catalog(path={
-            'query': '/'.join(path[:-(i)]),
-            'depth': 0})
-        if not brains:
-            continue
-        context = brains[0].getObject()
-        break
-    utility = getUtility(ITinyMCE)
-    config = utility.getConfiguration(context=context, request=request)
-    return config.replace('"', '&#34;')
+if ITinyMCE:
+    def tinymce_config(widget, data):
+        request = data.request.zrequest
+        path = request.physicalPathFromURL(request.getURL())
+        context = getSite()
+        # query object by path, if not found, context is site
+        for i in range(1, len(path)):
+            brains = context.portal_catalog(path={
+                'query': '/'.join(path[:-(i)]),
+                'depth': 0})
+            if not brains:
+                continue
+            context = brains[0].getObject()
+            break
+        utility = getUtility(ITinyMCE)
+        config = utility.getConfiguration(context=context, request=request)
+        return config.replace('"', '&#34;')
 
-
-factory.defaults['richtext.title'] = tinymce_config
+    factory.defaults['richtext.title'] = tinymce_config
 
 
 @managedprops('label', 'for', 'help', 'title')
@@ -58,8 +62,8 @@ def plone_label_renderer(widget, data):
         if widget.attrs['title']:
             label_attrs['title'] = widget.attrs['title']
     label_contents = label_text
-    if widget.attrs.get(widget.attrs['required_bullet_trigger']) \
-      and data.mode == 'edit':
+    if widget.attrs.get(widget.attrs['required_bullet_trigger'])\
+            and data.mode == 'edit':
         label_contents += data.tag('span', '&nbsp;',
                                    class_='required',
                                    title=_('required', 'Required'))

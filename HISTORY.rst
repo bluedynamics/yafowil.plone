@@ -5,8 +5,8 @@ History
 2.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Make dependency on Products.TinyMCE a soft dependency.
+  [thet]
 
 2.1 (2013-06-03)
 ----------------
