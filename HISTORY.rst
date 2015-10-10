@@ -5,6 +5,10 @@ History
 2.2 (unreleased)
 ----------------
 
+- Use ``pkg_resources.get_distribution`` instead of catching ``ImportError``
+  to check whether TinyMCE is installed.
+  [rnix]
+
 - Make dependency on Products.TinyMCE a soft dependency.
   [thet]
 

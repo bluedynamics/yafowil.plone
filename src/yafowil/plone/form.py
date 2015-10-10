@@ -1,6 +1,6 @@
+from Products.Five import BrowserView
 from yafowil.controller import Controller
 from yafowil.yaml import parse_from_YAML
-from Products.Five import BrowserView
 
 
 class BaseForm(BrowserView):

@@ -1,11 +1,11 @@
-import sys
-import logging
+from Products.CMFCore.utils import getToolByName
 from operator import itemgetter
+from plone.registry.interfaces import IRegistry
 from yafowil.base import factory
 from yafowil.utils import get_plugin_names
-from Products.CMFCore.utils import getToolByName
 from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
+import logging
+import sys
 
 
 logger = logging.getLogger('yafowil.plone')

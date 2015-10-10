@@ -1,22 +1,24 @@
-from zope.component import getUtility
-from zope.component.hooks import getSite
+from Products.CMFPlone import PloneMessageFactory as _
 from yafowil.base import factory
 from yafowil.common import generic_positional_rendering_helper
-from yafowil.utils import (
-    UNSET,
-    cssid,
-    managedprops,
-)
-from .connectors import plone_preprocessor
-from Products.CMFPlone import PloneMessageFactory as _
+from yafowil.plone.connectors import plone_preprocessor
+from yafowil.utils import UNSET
+from yafowil.utils import cssid
+from yafowil.utils import managedprops
+from zope.component import getUtility
+from zope.component.hooks import getSite
+import pkg_resources
 
+
+HAS_TINYMCE = True
 try:
+    pkg_resources.get_distribution('Products.TinyMCE')
     from Products.TinyMCE.interfaces.utility import ITinyMCE
-except ImportError:
-    ITinyMCE = None
+except pkg_resources.DistributionNotFound:
+    HAS_TINYMCE = False
 
 
-if ITinyMCE:
+if HAS_TINYMCE:
     def tinymce_config(widget, data):
         request = data.request.zrequest
         path = request.physicalPathFromURL(request.getURL())

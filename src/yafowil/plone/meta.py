@@ -1,7 +1,7 @@
-from zope.interface import Interface
 from Products.Five.browser.metaconfigure import resourceDirectory
 from yafowil.base import factory
 from yafowil.utils import get_plugin_names
+from zope.interface import Interface
 
 
 class IYAFOWILResourceDirective(Interface):

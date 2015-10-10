@@ -1,8 +1,9 @@
-from zExceptions import NotFound
 from Products.Five import BrowserView
 from yafowil.base import factory
 from yafowil.controller import Controller
-from yafowil.utils import get_example, get_example_names
+from yafowil.utils import get_example
+from yafowil.utils import get_example_names
+from zExceptions import NotFound
 import yafowil.loader  # nopep8  # loads registry
 
 

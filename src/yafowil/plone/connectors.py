@@ -1,10 +1,8 @@
 from UserDict import DictMixin
+from ZPublisher.HTTPRequest import FileUpload
+from ZPublisher.HTTPRequest import HTTPRequest
 from zope.i18n import translate
 from zope.i18nmessageid import Message
-from ZPublisher.HTTPRequest import (
-    HTTPRequest,
-    FileUpload,
-)
 
 
 class Zope2RequestAdapter(DictMixin):
