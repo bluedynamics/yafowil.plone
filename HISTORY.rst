@@ -2,7 +2,7 @@
 History
 =======
 
-2.2 (unreleased)
+2.2 (2015-10-10)
 ----------------
 
 - Use ``pkg_resources.get_distribution`` instead of catching ``ImportError``
@@ -11,6 +11,7 @@ History
 
 - Make dependency on Products.TinyMCE a soft dependency.
   [thet]
+
 
 2.1 (2013-06-03)
 ----------------
