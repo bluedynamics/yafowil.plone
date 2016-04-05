@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<registry>
+
+  <records prefix="plone.bundles/yafowil"
+           interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+    <value key="enabled">True</value>
+    <value key="jscompilation">yafowil.plone.js</value>
+    <value key="csscompilation">yafowil.plone.css</value>
+    <value key="compile">False</value>
+    <!--
+      depend to jqueryui bundle in your integration package if you use an addon
+      widget which depends on jqueryui
+    -->
+    <value key="depends">plone</value>
+  </records>
+
+</registry>

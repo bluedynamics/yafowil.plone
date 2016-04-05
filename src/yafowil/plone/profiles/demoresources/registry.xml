@@ -10,7 +10,7 @@
     <value key="ui_droppable">True</value>
     <value key="ui_resizable">True</value>
   </records>
-  
+
   <!-- yafowil.widget.array -->
   <record name="yafowil.widget.array.common">
     <field type="plone.registry.field.Bool">
@@ -18,7 +18,7 @@
     </field>
     <value>True</value>
   </record>
-  
+
   <!-- yafowil.widget.autocomplete -->
   <record name="yafowil.widget.autocomplete.dependencies">
     <field type="plone.registry.field.Bool">
@@ -26,14 +26,14 @@
     </field>
     <value>True</value>
   </record>
-  
+
   <record name="yafowil.widget.autocomplete.common">
     <field type="plone.registry.field.Bool">
       <title>Autocomplete widget common resources</title>
     </field>
     <value>True</value>
   </record>
-  
+
   <!-- yafowil.widget.datetime -->
   <record name="yafowil.widget.datetime.datepicker">
     <field type="plone.registry.field.Bool">
@@ -41,21 +41,21 @@
     </field>
     <value>True</value>
   </record>
-  
+
   <record name="yafowil.widget.datetime.timepicker">
     <field type="plone.registry.field.Bool">
       <title>Datetime widget timepicker resources</title>
     </field>
     <value>True</value>
   </record>
-  
+
   <record name="yafowil.widget.datetime.common">
     <field type="plone.registry.field.Bool">
       <title>Datetime widget common resources</title>
     </field>
     <value>True</value>
   </record>
-  
+
   <!-- yafowil.widget.dict -->
   <record name="yafowil.widget.dict.common">
     <field type="plone.registry.field.Bool">
@@ -63,7 +63,7 @@
     </field>
     <value>True</value>
   </record>
-  
+
   <!-- yafowil.widget.dynatree -->
   <record name="yafowil.widget.dynatree.dependencies">
     <field type="plone.registry.field.Bool">
@@ -71,14 +71,14 @@
     </field>
     <value>True</value>
   </record>
-  
+
   <record name="yafowil.widget.dynatree.common">
     <field type="plone.registry.field.Bool">
       <title>Dynatree widget common resources</title>
     </field>
     <value>True</value>
   </record>
-  
+
   <!-- yafowil.widget.image -->
   <record name="yafowil.widget.image.common">
     <field type="plone.registry.field.Bool">
@@ -86,7 +86,7 @@
     </field>
     <value>True</value>
   </record>
-  
+
   <!-- yafowil.widget.multiselect -->
   <record name="yafowil.widget.multiselect.dependencies">
     <field type="plone.registry.field.Bool">
@@ -94,14 +94,14 @@
     </field>
     <value>True</value>
   </record>
-  
+
   <record name="yafowil.widget.multiselect.common">
     <field type="plone.registry.field.Bool">
       <title>Multiselect widget common resources</title>
     </field>
     <value>True</value>
   </record>
-  
+
   <!-- yafowil.widget.richtext -->
   <record name="yafowil.widget.richtext.dependencies">
     <field type="plone.registry.field.Bool">
@@ -109,21 +109,21 @@
     </field>
     <value>False</value>
   </record>
-  
+
   <record name="yafowil.widget.richtext.jquery">
     <field type="plone.registry.field.Bool">
       <title>Richtext widget jquery integration resources</title>
     </field>
     <value>True</value>
   </record>
-  
+
   <record name="yafowil.widget.richtext.common">
     <field type="plone.registry.field.Bool">
       <title>Richtext widget common resources</title>
     </field>
     <value>True</value>
   </record>
-  
+
   <!-- yafowil.widget.wysihtml -->
   <!--
   <record name="yafowil.widget.wysihtml5.dependencies">
@@ -132,7 +132,7 @@
     </field>
     <value>False</value>
   </record>
-  
+
   <record name="yafowil.widget.wysihtml5.common">
     <field type="plone.registry.field.Bool">
       <title>WYSIHTML5 widget common resources</title>
