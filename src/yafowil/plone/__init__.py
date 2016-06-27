@@ -1,3 +1,4 @@
+from yafowil.utils import entry_point
 import logging
 import pkg_resources
 
@@ -13,9 +14,11 @@ else:
     from . import plone4 as yafowil_plone
 
 
+@entry_point(order=30)
 def register():
     yafowil_plone.register()
 
 
+@entry_point(order=30)
 def configure():
     yafowil_plone.configure()

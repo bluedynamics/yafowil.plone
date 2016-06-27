@@ -5,6 +5,9 @@ History
 2.3 (unreleased)
 ----------------
 
+- Use ``yafowil.utils.entry_point`` decorator.
+  [rnix]
+
 - Plone 5 support.
   [rnix]
 
