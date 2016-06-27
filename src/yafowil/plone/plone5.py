@@ -3,6 +3,10 @@ from yafowil.plone.connectors import plone_preprocessor
 import os
 
 
+###############################################################################
+# Plone 5 specific resources
+###############################################################################
+
 resourcedir = os.path.join(os.path.dirname(__file__), 'plone5')
 css = [{
     'group': 'bootstrap.glyphicons',
@@ -11,12 +15,31 @@ css = [{
 }]
 
 
-PLONE_MACROS = {
-}
+###############################################################################
+# configure factory
+###############################################################################
 
+def configure_factory():
+    pass
+
+
+###############################################################################
+# register macros
+###############################################################################
+
+def register_macros():
+    pass
+
+
+###############################################################################
+# entry points
+###############################################################################
 
 def register():
     factory.register_global_preprocessors([plone_preprocessor])
     factory.register_theme('bootstrap', 'yafowil.plone', resourcedir, css=css)
-    for name, value in PLONE_MACROS.items():
-        factory.register_macro(name, value['chain'], value['props'])
+
+
+def configure():
+    configure_factory()
+    register_macros()

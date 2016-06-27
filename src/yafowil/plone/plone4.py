@@ -10,6 +10,10 @@ from zope.component.hooks import getSite
 import pkg_resources
 
 
+###############################################################################
+# Plone TinyMCE hook
+###############################################################################
+
 HAS_TINYMCE = True
 try:
     pkg_resources.get_distribution('Products.TinyMCE')
@@ -38,6 +42,10 @@ if HAS_TINYMCE:
 
     factory.defaults['richtext.title'] = tinymce_config
 
+
+###############################################################################
+# Plone specific label blueprint
+###############################################################################
 
 @managedprops('label', 'for', 'help', 'title')
 def plone_label_renderer(widget, data):
@@ -115,43 +123,46 @@ Attribute name which triggers rendering of required bullet. Defaults to
 """
 
 
-PLONE_MACROS = {
-    'form': {
-        'chain': 'form',
-        'props': {
-            'form.class': 'enableUnloadProtection enableAutoFocus '
-                          'enableFormTabbing edit-form',
-        }
-    },
-    'field': {
-        'chain': 'field:plonelabel:error',
-        'props': {
-            'field.class': 'field',
-            'field.error_class': 'error',
-            'error.class': 'fieldErrorBox',
-            'error.render_empty': True,
-            'error.position': 'before',
-        }
-    },
-    'button': {
-        'chain': 'field:submit',
-        'props': {
-            'field.class': 'formControls',
-            'submit.class': 'context',
-        }
-    },
+###############################################################################
+# configure factory
+###############################################################################
 
-    # yafowil.widget.array
-    'array': {
-        'chain': 'array',
-        'props': {},
-    },
-}
+def configure_factory():
+    factory.defaults['select.label_radio_class'] = 'radioType'
+    factory.defaults['select.label_checkbox_class'] = 'checkboxType'
 
+
+###############################################################################
+# register macros
+###############################################################################
+
+def register_macros():
+    factory.register_macro('form', 'form', {
+        'form.class': 'enableUnloadProtection enableAutoFocus '
+                      'enableFormTabbing edit-form',
+    })
+    factory.register_macro('field', 'field:plonelabel:error', {
+        'field.class': 'field',
+        'field.error_class': 'error',
+        'error.class': 'fieldErrorBox',
+        'error.render_empty': True,
+        'error.position': 'before',
+    })
+    factory.register_macro('button', 'field:submit', {
+        'field.class': 'formControls',
+        'submit.class': 'context',
+    })
+    factory.register_macro('array', 'array', {})
+
+
+###############################################################################
+# entry points
+###############################################################################
 
 def register():
     factory.register_global_preprocessors([plone_preprocessor])
-    for name, value in PLONE_MACROS.items():
-        factory.register_macro(name, value['chain'], value['props'])
-    factory.defaults['select.label_radio_class'] = 'radioType'
-    factory.defaults['select.label_checkbox_class'] = 'checkboxType'
+
+
+def configure():
+    configure_factory()
+    register_macros()

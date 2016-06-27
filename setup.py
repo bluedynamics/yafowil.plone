@@ -55,4 +55,5 @@ setup(
 
     [yafowil.plugin]
     register = yafowil.plone:register
+    configure = yafowil.plone:configure
     """)
