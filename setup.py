@@ -42,8 +42,11 @@ setup(
         'yafowil.yaml>=1.0.4',
     ],
     extras_require={
+        'plone5': [
+            'yafowil.bootstrap'
+        ],
         'addons': [
-            'collective.js.jqueryui',
+            'collective.js.jqueryui'
         ]
     },
     entry_points="""
