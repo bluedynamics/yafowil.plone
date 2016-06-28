@@ -10,10 +10,10 @@
     <value key="depends">plone</value>
   </records>
 
-  <!-- bootstrap glyphicons -->
-  <record name="bootstrap.glyphicons">
+  <!-- yafowil.plone common resources -->
+  <record name="yafowil.plone.common">
     <field type="plone.registry.field.Bool">
-      <title>Glyphicons Halflings Web Font</title>
+      <title>Yafowil plone common resources</title>
     </field>
     <value>True</value>
   </record>

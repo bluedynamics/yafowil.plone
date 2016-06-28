@@ -62,12 +62,12 @@
     description="YAFOWIL - Yet Another Form Widget Library - Demo Setup."
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
-  <!-- plone 4 -->
+  <!-- yafowil resource directories -->
   <include package="." file="meta.zcml" />
 
-  <yafowil:resources
-    zcml:condition="not-have plone-5" />
+  <yafowil:resources />
 
+  <!-- plone 4 -->
   <genericsetup:registerProfile
     zcml:condition="not-have plone-5"
     name="default"

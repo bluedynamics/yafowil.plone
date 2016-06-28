@@ -4,13 +4,13 @@ import os
 
 
 ###############################################################################
-# Plone 5 specific resources
+# plone5 specific resources
 ###############################################################################
 
-resourcedir = os.path.join(os.path.dirname(__file__), 'plone5')
+resourcedir = os.path.join(os.path.dirname(__file__), 'resources', 'plone5')
 css = [{
-    'group': 'bootstrap.glyphicons',
-    'resource': 'glyphicons.css',
+    'group': 'yafowil.plone.common',
+    'resource': 'yafowil-fontello.css',
     'order': 10,
 }]
 
@@ -20,7 +20,11 @@ css = [{
 ###############################################################################
 
 def configure_factory():
-    pass
+    # set theme
+    factory.theme = 'plone5'
+    # selection
+    factory.defaults['select.label_radio_class'] = 'radioType'
+    factory.defaults['select.label_checkbox_class'] = 'checkboxType'
 
 
 ###############################################################################
@@ -28,7 +32,23 @@ def configure_factory():
 ###############################################################################
 
 def register_macros():
-    pass
+    factory.register_macro('form', 'form', {
+        'form.class': 'enableUnloadProtection enableAutoFocus '
+                      'enableFormTabbing edit-form',
+    })
+    factory.register_macro('field', 'field:plonelabel:error', {
+        'field.class': 'field',
+        'field.error_class': 'error',
+        'error.class': 'fieldErrorBox',
+        'error.render_empty': True,
+        'error.position': 'before',
+    })
+    factory.register_macro('button', 'field:submit', {
+        'field.class': 'formControls',
+        'submit.class': 'context',
+    })
+    factory.register_macro('array', 'array', {})
+    factory.register_macro('arrayfield', 'field:plonelabel:error', {})
 
 
 ###############################################################################
@@ -36,8 +56,9 @@ def register_macros():
 ###############################################################################
 
 def register():
+    import common
     factory.register_global_preprocessors([plone_preprocessor])
-    factory.register_theme('bootstrap', 'yafowil.plone', resourcedir, css=css)
+    factory.register_theme('plone5', 'yafowil.plone', resourcedir, css=css)
 
 
 def configure():

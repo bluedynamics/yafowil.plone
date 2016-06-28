@@ -1,8 +1,0 @@
-@font-face {
-  font-family: 'Glyphicons Halflings';
-  src: url('++plone++static/components/bootstrap/dist/fonts/glyphicons-halflings-regular.eot');
-  src: url('++plone++static/components/bootstrap/dist/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
-       url('++plone++static/components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff') format('woff'),
-       url('++plone++static/components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf') format('truetype'),
-       url('++plone++static/components/bootstrap/dist/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
-}

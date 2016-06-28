@@ -126,6 +126,7 @@
   </record>
 
   <!-- yafowil.widget.recaptcha -->
+  <!--
   <record name="yafowil.widget.recaptcha.dependencies">
     <field type="plone.registry.field.Bool">
       <title>Recaptcha widget dependency resources</title>
@@ -139,6 +140,7 @@
     </field>
     <value>True</value>
   </record>
+  -->
 
   <!-- yafowil.widget.richtext -->
   <record name="yafowil.widget.richtext.dependencies">
