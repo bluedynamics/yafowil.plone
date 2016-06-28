@@ -16,6 +16,7 @@
 /lib/
 /local/
 /pip-selfcheck.json
+/devsrc/
 /.installed.cfg
 /.pydevproject
 /.project
