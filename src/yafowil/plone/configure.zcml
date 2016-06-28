@@ -38,6 +38,11 @@
     <i18n:registerTranslations directory="locales" />
   </configure>
 
+  <configure package="yafowil.widget.recaptcha"
+             zcml:condition="installed yafowil.widget.recaptcha">
+    <i18n:registerTranslations directory="locales" />
+  </configure>
+
   <!-- Hide profiles/products from Quick Installer -->
   <utility factory=".setuphandlers.HiddenProfiles" name="yafowil.plone" />
   <utility factory=".setuphandlers.HiddenProducts" name="yafowil.plone" />

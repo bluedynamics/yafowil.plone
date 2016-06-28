@@ -1,5 +1,6 @@
 from yafowil.utils import entry_point
 import logging
+import os
 import pkg_resources
 
 
@@ -14,11 +15,12 @@ else:
     from . import plone4 as yafowil_plone
 
 
-@entry_point(order=30)
+@entry_point(order=20)
 def register():
     yafowil_plone.register()
 
 
-@entry_point(order=30)
+@entry_point(order=20)
 def configure():
-    yafowil_plone.configure()
+    if not os.environ.get('TESTRUN_MARKER'):
+        yafowil_plone.configure()
