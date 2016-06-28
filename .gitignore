@@ -11,6 +11,11 @@
 /downloads/
 /var/
 /dist/
+/buildout.cfg
+/include/
+/lib/
+/local/
+/pip-selfcheck.json
 /.installed.cfg
 /.pydevproject
 /.project
