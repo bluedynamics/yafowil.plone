@@ -9,14 +9,7 @@
     i18n_domain="yafowil.plone">
 
   <!-- examples -->
-  <!--
-    <browser:page
-      for="*"
-      name="yafowil_examples"
-      template="example.pt"
-      permission="zope.Public"
-      class=".example.ExampleView" />
-  -->
+  <!-- <include package=".examples" /> -->
 
   <!-- register translations -->
   <configure package="yafowil.i18n">
