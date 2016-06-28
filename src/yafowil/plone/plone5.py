@@ -40,6 +40,7 @@ def register_macros():
         'field.class': 'field',
         'field.error_class': 'error',
         'error.class': 'fieldErrorBox',
+        'error.message_class': 'error',
         'error.render_empty': True,
         'error.position': 'before',
     })

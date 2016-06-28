@@ -70,19 +70,21 @@ def plone_label_renderer(widget, data):
             label_attrs['for_'] = cssid(widget, 'input')
         if widget.attrs['title']:
             label_attrs['title'] = widget.attrs['title']
-    label_contents = label_text
+    label_contents = [label_text]
     if widget.attrs.get(widget.attrs['required_bullet_trigger'])\
             and data.mode == 'edit':
-        label_contents += data.tag('span', '&nbsp;',
-                                   class_='required',
-                                   title=_('required', 'Required'))
-    label_contents += data.tag('span', help_text, class_='formHelp')
+        label_contents.append(data.tag(
+            'span', '&nbsp;',
+            class_='required',
+            title=_('required', 'Required')))
+    label_contents.append(data.tag('span', help_text, class_='formHelp'))
     rendered = data.rendered is not UNSET and data.rendered or u''
     position = widget.attrs['position']
     if callable(position):
         position = position(widget, data)
+    combined_label = u' '.join(label_contents)
     return generic_positional_rendering_helper(
-        'label', label_contents, label_attrs, rendered, position, tag)
+        'label', combined_label, label_attrs, rendered, position, tag)
 
 
 factory.register(
