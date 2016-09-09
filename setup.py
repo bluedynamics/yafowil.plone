@@ -3,7 +3,7 @@ from setuptools import setup
 import os
 
 
-version = '2.3.dev0'
+version = '2.3'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
