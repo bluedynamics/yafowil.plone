@@ -1,50 +1,49 @@
 from Products.CMFCore.utils import getToolByName
-from operator import itemgetter
-from plone.registry.interfaces import IRegistry
-from yafowil.base import factory
-from yafowil.utils import get_plugin_names
-from zope.component import getUtility
-import logging
-import sys
+from Products.CMFPlone import interfaces as Plone
+from Products.CMFQuickInstallerTool import interfaces as QuickInstaller
+from yafowil.plone.resources import enabled_resources
+from zope.interface import implementer
 
 
-logger = logging.getLogger('yafowil.plone')
+@implementer(Plone.INonInstallable)
+class HiddenProfiles(object):
+
+    def getNonInstallableProfiles(self):
+        """Do not show on Plone's list of installable profiles.
+        """
+        return [
+            'yafowil.plone:demo',
+            'yafowil.plone:demoresources'
+        ]
 
 
-def _extract_resources(which):
-    result = list()
-    registry = getUtility(IRegistry)
-    for plugin_name in get_plugin_names():
-        resources = factory.resources_for(plugin_name)
-        if not resources:
-            continue
-        for record in resources[which]:
-            if not registry.get(record['group']):
-                logger.warning("Skipping resource '%s' for group '%s'" % (
-                               record['resource'], record['group']))
-                continue
-            if 'order' not in record:
-                record['order'] = sys.maxint
-            if record['resource'].startswith('http'):
-                record['url'] = record['resource']
-            else:
-                resdirname = '++resource++%s' % plugin_name
-                record['url'] = '%s/%s' % (resdirname, record['resource'])
-            result.append(record)
-            logger.info("Activate resource '%s' for group '%s'" % (
-                        record['resource'], record['group']))
-    return sorted(result, key=itemgetter('order'))
+@implementer(QuickInstaller.INonInstallable)
+class HiddenProducts(object):
+
+    def getNonInstallableProducts(self):
+        """Do not show on QuickInstaller's list of installable products.
+        """
+        return [
+            'yafowil.plone:demo',
+            'yafowil.plone:demoresources'
+        ]
 
 
 def setup_resource_registries(context):
-    """context: Products.GenericSetup.context.DirectoryImportContext instance
+    """Registers all enabled yafowil resource groups to portal_css and
+    portal_javascripts.
+
+    Plone 4 only.
+
+    ``context`` is a Products.GenericSetup.context.DirectoryImportContext
+    instance.
     """
     if not context.readDataFile('yafowil.plone.txt'):
         return
     site = context.getSite()
     msg = 'Stylesheets (CSS)'
     regcss = getToolByName(site, 'portal_css')
-    for record in _extract_resources('css'):
+    for record in enabled_resources('css', verbose=True):
         merge = record.get('merge', True)
         msg += '<br />%s' % record['resource']
         if [_ for _ in regcss.getResources() if record['url'] == _.getId()]:
@@ -58,7 +57,7 @@ def setup_resource_registries(context):
             applyPrefix=True)
     msg += '<br /><br />Javascripts (JS)'
     regjs = getToolByName(site, 'portal_javascripts')
-    for record in _extract_resources('js'):
+    for record in enabled_resources('js', verbose=True):
         merge = record.get('merge', True)
         msg += '<br />%s' % record['resource']
         if [_ for _ in regjs.getResources() if record['url'] == _.getId()]:

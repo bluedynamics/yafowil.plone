@@ -1,0 +1,27 @@
+@font-face {
+  font-family: 'yafowil-fontello';
+  src: url('++resource++yafowil.plone/yafowil-fontello.eot?21257564');
+  src: url('++resource++yafowil.plone/yafowil-fontello.eot?21257564#iefix') format('embedded-opentype'),
+       url('++resource++yafowil.plone/yafowil-fontello.woff2?21257564') format('woff2'),
+       url('++resource++yafowil.plone/yafowil-fontello.woff?21257564') format('woff'),
+       url('++resource++yafowil.plone/yafowil-fontello.ttf?21257564') format('truetype'),
+       url('++resource++yafowil.plone/yafowil-fontello.svg?21257564#yafowil-fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'yafowil-fontello';
+    src: url('++resource++yafowil.plone/yafowil-fontello.svg?21257564#yafowil-fontello') format('svg');
+  }
+}
+*/
+
+.icon-plus-circle:before { content: '\e800'; } /* '' */
+.icon-minus-circle:before { content: '\e801'; } /* '' */
+.icon-down-circle:before { content: '\e802'; } /* '' */
+.icon-up-circle:before { content: '\e803'; } /* '' */

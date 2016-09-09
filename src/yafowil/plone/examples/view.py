@@ -45,14 +45,15 @@ class ExampleView(BrowserView):
                 u'form',
                 name='form-%s' % widget.name,
                 props={
-                    'action': 'yafowil_examples/%s' % self.example_name})
+                    'action': self.example_name})
             form[widget.name] = widget
             form['submit'] = factory(
                 'submit',
                 props={
                     'label': 'submit',
                     'action': 'save',
-                    'handler': lambda widget, data: None})
+                    'handler': lambda widget, data: None,
+                    'class': 'submit-widget button-field context'})
             controller = Controller(form, self.request)
             result.append(controller.rendered)
         return result

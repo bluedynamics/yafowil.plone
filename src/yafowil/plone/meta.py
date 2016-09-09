@@ -10,6 +10,9 @@ class IYAFOWILResourceDirective(Interface):
 
 
 def yafowil_resource_directive(_context):
+    """Register plugin resource directories as plone resource directories
+    to be accessible via browser URL.
+    """
     for plugin_name in get_plugin_names():
         resources = factory.resources_for(plugin_name)
         if not resources:

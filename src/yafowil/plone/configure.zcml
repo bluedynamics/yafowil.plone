@@ -8,17 +8,10 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="yafowil.plone">
 
-  <include package="." file="meta.zcml" />
+  <!-- examples -->
+  <!-- <include package=".examples" /> -->
 
-  <browser:page
-    for="*"
-    name="yafowil_examples"
-    template="example.pt"
-    permission="zope.Public"
-    class=".example.ExampleView" />
-
-  <yafowil:resources />
-
+  <!-- register translations -->
   <configure package="yafowil.i18n">
     <i18n:registerTranslations directory="locales" />
   </configure>
@@ -38,13 +31,16 @@
     <i18n:registerTranslations directory="locales" />
   </configure>
 
-  <genericsetup:registerProfile
-    name="default"
-    title="YAFOWIL Form Library"
-    directory="profiles/default"
-    description="YAFOWIL - Yet Another Form Widget Library - Integration for Plone."
-    provides="Products.GenericSetup.interfaces.EXTENSION" />
+  <configure package="yafowil.widget.recaptcha"
+             zcml:condition="installed yafowil.widget.recaptcha">
+    <i18n:registerTranslations directory="locales" />
+  </configure>
 
+  <!-- Hide profiles/products from Quick Installer -->
+  <utility factory=".setuphandlers.HiddenProfiles" name="yafowil.plone" />
+  <utility factory=".setuphandlers.HiddenProducts" name="yafowil.plone" />
+
+  <!-- generic profiles -->
   <genericsetup:registerProfile
     name="demoresources"
     title="YAFOWIL Form Library Demo Resource Integration Profile"
@@ -59,12 +55,50 @@
     description="YAFOWIL - Yet Another Form Widget Library - Demo Setup."
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
+  <!-- yafowil resource directories -->
+  <include package="." file="meta.zcml" />
+
+  <yafowil:resources />
+
+  <!-- plone 4 -->
+  <genericsetup:registerProfile
+    zcml:condition="not-have plone-5"
+    name="default"
+    title="YAFOWIL Form Library"
+    directory="profiles/plone4"
+    description="YAFOWIL - Yet Another Form Widget Library - Integration for Plone."
+    provides="Products.GenericSetup.interfaces.EXTENSION" />
+
   <genericsetup:importStep
+    zcml:condition="not-have plone-5"
     name="yafowil.plone"
     title="YAFOWIL: resource registries import handlers"
     description="Registers all resources (css/js) provided by YAFOWIL and its plugins"
     handler=".setuphandlers.setup_resource_registries">
     <depends name="plone.app.registry" />
   </genericsetup:importStep>
+
+  <!-- plone 5 -->
+  <genericsetup:registerProfile
+    zcml:condition="have plone-5"
+    name="default"
+    title="YAFOWIL Form Library"
+    directory="profiles/plone5"
+    description="YAFOWIL - Yet Another Form Widget Library - Integration for Plone."
+    provides="Products.GenericSetup.interfaces.EXTENSION" />
+
+  <browser:page
+    zcml:condition="have plone-5"
+    for="*"
+    name="yafowil.plone.js"
+    class=".resources.YafowilJS"
+    permission="zope2.View" />
+
+  <browser:page
+    zcml:condition="have plone-5"
+    for="*"
+    name="yafowil.plone.css"
+    class=".resources.YafowilCSS"
+    permission="zope2.View" />
 
 </configure>

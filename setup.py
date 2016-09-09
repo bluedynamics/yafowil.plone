@@ -3,7 +3,7 @@ from setuptools import setup
 import os
 
 
-version = '2.2'
+version = '2.3.dev0'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
@@ -43,7 +43,7 @@ setup(
     ],
     extras_require={
         'addons': [
-            'collective.js.jqueryui',
+            'collective.js.jqueryui'
         ]
     },
     entry_points="""
@@ -52,4 +52,5 @@ setup(
 
     [yafowil.plugin]
     register = yafowil.plone:register
+    configure = yafowil.plone:configure
     """)

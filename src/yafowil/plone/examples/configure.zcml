@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="yafowil.plone">
+
+  <browser:page
+    for="*"
+    name="yafowil_examples"
+    template="view.pt"
+    permission="zope.Public"
+    class=".view.ExampleView" />
+
+</configure>

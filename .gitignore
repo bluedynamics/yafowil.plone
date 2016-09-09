@@ -11,8 +11,15 @@
 /downloads/
 /var/
 /dist/
+/buildout.cfg
+/include/
+/lib/
+/local/
+/pip-selfcheck.json
+/devsrc/
 /.installed.cfg
 /.pydevproject
 /.project
 /.DS_Store
 /.mr.developer.cfg
+/.settings/
