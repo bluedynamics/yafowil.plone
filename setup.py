@@ -3,7 +3,7 @@ from setuptools import setup
 import os
 
 
-version = '2.4.dev0'
+version = '2.3.1.dev0'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
@@ -39,7 +39,7 @@ setup(
     install_requires=[
         'setuptools',
         'Products.CMFPlone',
-        'yafowil>2.0.99',
+        'yafowil>=2.1.99',
         'yafowil.yaml>=1.0.4',
     ],
     extras_require={
