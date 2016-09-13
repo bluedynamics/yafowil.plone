@@ -2,10 +2,11 @@
 History
 =======
 
-2.4 (unreleased)
-----------------
+2.3.1 (unreleased)
+------------------
 
-- Nothing changed yet.
+- Fix yafowil dependency minimal version
+  [jensens]
 
 
 2.3 (2016-09-09)
