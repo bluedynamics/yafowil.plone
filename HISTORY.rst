@@ -5,7 +5,7 @@ History
 2.3.1 (unreleased)
 ------------------
 
-- Fix yafowil dependency minimla version
+- Fix yafowil dependency minimal version
   [jensens]
 
 
