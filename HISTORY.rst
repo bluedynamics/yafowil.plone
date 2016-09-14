@@ -2,7 +2,7 @@
 History
 =======
 
-2.3.1 (unreleased)
+2.3.1 (2016-09-14)
 ------------------
 
 - Fix yafowil dependency minimal version
