@@ -2,10 +2,11 @@
 History
 =======
 
-2.3.2 (unreleased)
-------------------
+2.4 (unreleased)
+----------------
 
-- Nothing changed yet.
+- Introduce ``yafowil.plone.form.CSRFProtectionBehavior``.
+  [rnix]
 
 
 2.3.1 (2016-09-14)

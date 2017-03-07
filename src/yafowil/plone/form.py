@@ -1,6 +1,36 @@
 from Products.Five import BrowserView
+from plone.keyring.interfaces import IKeyManager
+from plone.protect.authenticator import createToken
+from plone.protect.utils import getRoot
+from plone.protect.utils import getRootKeyManager
+from plumber import Behavior
+from plumber import plumb
+from yafowil.base import factory
 from yafowil.controller import Controller
 from yafowil.yaml import parse_from_YAML
+from zope.component import ComponentLookupError
+from zope.component import getUtility
+
+
+class CSRFProtectionBehavior(Behavior):
+    """Plumbing behavior for hooking up CSRF protection to YAFOWIL forms.
+    Supposed to be used for AJAX forms.
+    """
+
+    @plumb
+    def prepare(_next, self):
+        """Hook after prepare and set '_authenticator' as proxy field to
+        ``self.form``.
+        """
+        _next(self)
+        try:
+            key_manager = getUtility(IKeyManager)
+        except ComponentLookupError:
+            key_manager = getRootKeyManager(getRoot(context))
+        self.form['_authenticator'] = factory(
+            'proxy',
+            value=createToken(manager=key_manager),
+        )
 
 
 class BaseForm(BrowserView):
