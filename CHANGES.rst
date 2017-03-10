@@ -2,7 +2,7 @@
 History
 =======
 
-2.4.1 (unreleased)
+2.4.1 (2017-03-10)
 ------------------
 
 - Reduce logging verbosity on load from info to debug.
