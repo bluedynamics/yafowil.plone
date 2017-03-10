@@ -5,7 +5,7 @@ import os
 
 version = '2.4.0.dev0'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
-longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
+longdesc += open(os.path.join(os.path.dirname(__file__), 'CHANGES.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
 shortdesc = 'Plone Integration with YAFOWIL'
 tests_require = ['interlude']
