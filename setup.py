@@ -3,7 +3,7 @@ from setuptools import setup
 import os
 
 
-version = '2.4.0'
+version = '2.4.1.dev0'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'CHANGES.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
