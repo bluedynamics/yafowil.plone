@@ -5,7 +5,8 @@ History
 2.4.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Reduce logging verbosity on load from info to debug.
+  [jensens]
 
 
 2.4.0 (2017-03-10)
