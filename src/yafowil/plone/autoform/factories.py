@@ -1,3 +1,4 @@
+from node.utils import UNSET
 from plone.app.textfield import RichText
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.app.z3cform.widget import DatetimeFieldWidget
@@ -13,6 +14,11 @@ from zope.schema import Datetime
 from zope.schema import Text
 from zope.schema import TextLine
 from zope.schema import Tuple
+from zope.schema.vocabulary import SimpleVocabulary
+import logging
+
+
+logger = logging.getLogger('yafowil.plone')
 
 
 class widget_factory(object):
@@ -37,26 +43,54 @@ class widget_factory(object):
         """
         # widget bound factory
         if field.widget:
-            return cls._registry[field.widget.factory](context, field)
+            factory = cls._registry[field.widget.factory]
         # schema field bound factory
-        return cls._registry[field.schemafield.__class__](context, field)
+        else:
+            factory = cls._registry[field.schemafield.__class__]
+        return factory(context, field)
 
 
-"""
-zope.schema.field
+def value_or_default(context, field):
+    request = context.REQUEST
+    if request._yafowil_autoform_scope == 'add':
+        default_factory = field.schemafield.defaultFactory
+        if default_factory:
+            try:
+                # XXX: zope.schema.interfaces.IContextAwareDefaultFactory
+                return default_factory(context)
+            except Exception as e:
+                logger.warning
+        return UNSET
+    elif request._yafowil_autoform_scope == 'edit':
+        return UNSET
+    else:
+        return UNSET
 
-['_Element__tagged_values', '_Field__missing_value_marker', '__class__', 
-'__delattr__', '__dict__', '__doc__', '__eq__', '__format__', 
-'__getattribute__', '__hash__', '__implemented__', '__init__', '__module__', 
-'__name__', '__ne__', '__new__', '__providedBy__', '__provides__', 
-'__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', 
-'__str__', '__subclasshook__', '__weakref__', '_type', '_validate', 
-'bind', 'constraint', 'context', 'default', 'defaultFactory', 'description', 
-'fromUnicode', 'get', 'getDoc', 'getName', 'getTaggedValue', 
-'getTaggedValueTags', 'interface', 'max_length', 'min_length', 'missing_value', 
-'order', 'query', 'queryTaggedValue', 'readonly', 'required', 'set', 
-'setTaggedValue', 'title', 'validate']
-"""
+
+def lookup_vocabulary(field):
+    vocabulary = None
+    # try to find vocabulary on widget params
+    if field.widget:
+        vocabulary = field.widget.params.get('vocabulary')
+    # try to find vocabulary on schemafield if not found on widget
+    if not vocabulary:
+        if hasattr(field.schemafield, 'vocabulary'):
+            vocabulary = field.schemafield.vocabulary
+    # return empty list if no vocabulary found
+    if not vocabulary:
+        return []
+    if isinstance(vocabulary, basestring):
+        # XXX: try to lookup vocabulary
+        return []
+    if isinstance(vocabulary, SimpleVocabulary):
+        ret = list()
+        for term in vocabulary:
+            # XXX: term.value as vocab key? probably what we want when using
+            #      datatypes
+            ret.append((term.token, term.title))
+        return ret
+    logger.warning('Unknown vocabulary type: {0}'.format(vocabulary))
+    return []
 
 
 ###############################################################################
@@ -67,8 +101,11 @@ zope.schema.field
 def rich_text_widget_factory(context, field):
     return factory(
         '#field:richtext',
+        value=value_or_default(context, field),
         props={
-            'label': field.name
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required
         })
 
 
@@ -76,9 +113,12 @@ def rich_text_widget_factory(context, field):
 def relation_list_widget_factory(context, field):
     return factory(
         '#field:select',
+        value=value_or_default(context, field),
         props={
-            'label': field.name,
-            'vocabulary': [1, 2, 3]
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required,
+            'vocabulary': lookup_vocabulary(field)
         })
 
 
@@ -86,8 +126,11 @@ def relation_list_widget_factory(context, field):
 def ascii_line_widget_factory(context, field):
     return factory(
         '#field:text',
+        value=value_or_default(context, field),
         props={
-            'label': field.name
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required
         })
 
 
@@ -95,8 +138,12 @@ def ascii_line_widget_factory(context, field):
 def bool_widget_factory(context, field):
     return factory(
         '#field:checkbox',
+        value=value_or_default(context, field),
         props={
-            'label': field.name
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required,
+            'plonelabel.position': 'after'
         })
 
 
@@ -104,9 +151,12 @@ def bool_widget_factory(context, field):
 def choice_widget_factory(context, field):
     return factory(
         '#field:select',
+        value=value_or_default(context, field),
         props={
-            'label': field.name,
-            'vocabulary': [1, 2, 3]
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required,
+            'vocabulary': lookup_vocabulary(field)
         })
 
 
@@ -114,8 +164,11 @@ def choice_widget_factory(context, field):
 def datetime_widget_factory(context, field):
     return factory(
         '#field:datetime',
+        value=value_or_default(context, field),
         props={
-            'label': field.name
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required
         })
 
 
@@ -123,8 +176,11 @@ def datetime_widget_factory(context, field):
 def text_widget_factory(context, field):
     return factory(
         '#field:textarea',
+        value=value_or_default(context, field),
         props={
-            'label': field.name
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required
         })
 
 
@@ -132,8 +188,11 @@ def text_widget_factory(context, field):
 def text_line_widget_factory(context, field):
     return factory(
         '#field:text',
+        value=value_or_default(context, field),
         props={
-            'label': field.name
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required
         })
 
 
@@ -141,9 +200,12 @@ def text_line_widget_factory(context, field):
 def tuple_widget_factory(context, field):
     return factory(
         '#field:select',
+        value=value_or_default(context, field),
         props={
-            'label': field.name,
-            'vocabulary': [1, 2, 3]
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required,
+            'vocabulary': lookup_vocabulary(field)
         })
 
 
@@ -154,30 +216,37 @@ def tuple_widget_factory(context, field):
 @widget_factory(RichTextFieldWidget)
 def rich_text_field_widget_factory(context, field):
     return factory(
-        '#field:select',
+        '#field:richtext',
+        value=value_or_default(context, field),
         props={
-            'label': field.name,
-            'vocabulary': [1, 2, 3]
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required
         })
 
 
 @widget_factory(DatetimeFieldWidget)
 def datetime_field_widget_factory(context, field):
     return factory(
-        '#field:select',
+        '#field:datetime',
+        value=value_or_default(context, field),
         props={
-            'label': field.name,
-            'vocabulary': [1, 2, 3]
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required
         })
 
 
 @widget_factory(AjaxSelectFieldWidget)
 def ajax_select_field_widget_factory(context, field):
     return factory(
-        '#field:select',
+        '#field:autocomplete',
+        value=value_or_default(context, field),
         props={
-            'label': field.name,
-            'vocabulary': [1, 2, 3]
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required,
+            'source': 'foooo'
         })
 
 
@@ -185,9 +254,12 @@ def ajax_select_field_widget_factory(context, field):
 def select_field_widget_factory(context, field):
     return factory(
         '#field:select',
+        value=value_or_default(context, field),
         props={
-            'label': field.name,
-            'vocabulary': [1, 2, 3]
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required,
+            'vocabulary': lookup_vocabulary(field)
         })
 
 
@@ -195,7 +267,10 @@ def select_field_widget_factory(context, field):
 def related_items_field_widget_factory(context, field):
     return factory(
         '#field:select',
+        value=value_or_default(context, field),
         props={
-            'label': field.name,
-            'vocabulary': [1, 2, 3]
+            'label': field.schemafield.title,
+            'help': field.schemafield.description,
+            'required': field.schemafield.required,
+            'vocabulary': lookup_vocabulary(field)
         })

@@ -100,8 +100,10 @@ class AddAutoForm(BaseAutoForm):
     form_name = 'addform'
 
     def __init__(self, context, request, ti):
+        request._yafowil_autoform_scope = 'add'
         super(AddAutoForm, self).__init__(context, request)
         self.ti = ti
+
 
     @property
     def form_title(self):
@@ -122,6 +124,7 @@ class EditAutoForm(BaseAutoForm):
     action_resource = u'edit'
 
     def __init__(self, context, request):
+        request._yafowil_autoform_scope = 'edit'
         super(EditAutoForm, self).__init__(context, request)
         self.ti = getToolByName('portal_types').getTypeInfo(context.portal_type)
 
