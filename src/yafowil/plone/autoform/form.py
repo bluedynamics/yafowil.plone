@@ -5,7 +5,7 @@ from plone.dexterity.utils import iterSchemata
 from plone.dexterity.utils import iterSchemataForType
 from plumber import plumbing
 from yafowil.base import factory
-from yafowil.plone.autoform.schema import schema_widget_factory
+from yafowil.plone.autoform.factories import widget_factory
 from yafowil.plone.autoform.schema import resolve_schemata
 from yafowil.plone.form import BaseForm
 from yafowil.plone.form import CSRFProtectionBehavior
@@ -81,7 +81,7 @@ class BaseAutoForm(BaseForm):
                 })
             # add fields to fieldset
             for field_name in fieldset_definition.fields:
-                fieldset[field_name] = schema_widget_factory.widget_for(
+                fieldset[field_name] = widget_factory.widget_for(
                     self.context,
                     schema_definitions['fields'][field_name]
                 )
