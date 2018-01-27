@@ -1,4 +1,4 @@
-from zope import schema
+from plone.supermodel import model
 
 
 class IYafowilFormBehavior(model.Schema):

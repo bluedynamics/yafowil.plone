@@ -1,6 +1,6 @@
-from zope.publisher.interfaces.browser import IBrowserLayer
+from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
 
-class IYafowilLayer(IBrowserLayer):
+class IYafowilLayer(IDefaultBrowserLayer):
     """YAFOWIL related browser layer.
     """

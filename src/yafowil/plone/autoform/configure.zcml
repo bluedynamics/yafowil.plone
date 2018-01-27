@@ -2,6 +2,7 @@
            xmlns:plone="http://namespaces.plone.org/plone">
 
   <include package="plone.behavior" file="meta.zcml"/>
+  <include package="Products.CMFCore" />
 
   <plone:behavior
     title="YAFOWIL forms from contenttype schemas"
@@ -16,7 +17,8 @@
          yafowil.plone.interfaces.IYafowilLayer
          plone.dexterity.interfaces.IDexterityFTI"
     provides="zope.publisher.interfaces.browser.IBrowserPage"
-    factory=".form.DefaultAddView">
+    factory=".form.DefaultAddView" />
+
   <class class=".form.DefaultAddView">
     <require
       permission="cmf.AddPortalContent"
