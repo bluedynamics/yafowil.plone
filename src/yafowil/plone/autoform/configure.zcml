@@ -1,4 +1,5 @@
 <configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
            xmlns:plone="http://namespaces.plone.org/plone">
 
   <include package="plone.behavior" file="meta.zcml"/>
@@ -7,7 +8,6 @@
   <plone:behavior
     title="YAFOWIL forms from contenttype schemas"
     name="yafowil.autoform"
-    name_only="true"
     description="Yet another autoform"
     provides=".behavior.IYafowilFormBehavior"
   />
@@ -24,5 +24,11 @@
       permission="cmf.AddPortalContent"
       interface="zope.publisher.interfaces.browser.IBrowserPage" />
   </class>
+
+  <browser:page
+    for="yafowil.plone.autoform.behavior.IYafowilFormBehavior"
+    name="edit"
+    class=".form.EditAutoForm"
+    permission="cmf.ModifyPortalContent" />
 
 </configure>
