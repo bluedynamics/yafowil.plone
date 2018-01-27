@@ -11,6 +11,9 @@
   <!-- examples -->
   <!-- <include package=".examples" /> -->
 
+  <!--yafowil autoforms -->
+  <include package=".autoform" />
+
   <!-- register translations -->
   <configure package="yafowil.i18n">
     <i18n:registerTranslations directory="locales" />

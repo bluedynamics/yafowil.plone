@@ -1,0 +1,26 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:plone="http://namespaces.plone.org/plone">
+
+  <include package="plone.behavior" file="meta.zcml"/>
+
+  <plone:behavior
+    title="YAFOWIL forms from contenttype schemas"
+    name="yafowil.autoform"
+    name_only="true"
+    description="Yet another autoform"
+    provides=".behavior.IYafowilFormBehavior"
+  />
+
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         yafowil.plone.interfaces.IYafowilLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory=".form.DefaultAddView">
+  <class class=".form.DefaultAddView">
+    <require
+      permission="cmf.AddPortalContent"
+      interface="zope.publisher.interfaces.browser.IBrowserPage" />
+  </class>
+
+</configure>

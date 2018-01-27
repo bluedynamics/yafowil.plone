@@ -15,6 +15,7 @@
 /include/
 /lib/
 /local/
+/share/
 /pip-selfcheck.json
 /devsrc/
 /.installed.cfg
