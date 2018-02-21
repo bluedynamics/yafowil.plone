@@ -31,7 +31,7 @@ def resolve_schemata(schemata):
     # create default fieldset, not resolved by plone.autoform
     fieldsets['default'] = Fieldset(
         'default',
-        label='Default' # XXX: i18n
+        label='Default'  # XXX: i18n
     )
     for idx, schema in enumerate(schemata):
         # assume first schema in list is main schema, all remaining are
