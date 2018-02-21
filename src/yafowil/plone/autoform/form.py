@@ -88,7 +88,7 @@ class BaseAutoForm(BaseForm):
 
     def save(self, widget, data):
         print 'BaseAutoForm.save()'
-        #data.write(self.context)
+        # data.write(self.context)
 
     def __call__(self):
         return self.template()
@@ -103,7 +103,6 @@ class AddAutoForm(BaseAutoForm):
         request._yafowil_autoform_scope = 'add'
         super(AddAutoForm, self).__init__(context, request)
         self.ti = ti
-
 
     @property
     def form_title(self):
@@ -126,7 +125,9 @@ class EditAutoForm(BaseAutoForm):
     def __init__(self, context, request):
         request._yafowil_autoform_scope = 'edit'
         super(EditAutoForm, self).__init__(context, request)
-        self.ti = getToolByName('portal_types').getTypeInfo(context.portal_type)
+        self.ti = getToolByName(
+            'portal_types'
+        ).getTypeInfo(context.portal_type)
 
     @property
     def form_title(self):

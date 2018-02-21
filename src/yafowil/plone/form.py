@@ -26,7 +26,7 @@ class CSRFProtectionBehavior(Behavior):
         try:
             key_manager = getUtility(IKeyManager)
         except ComponentLookupError:
-            key_manager = getRootKeyManager(getRoot(context))
+            key_manager = getRootKeyManager(getRoot(self.context))
         self.form['_authenticator'] = factory(
             'proxy',
             value=createToken(manager=key_manager),

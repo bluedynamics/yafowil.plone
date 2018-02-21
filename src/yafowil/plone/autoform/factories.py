@@ -58,8 +58,8 @@ def value_or_default(context, field):
             try:
                 # XXX: zope.schema.interfaces.IContextAwareDefaultFactory
                 return default_factory(context)
-            except Exception as e:
-                logger.warning
+            except Exception:
+                logger.exception('Fetching default_factory failed')
         return UNSET
     elif request._yafowil_autoform_scope == 'edit':
         return UNSET
