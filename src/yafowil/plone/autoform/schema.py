@@ -9,6 +9,88 @@ from plone.supermodel.model import Fieldset
 from zope.schema import getFieldsInOrder
 
 
+class _FieldSet(object):
+    """Represent form fieldsets defined via ``plone.supermodel.model.fieldset``.
+    All schema fields with no dedicated fieldset defined will end up in default
+    fieldset.
+    """
+
+    def __init__(self, name, label):
+        """Create fieldset.
+
+        :param name: Fieldset name.
+        :param label: Fieldset label.
+        """
+        self.name = name
+        self.label = label
+        self._children = list()
+
+    def add(self, child):
+        """Add field to fieldset.
+
+        :param child: ``yafowil.plone.autoform.schema.Field`` or
+            ``yafowil.plone.autoform.schema.Fieldset`` instance.
+        """
+        self._children.add(child)
+
+    def __iter__(self):
+        """Iterate over fields in order.
+
+        :return: children iterator.
+        """
+        return self._children.__iter__()
+
+
+class _Field(object):
+    """Hold information about a field of a schema. Contained in ``FieldSet``
+    instances.
+
+    ``Field`` instances get passed to ``yafowil.plone.autoform.widget_factory``
+    callbacks which are responsible to create and return ``yafowil.base.Widget``
+    instances via ``yafowil.base.factory``.
+    """
+
+    def __init__(self, name, schemafield, schema, widget, mode, is_behavior):
+        """Create field.
+
+        :param name: Name of the field.
+        :param schemafield: ``zope.schema._bootstrapfields.Field`` deriving
+            instance.
+        :param schema: ``plone.supermodel.model.Schema`` instance.
+        :param widget: ``yafowil.plone.autoform.schema.Widget`` instance
+        :param mode: Form widget rendering mode as string. Either 'edit',
+            'display' or 'skip'
+        :param is_behavior: Flag whether field belongs to a dexterity behavior.
+        """
+        self.name = name
+        self.schemafield = schemafield
+        self.schema = schema
+        self.widget = widget
+        self.mode = mode
+        self.is_behavior = is_behavior
+
+
+class _Widget(object):
+    """Hold information about ``plone.autoform.widgets.ParameterizedWidget``
+    instances set via ``plone.autoform.directives.widget`` directive on schema
+    fields. This information gets set on ``Field`` instances to gain information
+    about the ``z3c.form`` widget used for this field.
+
+    ``plone.autoform.directives.widget`` directive is not desired on schemata
+    dedicated to yafowil forms, but used to interpret ``z3c.form`` related
+    schemata with ``yafowil.plone.autoform``.
+    """
+
+    def __init__(self, factory, params):
+        """Create widget.
+
+        :param factory: ``ParameterizedWidget.widget_factory`` value.
+        :param params: ``ParameterizedWidget.params`` value.
+        """
+        self.factory = factory
+        self.params = params
+
+
 # field definition
 Field = namedtuple(
     'Field',
