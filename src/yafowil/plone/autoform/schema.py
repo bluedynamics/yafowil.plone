@@ -1,4 +1,5 @@
 from collections import namedtuple
+from collections import OrderedDict
 from operator import attrgetter
 from plone.autoform.interfaces import WIDGETS_KEY
 from plone.autoform.widgets import ParameterizedWidget
@@ -17,7 +18,7 @@ class _FieldSet(object):
     fieldset.
     """
 
-    def __init__(self, name, label='', description='', order=DEFAULT_ORDER):
+    def __init__(self, name, label=None, description=None, order=DEFAULT_ORDER):
         """Create fieldset.
 
         :param name: Fieldset name.
@@ -37,7 +38,7 @@ class _FieldSet(object):
         :param child: ``yafowil.plone.autoform.schema.Field`` or
             ``yafowil.plone.autoform.schema.Fieldset`` instance.
         """
-        self._children.add(child)
+        self._children.append(child)
 
     def __iter__(self):
         """Iterate over fields in order.
@@ -97,54 +98,105 @@ class _Widget(object):
         self.params = params
 
 
-def resolve_fieldset(schema):
-    pass
+def resolve_fieldset(fieldsets, schema_fieldset):
+    """Get or create ``FieldSet`` instance for given ``schema_fieldset``.
 
+    :param fieldsets: Dict containing the fieldsets
+    :param schema_fieldset: Single schema fieldset definition from list
+        returned by ``mergedTaggedValueList(schema, FIELDSETS_KEY)``
+    :return: ``yafowil.plone.autoform.schema.FieldSet`` instance.
+    """
+    name = schema_fieldset.__name__
+    label = schema_fieldset.label
+    description = schema_fieldset.description
+    order = schema_fieldset.order
+    # case new fieldset
+    if name not in fieldset:
+        fieldset = fieldsets[name] = _FieldSet(
+            name=name,
+            label=label,
+            description=description,
+            order=order
+        )
+    # case fieldset exists
+    else:
+        fieldset = fieldsets[name]
+        # case label changes
+        if (label != fieldset.label and label != fieldset.name):
+            fieldset.label = label
+        # case description changes
+        if description is not None:
+            fieldset.description = description
+        # case order changes
+        if order != DEFAULT_ORDER:
+            fieldset.order = order
+    return fieldset
+
+
+def resolve_widget(schema_widget):
+    """Create and return ``Widget`` instance from given ``schema_widget``
+
+    :param schema_widget: Entry by field name from dict returned by
+        ``mergedTaggedValueDict(schema, WIDGETS_KEY)``.
+    :return: ``yafowil.plone.autoform.schema.Widget`` instance.
+    """
+    # no widget
+    if not schema_widget:
+        return None
+    # case ParameterizedWidget instance
+    if isinstance(schema_widget, ParameterizedWidget):
+        return _Widget(
+            factory=schema_widget.widget_factory,
+            params=schema_widget.params
+        )
+    # XXX: there are more cases
+    # https://github.com/plone/plone.autoform/blob/master/plone/autoform/directives.py#L76
+    raise RuntimeError('Unknown widget: {0}'.format(widget))
 
 
 def _resolve_schemata(schemata):
+    """Resolve list of schemata to fieldsets.
+
+    :param schemata: list of schemata returned by
+        ``plone.dexterity.utils.iterSchemata`` or
+        ``plone.dexterity.utils.iterSchemataForType``.
+    :return: list of ``yafowil.plone.autoform.schema.FieldSet`` instances.
+    """
     # fieldset definitions
     fieldsets = dict()
-    # field definitions
-    fields = dict()
     # create default fieldset, not resolved by plone.autoform
     fieldsets['default'] = _FieldSet(
-        'default',
+        name='default',
         label=_('default', default='Default')
     )
     for idx, schema in enumerate(schemata):
         # assume first schema in list is main schema, all remaining are
         # behavior schemata
         is_behavior = idx != 0
-        # collect all fieldsets from schema
-        consumed_fields = set()
+        # collect annotated widgets for schema
+        widgets = mergedTaggedValueDict(schema, WIDGETS_KEY)
+        # collect all fields from schema and create ``Field`` instances
+        fields = OrderedDict()
+        for name, schemafield in getFieldsInOrder(schema):
+            fields[name] = _Field(
+                name=name,
+                schemafield=schemafield,
+                schema=schema,
+                widget=resolve_widget(widgets.get(name)),
+                mode='edit',  # XXX
+                is_behavior=is_behavior
+            )
+        # collect fieldsets from schema and add related fields
         schema_fieldsets = mergedTaggedValueList(schema, FIELDSETS_KEY)
         for schema_fieldset in schema_fieldsets:
-            name = schema_fieldset.__name__
-            label = schema_fieldset.label
-            description = ''
-            if schema_fieldset.description is not None:
-                description = schema_fieldset.description
-            order = DEFAULT_ORDER
-            if schema_fieldset.order != DEFAULT_ORDER:
-                fieldset.order = schema_fieldset.order
-            fieldset = fieldsets.setdefault(
-                name,
-                _FieldSet(
-                    name,
-                    label=label,
-                    description=description,
-                    order=order
-                )
-            )
-            if (
-                schema_fieldset.label != fieldset.label and
-                schema_fieldset.label != fieldset.__name__
-            ):
-                fieldset.label = schema_fieldset.label
+            fieldset = resolve_fieldset(fieldsets, schema_fieldset)
             for field_name in schema_fieldset.fields:
-                fieldset.fields.append(field_name)
-                consumed_fields.add(field_name)
+                fieldset.add(fields.pop(field_name))
+        # add remaining fields to default fieldset
+        fieldset = fieldsets['default']
+        for field in fields.values():
+            fieldset.add(field)
+    # return sorted fieldset
     return sorted(fieldsets.values(), key=attrgetter('order'))
 
 
