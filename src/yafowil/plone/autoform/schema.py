@@ -1,11 +1,13 @@
 from collections import namedtuple
+from operator import attrgetter
 from plone.autoform.interfaces import WIDGETS_KEY
-from plone.autoform.utils import mergedTaggedValueDict
-from plone.autoform.utils import mergedTaggedValueList
 from plone.autoform.widgets import ParameterizedWidget
 from plone.supermodel.interfaces import DEFAULT_ORDER
 from plone.supermodel.interfaces import FIELDSETS_KEY
 from plone.supermodel.model import Fieldset
+from plone.supermodel.utils import mergedTaggedValueDict
+from plone.supermodel.utils import mergedTaggedValueList
+from yafowil.plone import _
 from zope.schema import getFieldsInOrder
 
 
@@ -15,14 +17,18 @@ class _FieldSet(object):
     fieldset.
     """
 
-    def __init__(self, name, label):
+    def __init__(self, name, label='', description='', order=DEFAULT_ORDER):
         """Create fieldset.
 
         :param name: Fieldset name.
         :param label: Fieldset label.
+        :param description: Fieldset description.
+        :param order: Fieldset order.
         """
         self.name = name
         self.label = label
+        self.description = description
+        self.order = order
         self._children = list()
 
     def add(self, child):
@@ -90,6 +96,61 @@ class _Widget(object):
         self.factory = factory
         self.params = params
 
+
+def resolve_fieldset(schema):
+    pass
+
+
+
+def _resolve_schemata(schemata):
+    # fieldset definitions
+    fieldsets = dict()
+    # field definitions
+    fields = dict()
+    # create default fieldset, not resolved by plone.autoform
+    fieldsets['default'] = _FieldSet(
+        'default',
+        label=_('default', default='Default')
+    )
+    for idx, schema in enumerate(schemata):
+        # assume first schema in list is main schema, all remaining are
+        # behavior schemata
+        is_behavior = idx != 0
+        # collect all fieldsets from schema
+        consumed_fields = set()
+        schema_fieldsets = mergedTaggedValueList(schema, FIELDSETS_KEY)
+        for schema_fieldset in schema_fieldsets:
+            name = schema_fieldset.__name__
+            label = schema_fieldset.label
+            description = ''
+            if schema_fieldset.description is not None:
+                description = schema_fieldset.description
+            order = DEFAULT_ORDER
+            if schema_fieldset.order != DEFAULT_ORDER:
+                fieldset.order = schema_fieldset.order
+            fieldset = fieldsets.setdefault(
+                name,
+                _FieldSet(
+                    name,
+                    label=label,
+                    description=description,
+                    order=order
+                )
+            )
+            if (
+                schema_fieldset.label != fieldset.label and
+                schema_fieldset.label != fieldset.__name__
+            ):
+                fieldset.label = schema_fieldset.label
+            for field_name in schema_fieldset.fields:
+                fieldset.fields.append(field_name)
+                consumed_fields.add(field_name)
+    return sorted(fieldsets.values(), key=attrgetter('order'))
+
+
+###############################################################################
+# prototype
+###############################################################################
 
 # field definition
 Field = namedtuple(

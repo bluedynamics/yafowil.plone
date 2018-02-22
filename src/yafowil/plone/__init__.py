@@ -1,9 +1,11 @@
 from yafowil.utils import entry_point
+from zope.i18nmessageid import MessageFactory
 import logging
 import os
 import pkg_resources
 
 
+_ = MessageFactory('yafowil.plone')
 logger = logging.getLogger('yafowil.plone')
 
 
