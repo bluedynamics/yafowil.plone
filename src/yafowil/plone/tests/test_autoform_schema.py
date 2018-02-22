@@ -88,6 +88,7 @@ class TestAutoformSchema(unittest.TestCase):
         self.assertEqual(field.is_behavior, False)
         self.assertEqual(field.label, 'Basic field')
         self.assertEqual(field.help, 'Basic field description')
+        self.assertEqual(field.required, True)
 
     def test_Widget(self):
         widget = Widget(factory=None, params={'foo': 'bar'})
@@ -107,6 +108,7 @@ class TestAutoformSchema(unittest.TestCase):
         self.assertEqual(field.schema, IBasicModel)
         self.assertEqual(field.label, 'Basic field')
         self.assertEqual(field.is_behavior, False)
+        self.assertEqual(field.required, True)
 
     def test_resolve_schemata_basic_and_behaviors(self):
         fieldsets = resolve_schemata([IBasicModel, IBehavior1, IBehavior2])
@@ -121,18 +123,21 @@ class TestAutoformSchema(unittest.TestCase):
         self.assertEqual(field.schema, IBasicModel)
         self.assertEqual(field.label, 'Basic field')
         self.assertEqual(field.is_behavior, False)
+        self.assertEqual(field.required, True)
 
         field = fieldset.children[1]
         self.assertEqual(field.name, 'field')
         self.assertEqual(field.schema, IBehavior1)
         self.assertEqual(field.label, 'Behavior 1 field')
         self.assertEqual(field.is_behavior, True)
+        self.assertEqual(field.required, True)
 
         field = fieldset.children[2]
         self.assertEqual(field.name, 'other')
         self.assertEqual(field.schema, IBehavior2)
         self.assertEqual(field.label, 'Behavior 2 other')
         self.assertEqual(field.is_behavior, True)
+        self.assertEqual(field.required, True)
 
     def test_resolve_schemata_fieldsets(self):
         fieldsets = resolve_schemata([IFieldsetModel, IFieldsetBehavior])
@@ -146,11 +151,13 @@ class TestAutoformSchema(unittest.TestCase):
         self.assertEqual(field.name, 'field1')
         self.assertEqual(field.schema, IFieldsetModel)
         self.assertEqual(field.is_behavior, False)
+        self.assertEqual(field.required, True)
 
         field = fieldset.children[1]
         self.assertEqual(field.name, 'field1')
         self.assertEqual(field.schema, IFieldsetBehavior)
         self.assertEqual(field.is_behavior, True)
+        self.assertEqual(field.required, True)
 
         fieldset = fieldsets[1]
         self.assertEqual(fieldset.name, 'fieldset')
@@ -160,8 +167,10 @@ class TestAutoformSchema(unittest.TestCase):
         self.assertEqual(field.name, 'field2')
         self.assertEqual(field.schema, IFieldsetModel)
         self.assertEqual(field.is_behavior, False)
+        self.assertEqual(field.required, True)
 
         field = fieldset.children[1]
         self.assertEqual(field.name, 'field2')
         self.assertEqual(field.schema, IFieldsetBehavior)
         self.assertEqual(field.is_behavior, True)
+        self.assertEqual(field.required, True)

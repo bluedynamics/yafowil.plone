@@ -65,25 +65,25 @@ class BaseAutoForm(BaseForm):
                     'pat-autotoc': pat_autotoc
                 }
             })
-        # lookup schema definitions
-        schema_definitions = resolve_schemata(self.get_schemata())
-        # add fieldsets to form
-        fieldset_definitions = schema_definitions['fieldsets'].values()
+        # resolve schema and add fieldsets to form
+        fieldset_definitions = resolve_schemata(self.get_schemata())
         for idx, fieldset_definition in enumerate(fieldset_definitions):
             fieldset_class = 'autotoc-section'
             if idx == 0:
                 fieldset_class += ' active'
-            fieldset = form[fieldset_definition.__name__] = factory(
+            fieldset = form[fieldset_definition.name] = factory(
                 'fieldset',
                 props={
                     'legend': fieldset_definition.label,
                     'class': fieldset_class
                 })
             # add fields to fieldset
-            for field_name in fieldset_definition.fields:
+            for field_definition in fieldset_definition:
+                # XXX: consider schema/behavior name in field name
+                field_name = field_definition.name
                 fieldset[field_name] = widget_factory.widget_for(
                     self.context,
-                    schema_definitions['fields'][field_name]
+                    field_definition
                 )
 
     def save(self, widget, data):

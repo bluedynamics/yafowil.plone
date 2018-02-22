@@ -103,9 +103,9 @@ def rich_text_widget_factory(context, field):
         '#field:richtext',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required
+            'label': field.label,
+            'help': field.help,
+            'required': field.required
         })
 
 
@@ -115,9 +115,9 @@ def relation_list_widget_factory(context, field):
         '#field:select',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required,
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
             'vocabulary': lookup_vocabulary(field)
         })
 
@@ -128,9 +128,9 @@ def ascii_line_widget_factory(context, field):
         '#field:text',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required
+            'label': field.label,
+            'help': field.help,
+            'required': field.required
         })
 
 
@@ -140,9 +140,9 @@ def bool_widget_factory(context, field):
         '#field:checkbox',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required,
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
             'plonelabel.position': 'after'
         })
 
@@ -153,9 +153,9 @@ def choice_widget_factory(context, field):
         '#field:select',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required,
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
             'vocabulary': lookup_vocabulary(field)
         })
 
@@ -166,9 +166,9 @@ def datetime_widget_factory(context, field):
         '#field:datetime',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required
+            'label': field.label,
+            'help': field.help,
+            'required': field.required
         })
 
 
@@ -178,9 +178,9 @@ def text_widget_factory(context, field):
         '#field:textarea',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required
+            'label': field.label,
+            'help': field.help,
+            'required': field.required
         })
 
 
@@ -190,9 +190,9 @@ def text_line_widget_factory(context, field):
         '#field:text',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required
+            'label': field.label,
+            'help': field.help,
+            'required': field.required
         })
 
 
@@ -202,9 +202,9 @@ def tuple_widget_factory(context, field):
         '#field:select',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required,
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
             'vocabulary': lookup_vocabulary(field)
         })
 
@@ -219,9 +219,9 @@ def rich_text_field_widget_factory(context, field):
         '#field:richtext',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required
+            'label': field.label,
+            'help': field.help,
+            'required': field.required
         })
 
 
@@ -231,9 +231,9 @@ def datetime_field_widget_factory(context, field):
         '#field:datetime',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required
+            'label': field.label,
+            'help': field.help,
+            'required': field.required
         })
 
 
@@ -243,9 +243,9 @@ def ajax_select_field_widget_factory(context, field):
         '#field:autocomplete',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required,
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
             'source': 'foooo'
         })
 
@@ -256,9 +256,9 @@ def select_field_widget_factory(context, field):
         '#field:select',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required,
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
             'vocabulary': lookup_vocabulary(field)
         })
 
@@ -269,8 +269,8 @@ def related_items_field_widget_factory(context, field):
         '#field:select',
         value=value_or_default(context, field),
         props={
-            'label': field.schemafield.title,
-            'help': field.schemafield.description,
-            'required': field.schemafield.required,
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
             'vocabulary': lookup_vocabulary(field)
         })

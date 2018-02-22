@@ -80,6 +80,7 @@ class Field(object):
         # convenience
         self.label = schemafield.title
         self.help = schemafield.description
+        self.required = schemafield.required
         # XXX: vocabulary
         # XXX: ???
 
