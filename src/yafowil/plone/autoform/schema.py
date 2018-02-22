@@ -7,6 +7,7 @@ from plone.supermodel.interfaces import FIELDSETS_KEY
 from plone.supermodel.utils import mergedTaggedValueDict
 from plone.supermodel.utils import mergedTaggedValueList
 from yafowil.plone import _
+from zope.dottedname.resolve import resolve
 from zope.schema import getFieldsInOrder
 
 
@@ -81,8 +82,9 @@ class Field(object):
         self.label = schemafield.title
         self.help = schemafield.description
         self.required = schemafield.required
-        # XXX: vocabulary
-        # XXX: ???
+        # XXX: vocabulary?
+        # XXX: set convenience attributes if overwritten via widget.params?
+        # XXX: ...?
 
 
 class Widget(object):
@@ -96,7 +98,7 @@ class Widget(object):
     schemata with ``yafowil.plone.autoform``.
     """
 
-    def __init__(self, factory, params):
+    def __init__(self, factory=None, params=dict()):
         """Create widget.
 
         :param factory: ``ParameterizedWidget.widget_factory`` value.
@@ -157,9 +159,10 @@ def resolve_widget(schema_widget):
             factory=schema_widget.widget_factory,
             params=schema_widget.params
         )
-    # XXX: there are more cases
-    # https://github.com/plone/plone.autoform/blob/master/plone/autoform/directives.py#L76
-    raise RuntimeError('Unknown widget: {0}'.format(widget))
+    # case dotted path to widget class
+    if isinstance(schema_widget, basestring):
+        return Widget(factory=resolve(schema_widget))
+    raise RuntimeError('Unknown widget: {0}'.format(schema_widget))
 
 
 def resolve_schemata(schemata):

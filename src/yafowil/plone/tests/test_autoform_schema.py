@@ -1,8 +1,10 @@
+from plone.autoform import directives as form
 from plone.supermodel import model
-from yafowil.plone.autoform.schema import resolve_schemata
-from yafowil.plone.autoform.schema import Fieldset
 from yafowil.plone.autoform.schema import Field
+from yafowil.plone.autoform.schema import Fieldset
 from yafowil.plone.autoform.schema import Widget
+from yafowil.plone.autoform.schema import resolve_schemata
+from z3c.form.browser.text import TextWidget
 from zope.schema import TextLine
 from zope.schema import getFieldsInOrder
 import unittest
@@ -19,15 +21,11 @@ class IBasicModel(model.Schema):
 
 
 class IBehavior1(model.Schema):
-    field = TextLine(
-        title=u'Behavior 1 field',
-        description=u'Behavior1 field description')
+    field = TextLine(title=u'Behavior 1 field')
 
 
 class IBehavior2(model.Schema):
-    other = TextLine(
-        title=u'Behavior 2 other',
-        description=u'Behavior 2 other description')
+    other = TextLine(title=u'Behavior 2 other')
 
 
 class IFieldsetModel(model.Schema):
@@ -40,6 +38,23 @@ class IFieldsetBehavior(model.Schema):
     model.fieldset('fieldset', label=u'Fieldset', fields=['field2'])
     field1 = TextLine(title=u'Default behavior field')
     field2 = TextLine(title=u'Fieldset behavior field')
+
+
+class IWidgetUsingModel(model.Schema):
+    # For available options see ``plone.autoform.directives.widget`` docs.
+
+    # Option 1
+    field1 = TextLine(title=u'Field 1')
+    field2 = TextLine(title=u'Field 2')
+    form.widget(field1='z3c.form.browser.text.TextWidget', field2=TextWidget)
+
+    # Option 2
+    field3 = TextLine(title=u'Field 3')
+    form.widget('field3', TextWidget, label=u'Label 3')
+
+    # Option 3
+    field4 = TextLine(title=u'Field 4')
+    form.widget('field4', label=u'Label 4')
 
 
 ###############################################################################
@@ -102,12 +117,17 @@ class TestAutoformSchema(unittest.TestCase):
         fieldset = fieldsets[0]
         self.assertEqual(len(fieldset.children), 1)
         self.assertEqual(fieldset.name, 'default')
+        self.assertEqual(fieldset.label, 'default')
 
         field = next(fieldset.__iter__())
         self.assertEqual(field.name, 'field')
+        self.assertEqual(field.schemafield, IBasicModel['field'])
         self.assertEqual(field.schema, IBasicModel)
-        self.assertEqual(field.label, 'Basic field')
+        self.assertEqual(field.widget, None)
+        self.assertEqual(field.mode, 'edit')
         self.assertEqual(field.is_behavior, False)
+        self.assertEqual(field.label, 'Basic field')
+        self.assertEqual(field.help, 'Basic field description')
         self.assertEqual(field.required, True)
 
     def test_resolve_schemata_basic_and_behaviors(self):
@@ -121,56 +141,82 @@ class TestAutoformSchema(unittest.TestCase):
         field = fieldset.children[0]
         self.assertEqual(field.name, 'field')
         self.assertEqual(field.schema, IBasicModel)
-        self.assertEqual(field.label, 'Basic field')
         self.assertEqual(field.is_behavior, False)
-        self.assertEqual(field.required, True)
+        self.assertEqual(field.label, 'Basic field')
 
         field = fieldset.children[1]
         self.assertEqual(field.name, 'field')
         self.assertEqual(field.schema, IBehavior1)
-        self.assertEqual(field.label, 'Behavior 1 field')
         self.assertEqual(field.is_behavior, True)
-        self.assertEqual(field.required, True)
+        self.assertEqual(field.label, 'Behavior 1 field')
 
         field = fieldset.children[2]
         self.assertEqual(field.name, 'other')
         self.assertEqual(field.schema, IBehavior2)
-        self.assertEqual(field.label, 'Behavior 2 other')
         self.assertEqual(field.is_behavior, True)
-        self.assertEqual(field.required, True)
+        self.assertEqual(field.label, 'Behavior 2 other')
 
     def test_resolve_schemata_fieldsets(self):
         fieldsets = resolve_schemata([IFieldsetModel, IFieldsetBehavior])
         self.assertEqual(len(fieldsets), 2)
 
         fieldset = fieldsets[0]
-        self.assertEqual(fieldset.name, 'default')
         self.assertEqual(len(fieldset.children), 2)
+        self.assertEqual(fieldset.name, 'default')
 
         field = fieldset.children[0]
         self.assertEqual(field.name, 'field1')
         self.assertEqual(field.schema, IFieldsetModel)
-        self.assertEqual(field.is_behavior, False)
-        self.assertEqual(field.required, True)
+        self.assertEqual(field.label, 'Default model field')
 
         field = fieldset.children[1]
         self.assertEqual(field.name, 'field1')
         self.assertEqual(field.schema, IFieldsetBehavior)
-        self.assertEqual(field.is_behavior, True)
-        self.assertEqual(field.required, True)
+        self.assertEqual(field.label, 'Default behavior field')
 
         fieldset = fieldsets[1]
-        self.assertEqual(fieldset.name, 'fieldset')
         self.assertEqual(len(fieldset.children), 2)
+        self.assertEqual(fieldset.name, 'fieldset')
+        self.assertEqual(fieldset.label, 'Fieldset')
 
         field = fieldset.children[0]
         self.assertEqual(field.name, 'field2')
         self.assertEqual(field.schema, IFieldsetModel)
-        self.assertEqual(field.is_behavior, False)
-        self.assertEqual(field.required, True)
+        self.assertEqual(field.label, 'Fieldset model field')
 
         field = fieldset.children[1]
         self.assertEqual(field.name, 'field2')
         self.assertEqual(field.schema, IFieldsetBehavior)
-        self.assertEqual(field.is_behavior, True)
-        self.assertEqual(field.required, True)
+        self.assertEqual(field.label, 'Fieldset behavior field')
+
+    def test_resolve_schemata_widgets(self):
+        fieldsets = resolve_schemata([IWidgetUsingModel])
+        self.assertEqual(len(fieldsets), 1)
+
+        fieldset = fieldsets[0]
+        self.assertEqual(len(fieldset.children), 4)
+        self.assertEqual(fieldset.name, 'default')
+
+        field = fieldset.children[0]
+        self.assertEqual(field.name, 'field1')
+        widget = field.widget
+        self.assertEqual(widget.factory, TextWidget)
+        self.assertEqual(widget.params, {})
+
+        field = fieldset.children[1]
+        self.assertEqual(field.name, 'field2')
+        widget = field.widget
+        self.assertEqual(widget.factory, TextWidget)
+        self.assertEqual(widget.params, {})
+
+        field = fieldset.children[2]
+        self.assertEqual(field.name, 'field3')
+        widget = field.widget
+        self.assertEqual(widget.factory, TextWidget)
+        self.assertEqual(widget.params, {'label': 'Label 3'})
+
+        field = fieldset.children[3]
+        self.assertEqual(field.name, 'field4')
+        widget = field.widget
+        self.assertEqual(widget.factory, None)
+        self.assertEqual(widget.params, {'label': 'Label 4'})
