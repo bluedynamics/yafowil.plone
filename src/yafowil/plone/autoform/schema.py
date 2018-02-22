@@ -12,7 +12,7 @@ from yafowil.plone import _
 from zope.schema import getFieldsInOrder
 
 
-class _FieldSet(object):
+class _Fieldset(object):
     """Represent form fieldsets defined via ``plone.supermodel.model.fieldset``.
     All schema fields with no dedicated fieldset defined will end up in default
     fieldset.
@@ -47,9 +47,13 @@ class _FieldSet(object):
         """
         return self._children.__iter__()
 
+    @property
+    def children(self):
+        return self._children
+
 
 class _Field(object):
-    """Hold information about a field of a schema. Contained in ``FieldSet``
+    """Hold information about a field of a schema. Contained in ``Fieldset``
     instances.
 
     ``Field`` instances get passed to ``yafowil.plone.autoform.widget_factory``
@@ -75,6 +79,10 @@ class _Field(object):
         self.widget = widget
         self.mode = mode
         self.is_behavior = is_behavior
+        self.label = schemafield.title
+        self.help = schemafield.description
+        # XXX: vocabulary
+        # XXX: ???
 
 
 class _Widget(object):
@@ -99,12 +107,12 @@ class _Widget(object):
 
 
 def resolve_fieldset(fieldsets, schema_fieldset):
-    """Get or create ``FieldSet`` instance for given ``schema_fieldset``.
+    """Get or create ``Fieldset`` instance for given ``schema_fieldset``.
 
     :param fieldsets: Dict containing the fieldsets
     :param schema_fieldset: Single schema fieldset definition from list
         returned by ``mergedTaggedValueList(schema, FIELDSETS_KEY)``
-    :return: ``yafowil.plone.autoform.schema.FieldSet`` instance.
+    :return: ``yafowil.plone.autoform.schema.Fieldset`` instance.
     """
     name = schema_fieldset.__name__
     label = schema_fieldset.label
@@ -112,7 +120,7 @@ def resolve_fieldset(fieldsets, schema_fieldset):
     order = schema_fieldset.order
     # case new fieldset
     if name not in fieldset:
-        fieldset = fieldsets[name] = _FieldSet(
+        fieldset = fieldsets[name] = _Fieldset(
             name=name,
             label=label,
             description=description,
@@ -160,12 +168,12 @@ def _resolve_schemata(schemata):
     :param schemata: list of schemata returned by
         ``plone.dexterity.utils.iterSchemata`` or
         ``plone.dexterity.utils.iterSchemataForType``.
-    :return: list of ``yafowil.plone.autoform.schema.FieldSet`` instances.
+    :return: list of ``yafowil.plone.autoform.schema.Fieldset`` instances.
     """
     # fieldset definitions
     fieldsets = dict()
     # create default fieldset, not resolved by plone.autoform
-    fieldsets['default'] = _FieldSet(
+    fieldsets['default'] = _Fieldset(
         name='default',
         label=_('default', default='Default')
     )
