@@ -1,18 +1,16 @@
-from collections import namedtuple
 from collections import OrderedDict
 from operator import attrgetter
 from plone.autoform.interfaces import WIDGETS_KEY
 from plone.autoform.widgets import ParameterizedWidget
 from plone.supermodel.interfaces import DEFAULT_ORDER
 from plone.supermodel.interfaces import FIELDSETS_KEY
-from plone.supermodel.model import Fieldset
 from plone.supermodel.utils import mergedTaggedValueDict
 from plone.supermodel.utils import mergedTaggedValueList
 from yafowil.plone import _
 from zope.schema import getFieldsInOrder
 
 
-class _Fieldset(object):
+class Fieldset(object):
     """Represent form fieldsets defined via ``plone.supermodel.model.fieldset``.
     All schema fields with no dedicated fieldset defined will end up in default
     fieldset.
@@ -52,7 +50,7 @@ class _Fieldset(object):
         return self._children
 
 
-class _Field(object):
+class Field(object):
     """Hold information about a field of a schema. Contained in ``Fieldset``
     instances.
 
@@ -79,13 +77,14 @@ class _Field(object):
         self.widget = widget
         self.mode = mode
         self.is_behavior = is_behavior
+        # convenience
         self.label = schemafield.title
         self.help = schemafield.description
         # XXX: vocabulary
         # XXX: ???
 
 
-class _Widget(object):
+class Widget(object):
     """Hold information about ``plone.autoform.widgets.ParameterizedWidget``
     instances set via ``plone.autoform.directives.widget`` directive on schema
     fields. This information gets set on ``Field`` instances to gain information
@@ -119,8 +118,8 @@ def resolve_fieldset(fieldsets, schema_fieldset):
     description = schema_fieldset.description
     order = schema_fieldset.order
     # case new fieldset
-    if name not in fieldset:
-        fieldset = fieldsets[name] = _Fieldset(
+    if name not in fieldsets:
+        fieldset = fieldsets[name] = Fieldset(
             name=name,
             label=label,
             description=description,
@@ -153,7 +152,7 @@ def resolve_widget(schema_widget):
         return None
     # case ParameterizedWidget instance
     if isinstance(schema_widget, ParameterizedWidget):
-        return _Widget(
+        return Widget(
             factory=schema_widget.widget_factory,
             params=schema_widget.params
         )
@@ -162,7 +161,7 @@ def resolve_widget(schema_widget):
     raise RuntimeError('Unknown widget: {0}'.format(widget))
 
 
-def _resolve_schemata(schemata):
+def resolve_schemata(schemata):
     """Resolve list of schemata to fieldsets.
 
     :param schemata: list of schemata returned by
@@ -173,7 +172,7 @@ def _resolve_schemata(schemata):
     # fieldset definitions
     fieldsets = dict()
     # create default fieldset, not resolved by plone.autoform
-    fieldsets['default'] = _Fieldset(
+    fieldsets['default'] = Fieldset(
         name='default',
         label=_('default', default='Default')
     )
@@ -186,7 +185,7 @@ def _resolve_schemata(schemata):
         # collect all fields from schema and create ``Field`` instances
         fields = OrderedDict()
         for name, schemafield in getFieldsInOrder(schema):
-            fields[name] = _Field(
+            fields[name] = Field(
                 name=name,
                 schemafield=schemafield,
                 schema=schema,
@@ -206,90 +205,3 @@ def _resolve_schemata(schemata):
             fieldset.add(field)
     # return sorted fieldset
     return sorted(fieldsets.values(), key=attrgetter('order'))
-
-
-###############################################################################
-# prototype
-###############################################################################
-
-# field definition
-Field = namedtuple(
-    'Field',
-    ['name', 'schemafield', 'schema', 'widget', 'mode', 'is_behavior']
-)
-
-
-# widget definition
-Widget = namedtuple('Widget', ['factory', 'params'])
-
-
-def resolve_schemata(schemata):
-    """Resove zope interface schemata for content type to fieldsets and
-    fields definitions for further processing.
-    """
-    # fieldset definitions
-    fieldsets = dict()
-    # field definitions
-    fields = dict()
-    # create default fieldset, not resolved by plone.autoform
-    fieldsets['default'] = Fieldset(
-        'default',
-        label='Default'  # XXX: i18n
-    )
-    for idx, schema in enumerate(schemata):
-        # assume first schema in list is main schema, all remaining are
-        # behavior schemata
-        is_behavior = idx != 0
-        # collect all fieldsets from schema
-        consumed_fields = set()
-        schema_fieldsets = mergedTaggedValueList(schema, FIELDSETS_KEY)
-        for schema_fieldset in schema_fieldsets:
-            fieldset = fieldsets.setdefault(
-                schema_fieldset.__name__,
-                Fieldset(
-                    schema_fieldset.__name__,
-                    label=schema_fieldset.label
-                )
-            )
-            if schema_fieldset.order != DEFAULT_ORDER:
-                fieldset.order = schema_fieldset.order
-            if (
-                schema_fieldset.label != fieldset.label and
-                schema_fieldset.label != fieldset.__name__
-            ):
-                fieldset.label = schema_fieldset.label
-            if schema_fieldset.description is not None:
-                fieldset.description = schema_fieldset.description
-            for field_name in schema_fieldset.fields:
-                fieldset.fields.append(field_name)
-                consumed_fields.add(field_name)
-        # collect annotated widgets for schema
-        widgets = mergedTaggedValueDict(schema, WIDGETS_KEY)
-        # collect all fields from schema and add field to return value and
-        # fieldname to default fieldset if not already consumed
-        for name, schemafield in getFieldsInOrder(schema):
-            widget = widgets.get(name)
-            if widget:
-                # it seems that widget is always an instance of
-                # ParameterizedWidget raise if not
-                if not isinstance(widget, ParameterizedWidget):
-                    raise RuntimeError('Unknown widget: {0}'.format(widget))
-                # turn parametrized widget to namedtuple
-                widget = Widget(
-                    factory=widget.widget_factory,
-                    params=widget.params
-                )
-            fields[name] = Field(
-                name=name,
-                schemafield=schemafield,
-                schema=schema,
-                widget=widget,
-                mode='edit',  # XXX
-                is_behavior=is_behavior
-            )
-            if name not in consumed_fields:
-                fieldsets['default'].fields.append(name)
-    return {
-        'fieldsets': fieldsets,
-        'fields': fields,
-    }
