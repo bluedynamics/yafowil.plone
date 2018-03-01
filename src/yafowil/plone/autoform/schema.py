@@ -82,9 +82,7 @@ class Field(object):
         self.label = schemafield.title
         self.help = schemafield.description
         self.required = schemafield.required
-        # XXX: vocabulary?
-        # XXX: set convenience attributes if overwritten via widget.params?
-        # XXX: ...?
+        # XXX: set convenience attributes if overwritten via widget.params
 
 
 class Widget(object):
