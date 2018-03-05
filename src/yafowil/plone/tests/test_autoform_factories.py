@@ -198,13 +198,22 @@ class TestAutoformFactories(unittest.TestCase):
             ) for pair in items
         ]
         vocabulary = SimpleVocabulary(terms)
+        empty_vocabulary = SimpleVocabulary([])
 
-        class ISchemaWithVocab(model.Schema):
-            field = Choice(
-                title=u'field',
+        class ISchemaWithVocabs(model.Schema):
+            vocab_field = Choice(
+                title=u'vocab field',
                 vocabulary=vocabulary)
+            empty_vocab_field = Choice(
+                title=u'empty vocab field',
+                vocabulary=empty_vocabulary)
 
         field = Field(
-            name='field',
-            schema=ISchemaWithVocab)
+            name='vocab_field',
+            schema=ISchemaWithVocabs)
         self.assertEqual(lookup_vocabulary(self.portal, field), items)
+
+        field = Field(
+            name='empty_vocab_field',
+            schema=ISchemaWithVocabs)
+        self.assertEqual(lookup_vocabulary(self.portal, field), [])

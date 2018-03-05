@@ -148,6 +148,8 @@ def lookup_vocabulary(context, field):
     """
     vocabulary = lookup_schema_vocabulary(context, field)
     ret = list()
+    if not vocabulary:
+        return ret
     for term in vocabulary:
         ret.append((term.token, term.title))
     return ret
