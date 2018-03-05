@@ -6,6 +6,9 @@ from plone.app.z3cform.widget import RelatedItemsFieldWidget
 from plone.app.z3cform.widget import RichTextFieldWidget
 from plone.app.z3cform.widget import SelectFieldWidget
 from yafowil.base import factory
+from yafowil.plone.autoform import FORM_SCOPE_ADD
+from yafowil.plone.autoform import FORM_SCOPE_EDIT
+from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
 from z3c.relationfield.schema import RelationList
 from zope.schema import ASCIILine
 from zope.schema import Bool
@@ -82,7 +85,8 @@ def value_or_default(context, field):
     :return: Value or default.
     """
     request = context.REQUEST
-    if getattr(request, '_yafowil_autoform_scope', None) == 'add':
+    scope = getattr(request, FORM_SCOPE_HOSTILE_ATTR, None)
+    if scope == FORM_SCOPE_ADD:
         default_factory = field.schemafield.defaultFactory
         if default_factory:
             try:
@@ -91,7 +95,7 @@ def value_or_default(context, field):
             except Exception:
                 logger.exception('Fetching default_factory failed')
         return UNSET
-    elif getattr(request, '_yafowil_autoform_scope', None) == 'edit':
+    elif scope == FORM_SCOPE_EDIT:
         return UNSET
     else:
         return UNSET

@@ -5,6 +5,9 @@ from plone.dexterity.utils import iterSchemata
 from plone.dexterity.utils import iterSchemataForType
 from plumber import plumbing
 from yafowil.base import factory
+from yafowil.plone.autoform import FORM_SCOPE_ADD
+from yafowil.plone.autoform import FORM_SCOPE_EDIT
+from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
 from yafowil.plone.autoform.factories import widget_factory
 from yafowil.plone.autoform.schema import resolve_schemata
 from yafowil.plone.form import BaseForm
@@ -100,7 +103,7 @@ class AddAutoForm(BaseAutoForm):
     form_name = 'addform'
 
     def __init__(self, context, request, ti):
-        request._yafowil_autoform_scope = 'add'
+        setattr(request, FORM_SCOPE_HOSTILE_ATTR, FORM_SCOPE_ADD)
         super(AddAutoForm, self).__init__(context, request)
         self.ti = ti
 
@@ -123,7 +126,7 @@ class EditAutoForm(BaseAutoForm):
     action_resource = u'edit'
 
     def __init__(self, context, request):
-        request._yafowil_autoform_scope = 'edit'
+        setattr(request, FORM_SCOPE_HOSTILE_ATTR, FORM_SCOPE_EDIT)
         super(EditAutoForm, self).__init__(context, request)
         self.ti = getToolByName(
             'portal_types'

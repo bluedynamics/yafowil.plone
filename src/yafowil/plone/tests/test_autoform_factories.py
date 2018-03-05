@@ -2,7 +2,7 @@ from plone.app.z3cform.widget import RichTextFieldWidget
 from plone.autoform import directives as form
 from plone.supermodel import model
 from yafowil.plone.autoform import factories
-from yafowil.plone.autoform import widget_factory
+from yafowil.plone.autoform.factories import widget_factory
 from yafowil.plone.autoform.schema import Field
 from yafowil.plone.autoform.schema import Widget
 from yafowil.plone.testing import YAFOWIL_PLONE_INTEGRATION_TESTING
