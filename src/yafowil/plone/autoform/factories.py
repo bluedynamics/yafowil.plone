@@ -52,15 +52,26 @@ class widget_factory(object):
         :param field: ``yafowil.plone.autoform.schema.Field`` instance.
         :return object: yafowil.Widget instance
         """
-        # schema field bound factory
-        # XXX
+        return cls._lookup_factory(field)(context, field)
+
+    @classmethod
+    def _lookup_factory(cls, field):
+        """Looup factory for field.
+
+        :param field: ``yafowil.plone.autoform.schema.Field`` instance.
+        :return object: Callable accepting ``context`` and ``field`` as
+            arguments .
+        """
+        # dedicated schema field bound factory
+        if field.schemafield in cls._registry:
+            factory = cls._registry[field.schemafield]
         # widget bound factory
-        if field.widget:
+        elif field.widget:
             factory = cls._registry[field.widget.factory]
         # schema field bound factory
         else:
             factory = cls._registry[field.schemafield.__class__]
-        return factory(context, field)
+        return factory
 
 
 def value_or_default(context, field):
@@ -71,7 +82,7 @@ def value_or_default(context, field):
     :return: Value or default.
     """
     request = context.REQUEST
-    if request._yafowil_autoform_scope == 'add':
+    if getattr(request, '_yafowil_autoform_scope', None) == 'add':
         default_factory = field.schemafield.defaultFactory
         if default_factory:
             try:
@@ -80,7 +91,7 @@ def value_or_default(context, field):
             except Exception:
                 logger.exception('Fetching default_factory failed')
         return UNSET
-    elif request._yafowil_autoform_scope == 'edit':
+    elif getattr(request, '_yafowil_autoform_scope', None) == 'edit':
         return UNSET
     else:
         return UNSET

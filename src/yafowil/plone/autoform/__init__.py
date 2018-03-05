@@ -1,1 +1,1 @@
-#
+from yafowil.plone.autoform.factories import widget_factory
