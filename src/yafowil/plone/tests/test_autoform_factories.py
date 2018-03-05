@@ -11,6 +11,8 @@ from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
 from yafowil.plone.autoform import factories
+from yafowil.plone.autoform.factories import lookup_schema_vocabulary
+from yafowil.plone.autoform.factories import lookup_vocabulary
 from yafowil.plone.autoform.factories import value_or_default
 from yafowil.plone.autoform.factories import widget_factory
 from yafowil.plone.autoform.schema import Field
@@ -18,9 +20,12 @@ from yafowil.plone.autoform.schema import Widget
 from yafowil.plone.testing import YAFOWIL_PLONE_INTEGRATION_TESTING
 from zope.component import queryUtility
 from zope.interface import provider
+from zope.schema import Choice
 from zope.schema import Text
 from zope.schema import TextLine
 from zope.schema.interfaces import IContextAwareDefaultFactory
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 import unittest
 
 
@@ -139,3 +144,67 @@ class TestAutoformFactories(unittest.TestCase):
         self.assertEqual(value_or_default(link, exclude_from_nav), True)
 
         delattr(self.request, FORM_SCOPE_HOSTILE_ATTR)
+
+    def test_lookup_schema_vocabulary(self):
+        vocabulary = SimpleVocabulary([SimpleTerm(
+            value='a', token='a', title='A')])
+
+        class ISchemaWithVocabs(model.Schema):
+            plain_field = TextLine(
+                title=u'plain field')
+            vocab_instance_field = Choice(
+                title=u'vocab instance field',
+                vocabulary=vocabulary)
+            vocab_factory_field = Choice(
+                title=u'vocab factory field',
+                vocabulary='plone.app.vocabularies.PortalTypes')
+            invalid_vocabulary_field = Choice(
+                title=u'invalid vocabulary field',
+                vocabulary='yafowil.plone.inexistent')
+
+        field = Field(
+            name='plain_field',
+            schema=ISchemaWithVocabs)
+        self.assertEqual(lookup_schema_vocabulary(self.portal, field), None)
+
+        field = Field(
+            name='vocab_instance_field',
+            schema=ISchemaWithVocabs)
+        self.assertEqual(lookup_schema_vocabulary(self.portal, field), vocabulary)
+
+        field = Field(
+            name='vocab_factory_field',
+            schema=ISchemaWithVocabs)
+        self.assertIsInstance(
+            lookup_schema_vocabulary(self.portal, field),
+            SimpleVocabulary)
+
+        field = Field(
+            name='invalid_vocabulary_field',
+            schema=ISchemaWithVocabs)
+        self.assertRaises(
+            ValueError,
+            lookup_schema_vocabulary,
+            self.portal,
+            field)
+
+    def test_lookup_vocabulary(self):
+        items = [('yes', u'Yes'), ('no', u'No')]
+        terms = [
+            SimpleTerm(
+                value=pair[0],
+                token=pair[0],
+                title=pair[1]
+            ) for pair in items
+        ]
+        vocabulary = SimpleVocabulary(terms)
+
+        class ISchemaWithVocab(model.Schema):
+            field = Choice(
+                title=u'field',
+                vocabulary=vocabulary)
+
+        field = Field(
+            name='field',
+            schema=ISchemaWithVocab)
+        self.assertEqual(lookup_vocabulary(self.portal, field), items)

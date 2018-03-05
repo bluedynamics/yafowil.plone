@@ -10,6 +10,7 @@ from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
 from z3c.relationfield.schema import RelationList
+from zope.component import queryUtility
 from zope.schema import ASCIILine
 from zope.schema import Bool
 from zope.schema import Choice
@@ -18,7 +19,8 @@ from zope.schema import Text
 from zope.schema import TextLine
 from zope.schema import Tuple
 from zope.schema.interfaces import IContextAwareDefaultFactory
-from zope.schema.vocabulary import SimpleVocabulary
+from zope.schema.interfaces import IVocabulary
+from zope.schema.interfaces import IVocabularyFactory
 import logging
 
 
@@ -104,36 +106,51 @@ def value_or_default(context, field):
     return UNSET
 
 
-def lookup_vocabulary(context, field):
-    """Lookup vocabulary for field.
+def lookup_schema_vocabulary(context, field):
+    """Lookup schema vocabulary for field.
 
     :param context: Context the form gets rendered on.
     :param field: ``yafowil.plone.autoform.schema.Field`` instance.
-    :return: Vocabulary suitable for yafowil factory.
+    :return: ``zope.schema.interfaces.IVocabulary`` implementation.
     """
     vocabulary = None
     # try to find vocabulary on widget params
     if field.widget:
         vocabulary = field.widget.params.get('vocabulary')
-    # try to find vocabulary on schemafield if not found on widget
+    # try to find vocabulary at schemafield.vocabulary if not found on widget
     if not vocabulary:
-        if hasattr(field.schemafield, 'vocabulary'):
-            vocabulary = field.schemafield.vocabulary
+        vocabulary = getattr(field.schemafield, 'vocabulary', vocabulary)
+    # try to find vocabulary at schemafield.vocabularyName if still not found
+    if not vocabulary:
+        vocabulary = getattr(field.schemafield, 'vocabularyName', vocabulary)
     # return empty list if no vocabulary found
     if not vocabulary:
-        return []
+        return None
+    # try to lookup vocabulary by name
     if isinstance(vocabulary, basestring):
-        # XXX: try to lookup vocabulary
-        return []
-    if isinstance(vocabulary, SimpleVocabulary):
-        ret = list()
-        for term in vocabulary:
-            # XXX: term.value as vocab key? probably what we want when using
-            #      datatypes
-            ret.append((term.token, term.title))
-        return ret
-    logger.warning('Unknown vocabulary type: {0}'.format(vocabulary))
-    return []
+        vocabulary = queryUtility(IVocabularyFactory, vocabulary)
+    # call vocabulary factory with context
+    if IVocabularyFactory.providedBy(vocabulary):
+        vocabulary = vocabulary(context)
+    # return vocab
+    if IVocabulary.providedBy(vocabulary):
+        return vocabulary
+    # lookup failed
+    raise ValueError('lookup_schema_vocabulary(): {0}'.format(vocabulary))
+
+
+def lookup_vocabulary(context, field):
+    """Lookup vocabulary for field which can be used with yafowil factory.
+
+    :param context: Context the form gets rendered on.
+    :param field: ``yafowil.plone.autoform.schema.Field`` instance.
+    :return: Vocabulary suitable for yafowil factory.
+    """
+    vocabulary = lookup_schema_vocabulary(context, field)
+    ret = list()
+    for term in vocabulary:
+        ret.append((term.token, term.title))
+    return ret
 
 
 ###############################################################################
