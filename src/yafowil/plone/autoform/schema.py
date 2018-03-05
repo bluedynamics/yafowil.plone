@@ -8,7 +8,7 @@ from plone.supermodel.utils import mergedTaggedValueDict
 from plone.supermodel.utils import mergedTaggedValueList
 from yafowil.plone import _
 from zope.dottedname.resolve import resolve
-from zope.schema import getFieldsInOrder
+from zope.schema import getFieldNamesInOrder
 
 
 class Fieldset(object):
@@ -60,12 +60,10 @@ class Field(object):
     instances via ``yafowil.base.factory``.
     """
 
-    def __init__(self, name, schemafield, schema, widget, mode, is_behavior):
+    def __init__(self, name, schema, widget=None, mode='edit', is_behavior=False):
         """Create field.
 
         :param name: Name of the field.
-        :param schemafield: ``zope.schema._bootstrapfields.Field`` deriving
-            instance.
         :param schema: ``plone.supermodel.model.Schema`` instance.
         :param widget: ``yafowil.plone.autoform.schema.Widget`` instance
         :param mode: Form widget rendering mode as string. Either 'edit',
@@ -73,15 +71,15 @@ class Field(object):
         :param is_behavior: Flag whether field belongs to a dexterity behavior.
         """
         self.name = name
-        self.schemafield = schemafield
         self.schema = schema
         self.widget = widget
         self.mode = mode
         self.is_behavior = is_behavior
         # convenience
-        self.label = schemafield.title
-        self.help = schemafield.description
-        self.required = schemafield.required
+        self.schemafield = schema[name]
+        self.label = self.schemafield.title
+        self.help = self.schemafield.description
+        self.required = self.schemafield.required
         # XXX: set convenience attributes if overwritten via widget.params
 
 
@@ -186,10 +184,9 @@ def resolve_schemata(schemata):
         widgets = mergedTaggedValueDict(schema, WIDGETS_KEY)
         # collect all fields from schema and create ``Field`` instances
         fields = OrderedDict()
-        for name, schemafield in getFieldsInOrder(schema):
+        for name in getFieldNamesInOrder(schema):
             fields[name] = Field(
                 name=name,
-                schemafield=schemafield,
                 schema=schema,
                 widget=resolve_widget(widgets.get(name)),
                 mode='edit',  # XXX

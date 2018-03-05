@@ -6,7 +6,7 @@ from yafowil.plone.autoform.schema import Widget
 from yafowil.plone.autoform.schema import resolve_schemata
 from z3c.form.browser.text import TextWidget
 from zope.schema import TextLine
-from zope.schema import getFieldsInOrder
+from zope.schema import getFieldNamesInOrder
 import unittest
 
 
@@ -74,33 +74,25 @@ class TestAutoformSchema(unittest.TestCase):
         self.assertEqual(fieldset.description, 'Default fieldset')
         self.assertEqual(fieldset.order, 0)
 
-        fieldname, schemafield = getFieldsInOrder(IBasicModel)[0]
+        fieldname = getFieldNamesInOrder(IBasicModel)[0]
         field = Field(
             name=fieldname,
-            schemafield=schemafield,
-            schema=IBasicModel,
-            widget=None,
-            mode='edit',
-            is_behavior=False)
+            schema=IBasicModel)
         fieldset.add(field)
         self.assertEqual(list(fieldset.__iter__()), [field])
         self.assertEqual(fieldset.children, [field])
 
     def test_Field(self):
-        fieldname, schemafield = getFieldsInOrder(IBasicModel)[0]
+        fieldname = getFieldNamesInOrder(IBasicModel)[0]
         field = Field(
             name=fieldname,
-            schemafield=schemafield,
-            schema=IBasicModel,
-            widget=None,
-            mode='edit',
-            is_behavior=False)
+            schema=IBasicModel)
         self.assertEqual(field.name, fieldname)
-        self.assertEqual(field.schemafield, schemafield)
         self.assertEqual(field.schema, IBasicModel)
         self.assertEqual(field.widget, None)
         self.assertEqual(field.mode, 'edit')
         self.assertEqual(field.is_behavior, False)
+        self.assertEqual(field.schemafield, IBasicModel[fieldname])
         self.assertEqual(field.label, 'Basic field')
         self.assertEqual(field.help, 'Basic field description')
         self.assertEqual(field.required, True)

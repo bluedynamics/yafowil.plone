@@ -17,6 +17,7 @@ from zope.schema import Datetime
 from zope.schema import Text
 from zope.schema import TextLine
 from zope.schema import Tuple
+from zope.schema.interfaces import IContextAwareDefaultFactory
 from zope.schema.vocabulary import SimpleVocabulary
 import logging
 
@@ -90,15 +91,17 @@ def value_or_default(context, field):
         default_factory = field.schemafield.defaultFactory
         if default_factory:
             try:
-                # XXX: zope.schema.interfaces.IContextAwareDefaultFactory
-                return default_factory(context)
+                if IContextAwareDefaultFactory.providedBy(default_factory):
+                    return default_factory(context)
+                return default_factory()
             except Exception:
                 logger.exception('Fetching default_factory failed')
         return UNSET
     elif scope == FORM_SCOPE_EDIT:
-        return UNSET
-    else:
-        return UNSET
+        if field.is_behavior:
+            return getattr(field.schema(context), field.name, UNSET)
+        return getattr(context, field.name, UNSET)
+    return UNSET
 
 
 def lookup_vocabulary(context, field):
