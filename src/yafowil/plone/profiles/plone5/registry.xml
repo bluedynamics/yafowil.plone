@@ -1,15 +1,6 @@
 <?xml version="1.0"?>
 <registry>
 
-  <records prefix="plone.bundles/yafowil"
-           interface='Products.CMFPlone.interfaces.IBundleRegistry'>
-    <value key="enabled">True</value>
-    <value key="jscompilation">yafowil.plone.js</value>
-    <value key="csscompilation">yafowil.plone.css</value>
-    <value key="compile">False</value>
-    <value key="depends">plone</value>
-  </records>
-
   <!-- yafowil.plone common resources -->
   <record name="yafowil.plone.common">
     <field type="plone.registry.field.Bool">
@@ -17,5 +8,24 @@
     </field>
     <value>True</value>
   </record>
+
+  <records remove="True" prefix="plone.bundles/yafowil" interface='Products.CMFPlone.interfaces.IBundleRegistry'/>
+
+  <records prefix="plone.resources/yafowil"
+           interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+    <value key="js">yafowil.plone.js</value>
+    <value key="css">
+      <element>yafowil.plone.css</element>
+    </value>
+  </records>
+
+  <records purge="False" prefix="plone.bundles/plone-legacy" interface="Products.CMFPlone.interfaces.IBundleRegistry">
+    <value key="last_compilation"></value>
+    <value key="merge_with">default</value>
+    <value key="depends">plone</value>
+    <value key="resources" purge="False">
+      <element>yafowil</element>
+    </value>
+  </records>
 
 </registry>
