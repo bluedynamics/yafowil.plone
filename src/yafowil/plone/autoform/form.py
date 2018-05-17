@@ -118,6 +118,11 @@ class AddAutoForm(BaseAutoForm):
     def get_schemata(self):
         return iterSchemataForType(self.ti.getId())
 
+    def save(self, widget, data):
+        import pdb; pdb.set_trace()
+        print 'AddAutoForm.save()'
+        # data.write(self.context)
+
 
 class EditAutoForm(BaseAutoForm):
     """Yafowil edit form.
