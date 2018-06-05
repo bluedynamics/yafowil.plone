@@ -1,6 +1,7 @@
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.dexterity.browser.add import DefaultAddView as DefaultAddViewBase
+from plone.dexterity.utils import createContentInContainer
 from plone.dexterity.utils import iterSchemata
 from plone.dexterity.utils import iterSchemataForType
 from plumber import plumbing
@@ -9,6 +10,7 @@ from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
 from yafowil.plone.autoform.factories import widget_factory
+from yafowil.plone.autoform.persistence import YafowilAutoformPersistWriter
 from yafowil.plone.autoform.schema import resolve_schemata
 from yafowil.plone.form import BaseForm
 from yafowil.plone.form import CSRFProtectionBehavior
@@ -59,6 +61,9 @@ class BaseAutoForm(BaseForm):
         )
         # XXX: make pat autotoc dedicated blueprint
         pat_autotoc = 'levels: legend; section: fieldset; className: autotabs'
+        # XXX: no default persist writer required on widget data
+        def noop_persist_writer(model, writer=None, recursiv=True):
+            pass
         self.form = form = factory(
             'form',
             name=self.form_name,
@@ -67,7 +72,8 @@ class BaseAutoForm(BaseForm):
                 'class': form_class,
                 'data': {
                     'pat-autotoc': pat_autotoc
-                }
+                },
+                'persist_writer': noop_persist_writer,
             })
         # resolve schema and add fieldsets to form
         fieldset_definitions = resolve_schemata(self.get_schemata())
@@ -85,15 +91,42 @@ class BaseAutoForm(BaseForm):
             for field_definition in fieldset_definition:
                 # XXX: consider schema/behavior name in field name
                 field_name = field_definition.name
-                fieldset[field_name] = widget_factory.widget_for(
+                form_field = fieldset[field_name] = widget_factory.widget_for(
                     self.context,
                     field_definition
                 )
+                if not form_field.attrs.get('persist_writer'):
+                    writer = YafowilAutoformPersistWriter(field_definition)
+                    form_field.attrs['persist_writer'] = writer
+        self.form['save'] = factory(
+            'submit',
+            props={
+                'action': 'save',
+                'expression': True,
+                'handler': self.save,
+                'next': self.next,
+            }
+        )
+        self.form['cancel'] = factory(
+            'submit',
+            props={
+                'action': 'cancel',
+                'expression': True,
+                'handler': self.cancel,
+                'next': self.next,
+            }
+        )
 
     def save(self, widget, data):
         raise NotImplementedError(
             'Abstract ``BaseAutoForm`` does not implement ``save``'
         )
+
+    def cancel(self, widget, data):
+        print 'BaseAutoForm.cancel()'
+
+    def next(self, request):
+        print 'BaseAutoForm.next()'
 
     def __call__(self):
         return self.template()
@@ -122,9 +155,11 @@ class AddAutoForm(BaseAutoForm):
 
     def save(self, widget, data):
         print 'AddAutoForm.save()'
-        # create child by factory
-        # call data.save with created child
-        # trigger object events
+        # XXX: trigger object events
+        # XXX: name choosing
+        # XXX: rename object in container
+        child = createContentInContainer(self.context, self.ti.getId())
+        data.write(child)
 
 
 class EditAutoForm(BaseAutoForm):
@@ -149,5 +184,5 @@ class EditAutoForm(BaseAutoForm):
 
     def save(self, widget, data):
         print 'EditAutoForm.save()'
-        # call data.save with edited context
-        # trigger object events
+        # XXX: trigger object events
+        data.write(self.context)

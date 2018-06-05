@@ -5,7 +5,9 @@ History
 2.4.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- ``Zope2RequestAdapter`` always returns non-iterable request parameter values
+  as unicode.
+  [rnix, jensens]
 
 
 2.4.1 (2017-03-10)

@@ -6,6 +6,7 @@ from zope.i18nmessageid import Message
 
 
 class Zope2RequestAdapter(DictMixin):
+    coding = 'utf-8'
 
     def __init__(self, request):
         if isinstance(request, self.__class__):
@@ -27,7 +28,10 @@ class Zope2RequestAdapter(DictMixin):
             fvalue['headers'] = value.headers
             fvalue['original'] = value
             return fvalue
-        return value
+        # XXX: check whether coding is defined on request and ensure proper
+        #      decoding
+        # XXX: form tag must set accept-charset to ensure proper encoding
+        return value.decode(self.coding)
 
     def keys(self):
         return self.zrequest.form.keys()
