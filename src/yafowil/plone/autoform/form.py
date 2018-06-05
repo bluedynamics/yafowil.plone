@@ -172,6 +172,7 @@ class EditAutoForm(BaseAutoForm):
         setattr(request, FORM_SCOPE_HOSTILE_ATTR, FORM_SCOPE_EDIT)
         super(EditAutoForm, self).__init__(context, request)
         self.ti = getToolByName(
+            self.context,
             'portal_types'
         ).getTypeInfo(context.portal_type)
 
