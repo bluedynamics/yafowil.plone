@@ -57,6 +57,7 @@ class BaseAutoForm(BaseForm):
             'rowlike pat-formunloadalert enableFormTabbing pat-autotoc '
             'view-name-add-Folder autotabs'
         )
+        # XXX: make pat autotoc dedicated blueprint
         pat_autotoc = 'levels: legend; section: fieldset; className: autotabs'
         self.form = form = factory(
             'form',
@@ -90,8 +91,9 @@ class BaseAutoForm(BaseForm):
                 )
 
     def save(self, widget, data):
-        print 'BaseAutoForm.save()'
-        # data.write(self.context)
+        raise NotImplementedError(
+            'Abstract ``BaseAutoForm`` does not implement ``save``'
+        )
 
     def __call__(self):
         return self.template()
@@ -118,6 +120,12 @@ class AddAutoForm(BaseAutoForm):
     def get_schemata(self):
         return iterSchemataForType(self.ti.getId())
 
+    def save(self, widget, data):
+        print 'AddAutoForm.save()'
+        # create child by factory
+        # call data.save with created child
+        # trigger object events
+
 
 class EditAutoForm(BaseAutoForm):
     """Yafowil edit form.
@@ -138,3 +146,8 @@ class EditAutoForm(BaseAutoForm):
 
     def get_schemata(self):
         return iterSchemata(self.context)
+
+    def save(self, widget, data):
+        print 'EditAutoForm.save()'
+        # call data.save with edited context
+        # trigger object events
