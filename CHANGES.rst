@@ -5,6 +5,12 @@ History
 3.0 (unreleased)
 ----------------
 
+- Move ``plonelabel`` blueprint to ``yafowil.plone.widgets.label``.
+  [rnix]
+
+- Move plone 4 related richtext widget hooks to ``plone4.py``
+  [rnix]
+
 - ``Zope2RequestAdapter`` always returns non-iterable request parameter values
   as unicode.
   [rnix, jensens]

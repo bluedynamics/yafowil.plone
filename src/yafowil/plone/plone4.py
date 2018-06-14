@@ -75,7 +75,7 @@ def register_macros():
 ###############################################################################
 
 def register():
-    import common
+    from yafowil.plone.widgets import label
     factory.register_global_preprocessors([plone_preprocessor])
 
 
