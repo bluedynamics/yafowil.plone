@@ -5,6 +5,10 @@ History
 2.4.2 (unreleased)
 ------------------
 
+- Use ``self.context`` instead of ``context`` in ``CSRFProtectionBehavior``
+  when looking up fallback root key manager.
+  [rnix]
+
 - Deliver resources as `plone.stableResource` to cache JS/CSS in browser.
   [jensens]
 
