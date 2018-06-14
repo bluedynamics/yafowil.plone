@@ -2,7 +2,7 @@
 History
 =======
 
-3.0 (unreleased)
+2.5 (unreleased)
 ----------------
 
 - Move ``plonelabel`` blueprint to ``yafowil.plone.widgets.label``.

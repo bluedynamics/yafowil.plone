@@ -40,8 +40,12 @@ def tinymce_config(widget, data):
 ###############################################################################
 
 def configure_factory():
+    # set theme
+    factory.theme = 'plone4'
+    # selection
     factory.defaults['select.label_radio_class'] = 'radioType'
     factory.defaults['select.label_checkbox_class'] = 'checkboxType'
+    # tinymce
     if HAS_TINYMCE:
         factory.defaults['richtext.title'] = tinymce_config
 
