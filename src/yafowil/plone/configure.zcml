@@ -11,8 +11,6 @@
   <!-- examples -->
   <!-- <include package=".examples" /> -->
 
-  <include file="upgrades.zcml" />
-
   <!-- register translations -->
   <configure package="yafowil.i18n">
     <i18n:registerTranslations directory="locales" />
