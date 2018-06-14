@@ -1,0 +1,127 @@
+<registry>
+
+  <!-- collective.js.jqueryui - enable required base resources -->
+  <records interface="collective.js.jqueryui.controlpanel.IJQueryUIPlugins">
+    <value key="ui_core">True</value>
+    <value key="ui_widget">True</value>
+    <value key="ui_mouse">True</value>
+    <value key="ui_position">True</value>
+    <value key="ui_draggable">True</value>
+    <value key="ui_droppable">True</value>
+    <value key="ui_resizable">True</value>
+  </records>
+
+  <!-- yafowil.widget.array -->
+  <record name="yafowil.widget.array.common">
+    <field type="plone.registry.field.Bool">
+      <title>Array widget common resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <!-- yafowil.widget.autocomplete -->
+  <record name="yafowil.widget.autocomplete.dependencies">
+    <field type="plone.registry.field.Bool">
+      <title>Autocomplete widget dependency resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <record name="yafowil.widget.autocomplete.common">
+    <field type="plone.registry.field.Bool">
+      <title>Autocomplete widget common resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <!-- yafowil.widget.datetime -->
+  <record name="yafowil.widget.datetime.datepicker">
+    <field type="plone.registry.field.Bool">
+      <title>Datetime widget datepicker resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <record name="yafowil.widget.datetime.timepicker">
+    <field type="plone.registry.field.Bool">
+      <title>Datetime widget timepicker resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <record name="yafowil.widget.datetime.common">
+    <field type="plone.registry.field.Bool">
+      <title>Datetime widget common resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <!-- yafowil.widget.dict -->
+  <record name="yafowil.widget.dict.common">
+    <field type="plone.registry.field.Bool">
+      <title>Dict widget common resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <!-- yafowil.widget.image -->
+  <record name="yafowil.widget.image.common">
+    <field type="plone.registry.field.Bool">
+      <title>Image widget common resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <!-- yafowil.widget.multiselect -->
+  <record name="yafowil.widget.multiselect.dependencies">
+    <field type="plone.registry.field.Bool">
+      <title>Multiselect widget dependency resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <record name="yafowil.widget.multiselect.common">
+    <field type="plone.registry.field.Bool">
+      <title>Multiselect widget common resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <!-- yafowil.widget.richtext -->
+  <record name="yafowil.widget.richtext.dependencies">
+    <field type="plone.registry.field.Bool">
+      <title>Richtext widget dependency resources</title>
+    </field>
+    <value>False</value>
+  </record>
+
+  <record name="yafowil.widget.richtext.jquery">
+    <field type="plone.registry.field.Bool">
+      <title>Richtext widget jquery integration resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <record name="yafowil.widget.richtext.common">
+    <field type="plone.registry.field.Bool">
+      <title>Richtext widget common resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <!-- yafowil.widget.select2 -->
+  <record name="yafowil.widget.select2.dependencies">
+    <field type="plone.registry.field.Bool">
+      <title>Select2 widget dependency resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <record name="yafowil.widget.select2.common">
+    <field type="plone.registry.field.Bool">
+      <title>Select2 widget common resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+</registry>

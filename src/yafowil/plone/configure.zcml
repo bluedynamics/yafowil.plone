@@ -61,6 +61,13 @@
     description="YAFOWIL - Yet Another Form Widget Library - Demo Setup."
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
+  <genericsetup:registerProfile
+    name="autoform"
+    title="YAFOWIL Form Library Autoform Profile"
+    directory="profiles/autoform"
+    description="YAFOWIL - Yet Another Form Widget Library - Autoform Setup."
+    provides="Products.GenericSetup.interfaces.EXTENSION" />
+
   <!-- yafowil resource directories -->
   <include package="." file="meta.zcml" />
 
