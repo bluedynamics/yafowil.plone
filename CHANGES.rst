@@ -9,9 +9,6 @@ History
   as unicode.
   [rnix, jensens]
 
-- Register yafowil with plone-legacy bundle to fix interfering while initializing Plone widgets.
-  [agitator]
-
 
 2.4.1 (2017-03-10)
 ------------------

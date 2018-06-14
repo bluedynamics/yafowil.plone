@@ -11,9 +11,6 @@
   <!-- examples -->
   <!-- <include package=".examples" /> -->
 
-  <!-- include upgrades -->
-  <include file="upgrades.zcml" />
-
   <!--yafowil autoforms -->
   <include package=".autoform" />
 
