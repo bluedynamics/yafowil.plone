@@ -5,7 +5,8 @@ History
 2.4.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Deliver resources as `plone.stableResource` to cache JS/CSS in browser.
+  [jensens]
 
 
 2.4.1 (2017-03-10)
