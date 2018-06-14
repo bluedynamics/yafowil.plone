@@ -2,8 +2,8 @@
 History
 =======
 
-2.4.2 (unreleased)
-------------------
+3.0 (unreleased)
+----------------
 
 - ``Zope2RequestAdapter`` always returns non-iterable request parameter values
   as unicode.
