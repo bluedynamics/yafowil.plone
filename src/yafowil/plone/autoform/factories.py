@@ -235,7 +235,11 @@ def datetime_widget_factory(context, field):
         props={
             'label': field.label,
             'help': field.help,
-            'required': field.required
+            'required': field.required,
+            'locale': 'de',
+            'datepicker': True,
+            'time': True,
+            'timepicker': True
         },
         mode=field.mode)
 
@@ -305,7 +309,11 @@ def datetime_field_widget_factory(context, field):
         props={
             'label': field.label,
             'help': field.help,
-            'required': field.required
+            'required': field.required,
+            'locale': 'de',
+            'datepicker': True,
+            'time': True,
+            'timepicker': True
         },
         mode=field.mode)
 
