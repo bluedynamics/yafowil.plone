@@ -5,8 +5,7 @@ History
 2.4.2 (unreleased)
 ------------------
 
-- Register yafowil with plone-legacy bundle to fix interfering while initializing Plone widgets.
-  [agitator]
+- Nothing changed yet.
 
 
 2.4.1 (2017-03-10)
