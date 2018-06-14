@@ -60,7 +60,7 @@ class Resources(BrowserView):
     Plone 5 only.
     """
     _header_template = u"\n/* yafowil.plone: %s */\n"
-    _resource_type= None
+    _resource_type = None
     _mimetype = None
 
     def __call__(self):
@@ -82,7 +82,7 @@ class Resources(BrowserView):
                 content = fd.read()
             try:
                 content = unicode(content)
-            except Exception, e:
+            except Exception:
                 content = unicode(content.decode('utf-8'))
             data.write(content)
             data.write(u"\n")
