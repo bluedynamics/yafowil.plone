@@ -1,5 +1,6 @@
 from node.utils import UNSET
 from plone.app.textfield import RichText
+from plone.app.widgets.utils import get_tinymce_options
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.app.z3cform.widget import DatetimeFieldWidget
 from plone.app.z3cform.widget import RelatedItemsFieldWidget
@@ -155,21 +156,60 @@ def lookup_vocabulary(context, field):
     return ret
 
 
-###############################################################################
-# schema field bound factories
-###############################################################################
-
-@widget_factory(RichText)
-def rich_text_widget_factory(context, field):
+def create_richtext_widget(context, field):
+    """Reads tinymce pattern options and creates a richtext field using related
+    mockup pattern.
+    """
+    def mimetypes_data(widget, data):
+        opt = get_tinymce_options(context, field.schemafield, context.REQUEST)
+        return {
+            'pat-textareamimetypeselector': {
+                'textareaName': widget.dottedpath,
+                'widgets': {
+                    'text/html': {
+                        'pattern': 'tinymce',
+                        'patternOptions': opt
+                    },
+                },
+            }
+        }
     return factory(
         '#field:richtext',
         value=value_or_default(context, field),
         props={
             'label': field.label,
             'help': field.help,
-            'required': field.required
+            'required': field.required,
+            'mimetypes': ['text/html', 'text/x-web-textile'],
+            'mimetypes_class': 'pat-textareamimetypeselector',
+            'mimetypes_data': mimetypes_data
         },
         mode=field.mode)
+
+
+def create_datetime_widget(context, field):
+    return factory(
+        '#field:datetime',
+        value=value_or_default(context, field),
+        props={
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
+            'locale': 'de',  # XXX
+            'datepicker': True,
+            'time': True,
+            'timepicker': True
+        },
+        mode=field.mode)
+
+
+###############################################################################
+# schema field bound factories
+###############################################################################
+
+@widget_factory(RichText)
+def rich_text_widget_factory(context, field):
+    return create_richtext_widget(context, field)
 
 
 @widget_factory(RelationList)
@@ -229,19 +269,7 @@ def choice_widget_factory(context, field):
 
 @widget_factory(Datetime)
 def datetime_widget_factory(context, field):
-    return factory(
-        '#field:datetime',
-        value=value_or_default(context, field),
-        props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'locale': 'de',
-            'datepicker': True,
-            'time': True,
-            'timepicker': True
-        },
-        mode=field.mode)
+    return create_datetime_widget(context, field)
 
 
 @widget_factory(Text)
@@ -290,32 +318,12 @@ def tuple_widget_factory(context, field):
 
 @widget_factory(RichTextFieldWidget)
 def rich_text_field_widget_factory(context, field):
-    return factory(
-        '#field:richtext',
-        value=value_or_default(context, field),
-        props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required
-        },
-        mode=field.mode)
+    return create_richtext_widget(context, field)
 
 
 @widget_factory(DatetimeFieldWidget)
 def datetime_field_widget_factory(context, field):
-    return factory(
-        '#field:datetime',
-        value=value_or_default(context, field),
-        props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'locale': 'de',
-            'datepicker': True,
-            'time': True,
-            'timepicker': True
-        },
-        mode=field.mode)
+    return create_datetime_widget(context, field)
 
 
 @widget_factory(AjaxSelectFieldWidget)
