@@ -19,8 +19,7 @@ class TestSetup(unittest.TestCase):
     def test_product_installed(self):
         """Test if yafowil.plone is installed.
         """
-        self.assertTrue(self.installer.isProductInstalled(
-            'yafowil.plone'))
+        self.assertTrue(self.installer.isProductInstalled('yafowil.plone'))
 
     def test_browserlayer(self):
         """Test that IYafowilLayer is registered.
