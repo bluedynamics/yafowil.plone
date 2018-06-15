@@ -38,8 +38,13 @@ class TestAutoformDirectives(unittest.TestCase):
 
             qux = TextLine(title=u'Qux')
 
+            directives.modifier('modifier_1')
+
             directives.order('qix', fieldset='other')
             qix = TextLine(title=u'Qix')
+
+            directives.modifier('modifier_2')
+            directives.modifier('modifier_3')
 
         self.assertEqual(
             IDummy.queryTaggedValue(directives.FACTORY_KEY),
@@ -61,4 +66,8 @@ class TestAutoformDirectives(unittest.TestCase):
                 'baz': {'after': 'qux', 'before': None, 'fieldset': None},
                 'qix': {'after': None, 'before': None, 'fieldset': 'other'},
             },
+        )
+        self.assertEqual(
+            IDummy.queryTaggedValue(directives.MODIFER_KEY),
+            ['modifier_1', 'modifier_2', 'modifier_3'],
         )

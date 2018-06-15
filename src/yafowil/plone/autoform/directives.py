@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from plone.supermodel.directives import MetadataDictDirective
+from plone.supermodel.directives import MetadataListDirective
 
 FACTORY_KEY = 'yafowil.plone.metainfo.factory'
-MODIFER_KEY = 'yafowil.plone.metainfo.modifier'
 ORDER_KEY = 'yafowil.plone.metainfo.order'
+MODIFER_KEY = 'yafowil.plone.metainfo.modifier'
 
 
 _marker = set()
@@ -23,7 +24,9 @@ class factory(MetadataDictDirective):
         custom=_marker,
         mode=_marker
     ):
-        """This is the method expected by MetadataDictDirective returning data
+        """This is the method expected by MetadataDictDirective returning data.
+        Dont be confused aout the name 'factory' here.
+        It is the api name expected by the super class in plone.supermodel.
         """
         data = dict()
         if blueprints is not _marker:
@@ -40,7 +43,7 @@ class factory(MetadataDictDirective):
 
 
 class order(MetadataDictDirective):
-    """Directive used to define factory infos for
+    """Directive used to define order infos for a schema field
     """
     key = ORDER_KEY
 
@@ -57,3 +60,15 @@ class order(MetadataDictDirective):
             'before': before,
         }
         return {field_name: data}
+
+
+class modifier(MetadataListDirective):
+    """Directive used to define factory infos for
+    """
+    key = MODIFER_KEY
+
+    def factory(
+        self,
+        modifier,
+    ):
+        return [modifier]
