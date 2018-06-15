@@ -209,6 +209,7 @@ TODO
 [ ]   - title: unicode
 [ ]   - description: unicode
 [ ]   - subjects: ??
+[ ]   - language
 [ ]   - effective: DateTime.DateTime.DateTime
 [ ]   - expires: DateTime.DateTime.DateTime
 [ ]   - creators: tuple

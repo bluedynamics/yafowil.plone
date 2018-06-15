@@ -172,14 +172,14 @@ def create_richtext_widget(context, field):
     mockup pattern.
     """
     def mimetypes_data(widget, data):
-        opt = get_tinymce_options(context, field.schemafield, context.REQUEST)
+        opts = get_tinymce_options(context, field.schemafield, context.REQUEST)
         return {
             'pat-textareamimetypeselector': {
                 'textareaName': widget.dottedpath,
                 'widgets': {
                     'text/html': {
                         'pattern': 'tinymce',
-                        'patternOptions': opt
+                        'patternOptions': opts
                     },
                 },
             }
@@ -329,11 +329,16 @@ def tuple_widget_factory(context, field):
 
 @widget_factory(RichTextFieldWidget)
 def rich_text_field_widget_factory(context, field):
+    # XXX: insert pat options logic from RichTextFieldWidget here
+    # XXX: check if RichText schema field also uses this widget
     return create_richtext_widget(context, field)
 
 
 @widget_factory(DatetimeFieldWidget)
 def datetime_field_widget_factory(context, field):
+    # XXX: use datetime pattern from mockup here
+    # XXX: insert pattern option logic from DatetimeFieldWidget here
+    # XXX: check if datetime schema field also uses this widget by default
     return create_datetime_widget(context, field)
 
 
@@ -348,6 +353,7 @@ def ajax_select_field_widget_factory(context, field):
     orderable = False
     vocabulary_view = '@@getVocabulary'
     vocabulary_name = field.widget.params['vocabulary']
+
     view_ctx = context
     # XXX: view_ctx = get_widget_form(view)
     # For EditForms and non-Forms (in tests), the vocabulary is looked
@@ -356,6 +362,7 @@ def ajax_select_field_widget_factory(context, field):
     #if (IEditForm.providedBy(view_ctx) or not IForm.providedBy(view_ctx)):
     #    view_ctx = context
     # pattern options
+
     opts = dict()
     schemafield = None
     if IChoice.providedBy(field.schemafield):
@@ -365,6 +372,7 @@ def ajax_select_field_widget_factory(context, field):
         schemafield = field.schemafield.value_type
     if IChoice.providedBy(field):
         opts['allowNewItems'] = 'false'
+
     opts = dict_merge(
         get_ajaxselect_options(
             view_ctx,
@@ -376,6 +384,7 @@ def ajax_select_field_widget_factory(context, field):
         ),
         opts
     )
+
     if schemafield and not vocabulary_name:
         form_url = request.getURL()
         # e.g. 'form.widgets.IDublinCore.subjects'
@@ -390,28 +399,35 @@ def ajax_select_field_widget_factory(context, field):
             widget_name,
         )
         opts['vocabularyUrl'] = source_url
+
     # ISequence represents an orderable collection
     if ISequence.providedBy(field.schemafield) or orderable:
         opts['orderable'] = True
+
     # hardcoded security check hack for keywords.
     # XXX: needs to be generalized
     if vocabulary_name == 'plone.app.vocabularies.Keywords':
         membership = getToolByName(context, 'portal_membership')
         user = membership.getAuthenticatedMember()
+
         registry = getUtility(IRegistry)
         roles_allowed_to_add_keywords = registry.get(
             'plone.roles_allowed_to_add_keywords',
             []
         )
+
         roles = set(user.getRolesInContext(context))
+
         allowNewItems = 'false'
         if roles.intersection(roles_allowed_to_add_keywords):
             allowNewItems = 'true'
         opts['allowNewItems'] = allowNewItems
+
     # data attribute data
     data = {
         'pat-select2': opts
     }
+
     return factory(
         '#field:text',
         value=value,
@@ -427,6 +443,54 @@ def ajax_select_field_widget_factory(context, field):
 
 @widget_factory(SelectFieldWidget)
 def select_field_widget_factory(context, field):
+    # XXX: check whether choice schema field uses this widget by default
+    separator = ';'
+    noValueToken = u''
+    noValueMessage = u''
+    multiple = None  # XXX: somewhere from widget?
+    orderable = False
+    required = field.required
+
+    opts = dict()
+    if multiple or ICollection.providedBy(field.schemafield):
+        multiple = opts['multiple'] = True
+
+    # ISequence represents an orderable collection
+    if orderable or ISequence.providedBy(field.schemafield):
+        opts['orderable'] = True
+
+    if multiple:
+        opts['separator'] = separator
+
+    # Allow to clear field value if it is not required
+    if not required:
+        opts['allowClear'] = True
+
+    vocab = lookup_vocabulary(context, field)
+
+    # XXX: this can probably be deleted
+    #base_items = self.items
+    #if callable(base_items):
+        # items used to be a property in all widgets, then in the select
+        # widget it became a method, then in a few others too, but never in
+        # all, so this was reverted to let it be a property again.  Let's
+        # support both here to avoid breaking on some z3c.form versions.
+        # See https://github.com/zopefoundation/z3c.form/issues/44
+    #    base_items = base_items()
+    #items = []
+    #for item in base_items:
+    #    if not isinstance(item['content'], six.string_types):
+    #        item['content'] = translate(
+    #            item['content'],
+    #            context=self.request,
+    #            default=item['value'])
+    #    items.append((item['value'], item['content']))
+    #args['items'] = items
+
+    data = {
+        'pat-select2': opts
+    }
+
     return factory(
         '#field:select',
         value=value_or_default(context, field),
@@ -434,13 +498,23 @@ def select_field_widget_factory(context, field):
             'label': field.label,
             'help': field.help,
             'required': field.required,
-            'vocabulary': lookup_vocabulary(context, field)
+            'vocabulary': vocab,
+            'class_add': 'pat-select2',
+            'data': data
         },
         mode=field.mode)
 
 
 @widget_factory(RelatedItemsFieldWidget)
 def related_items_field_widget_factory(context, field):
+    pattern = 'relateditems'
+    separator = ';'
+    vocabulary = None
+    vocabulary_override = False
+    vocabulary_view = '@@getVocabulary'
+    orderable = False
+    opts = dict()
+
     return factory(
         '#field:select',
         value=value_or_default(context, field),
