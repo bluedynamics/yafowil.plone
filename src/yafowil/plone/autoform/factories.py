@@ -2,6 +2,7 @@ from node.utils import UNSET
 from plone.app.textfield import RichText
 from plone.app.widgets.base import dict_merge
 from plone.app.widgets.utils import get_ajaxselect_options
+from plone.app.widgets.utils import get_relateditems_options
 from plone.app.widgets.utils import get_tinymce_options
 from plone.app.widgets.utils import get_widget_form
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
@@ -361,8 +362,8 @@ def ajax_select_field_widget_factory(context, field):
     # XXX: check for yafowil form instead of z3c form
     #if (IEditForm.providedBy(view_ctx) or not IForm.providedBy(view_ctx)):
     #    view_ctx = context
-    # pattern options
 
+    # pattern options
     opts = dict()
     schemafield = None
     if IChoice.providedBy(field.schemafield):
@@ -385,11 +386,12 @@ def ajax_select_field_widget_factory(context, field):
         opts
     )
 
-    if schemafield and not vocabulary_name:
+    if schemafield and getattr(schemafield, 'vocabulary', None):
         form_url = request.getURL()
         # e.g. 'form.widgets.IDublinCore.subjects'
         # XXX: taken from the z3c form implementation, actually a hack
         #      getSource would need to be overwritten with an own implementation
+        # XXX: check how getSource refers to field name
         widget_name = 'form.widgets.{}.{}'.format(
             field.schemafield.name,
             field.name
@@ -507,21 +509,87 @@ def select_field_widget_factory(context, field):
 
 @widget_factory(RelatedItemsFieldWidget)
 def related_items_field_widget_factory(context, field):
-    pattern = 'relateditems'
+    # XXX: pass view and request to widget factories
+    request = context.REQUEST
+    value = value_or_default(context, field)
     separator = ';'
     vocabulary = None
+    # XXX: check where vocabulary_override comes from
     vocabulary_override = False
     vocabulary_view = '@@getVocabulary'
+    vocabulary_name = field.widget.params['vocabulary']
     orderable = False
     opts = dict()
 
+    schemafield = None
+    if IChoice.providedBy(field.schemafield):
+        opts['maximumSelectionSize'] = 1
+        schemafield = field.schemafield
+    elif ICollection.providedBy(field.schemafield):
+        schemafield = field.schemafield.value_type
+
+    view_ctx = context
+    # XXX: view_ctx = get_widget_form(view)
+    # For EditForms and non-Forms (in tests), the vocabulary is looked
+    # up on the context, otherwise on the view
+    # XXX: check for yafowil form instead of z3c form
+    #if (IEditForm.providedBy(view_ctx) or not IForm.providedBy(view_ctx)):
+    #    view_ctx = context
+
+    # XXX: check where original implementation gets ``mode`` and ``basePath``
+    #      from. probably ``widget.params``
+    root_search_mode = (
+        opts.get('mode', None) and
+        'basePath' not in opts
+    )
+
+    opts = dict_merge(
+        get_relateditems_options(
+            view_ctx,
+            value,
+            separator,
+            vocabulary_name,
+            vocabulary_view,
+            field_name=field.name,
+        ),
+        opts,
+    )
+    if root_search_mode:
+        # Delete default basePath option in search mode, when no basePath
+        # was explicitly set.
+        del opts['basePath']
+
+    if not vocabulary_override \
+            and schemafield \
+            and getattr(schemafield, 'vocabulary', None):
+        # widget vocab takes precedence over field
+        form_url = request.getURL()
+        # e.g. 'form.widgets.IDublinCore.subjects'
+        # XXX: taken from the z3c form implementation, actually a hack
+        #      getSource would need to be overwritten with an own implementation
+        # XXX: check how getSource refers to field name
+        widget_name = 'form.widgets.{}.{}'.format(
+            field.schemafield.name,
+            field.name
+        )
+        source_url = '{0:s}/++widget++{1:s}/@@getSource'.format(
+            form_url,
+            widget_name,
+        )
+        opts['vocabularyUrl'] = source_url
+
+    data = {
+        'pat-relateditems': opts
+    }
+
     return factory(
-        '#field:select',
-        value=value_or_default(context, field),
+        '#field:text',
+        value=value,
         props={
             'label': field.label,
             'help': field.help,
             'required': field.required,
-            'vocabulary': lookup_vocabulary(context, field)
+            'class_add': 'pat-relateditems',
+            'data': data
         },
         mode=field.mode)
