@@ -1,16 +1,24 @@
 from node.utils import UNSET
 from plone.app.textfield import RichText
+from plone.app.widgets.base import dict_merge
+from plone.app.widgets.utils import get_ajaxselect_options
 from plone.app.widgets.utils import get_tinymce_options
+from plone.app.widgets.utils import get_widget_form
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.app.z3cform.widget import DatetimeFieldWidget
 from plone.app.z3cform.widget import RelatedItemsFieldWidget
 from plone.app.z3cform.widget import RichTextFieldWidget
 from plone.app.z3cform.widget import SelectFieldWidget
+from plone.registry.interfaces import IRegistry
+from Products.CMFCore.utils import getToolByName
 from yafowil.base import factory
 from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
+#from z3c.form.interfaces import IEditForm
+#from z3c.form.interfaces import IForm
 from z3c.relationfield.schema import RelationList
+from zope.component import getUtility
 from zope.component import queryUtility
 from zope.schema import ASCIILine
 from zope.schema import Bool
@@ -19,7 +27,10 @@ from zope.schema import Datetime
 from zope.schema import Text
 from zope.schema import TextLine
 from zope.schema import Tuple
+from zope.schema.interfaces import IChoice
+from zope.schema.interfaces import ICollection
 from zope.schema.interfaces import IContextAwareDefaultFactory
+from zope.schema.interfaces import ISequence
 from zope.schema.interfaces import IVocabulary
 from zope.schema.interfaces import IVocabularyFactory
 import logging
@@ -328,14 +339,88 @@ def datetime_field_widget_factory(context, field):
 
 @widget_factory(AjaxSelectFieldWidget)
 def ajax_select_field_widget_factory(context, field):
+    # Pattern options logic taken from
+    # ``plone.app.z3cform.widget.AjaxSelectWidget``.
+    # XXX: pass view and request to widget factories
+    request = context.REQUEST
+    value = value_or_default(context, field)
+    separator = ';'
+    orderable = False
+    vocabulary_view = '@@getVocabulary'
+    vocabulary_name = field.widget.params['vocabulary']
+    view_ctx = context
+    # XXX: view_ctx = get_widget_form(view)
+    # For EditForms and non-Forms (in tests), the vocabulary is looked
+    # up on the context, otherwise on the view
+    # XXX: check for yafowil form instead of z3c form
+    #if (IEditForm.providedBy(view_ctx) or not IForm.providedBy(view_ctx)):
+    #    view_ctx = context
+    # pattern options
+    opts = dict()
+    schemafield = None
+    if IChoice.providedBy(field.schemafield):
+        opts['maximumSelectionSize'] = 1
+        schemafield = field.schemafield
+    elif ICollection.providedBy(field.schemafield):
+        schemafield = field.schemafield.value_type
+    if IChoice.providedBy(field):
+        opts['allowNewItems'] = 'false'
+    opts = dict_merge(
+        get_ajaxselect_options(
+            view_ctx,
+            value,
+            separator,
+            vocabulary_name,
+            vocabulary_view,
+            field_name=field.name
+        ),
+        opts
+    )
+    if schemafield and not vocabulary_name:
+        form_url = request.getURL()
+        # e.g. 'form.widgets.IDublinCore.subjects'
+        # XXX: taken from the z3c form implementation, actually a hack
+        #      getSource would need to be overwritten with an own implementation
+        widget_name = 'form.widgets.{}.{}'.format(
+            field.schemafield.name,
+            field.name
+        )
+        source_url = '{0:s}/++widget++{1:s}/@@getSource'.format(
+            form_url,
+            widget_name,
+        )
+        opts['vocabularyUrl'] = source_url
+    # ISequence represents an orderable collection
+    if ISequence.providedBy(field.schemafield) or orderable:
+        opts['orderable'] = True
+    # hardcoded security check hack for keywords.
+    # XXX: needs to be generalized
+    if vocabulary_name == 'plone.app.vocabularies.Keywords':
+        membership = getToolByName(context, 'portal_membership')
+        user = membership.getAuthenticatedMember()
+        registry = getUtility(IRegistry)
+        roles_allowed_to_add_keywords = registry.get(
+            'plone.roles_allowed_to_add_keywords',
+            []
+        )
+        roles = set(user.getRolesInContext(context))
+        allowNewItems = 'false'
+        if roles.intersection(roles_allowed_to_add_keywords):
+            allowNewItems = 'true'
+        opts['allowNewItems'] = allowNewItems
+    # data attribute data
+    data = {
+        'pat-select2': opts
+    }
     return factory(
-        '#field:autocomplete',
-        value=value_or_default(context, field),
+        '#field:text',
+        value=value,
         props={
             'label': field.label,
             'help': field.help,
             'required': field.required,
-            'source': 'foooo'
+            'class_add': 'pat-select2',
+            'data': data
         },
         mode=field.mode)
 

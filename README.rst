@@ -188,13 +188,15 @@ The sources are in a GIT DVCS with its main branches at
 TODO
 ====
 
-[ ] - yafowil.plone.autoform.directives
-[ ]   - factory -> for hooking yafowil factory call customizations
-[ ]   - modifier -> for hooking a modifier callback for the entire form
+[X] - yafowil.plone.autoform.directives
+[X]   - factory -> for hooking yafowil factory call customizations
+[X]   - modifier -> for hooking a modifier callback for the entire form
 [X] - yafowil resources view caching
 [X] - yafowil resources in content form JS binding?
 [X] - yafowil resource delivery?
-
+[ ] - pass view and request to widget factories
+[ ] - yafowil.widget.select2 register dedicated plone5 styles, collide
+      partly with select2 delivered in plone
 [ ] - plone.app.content.interfaces.INameFromTitle
 [ ]   - title: unicode
 [ ] - plone.app.dexterity.behaviors.discussion.IAllowDiscussion
