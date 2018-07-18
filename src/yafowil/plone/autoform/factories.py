@@ -1,3 +1,4 @@
+from Acquisition import aq_parent
 from node.utils import UNSET
 from plone.app.textfield import RichText
 from plone.app.widgets.base import dict_merge
@@ -16,8 +17,6 @@ from yafowil.base import factory
 from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
-#from z3c.form.interfaces import IEditForm
-#from z3c.form.interfaces import IForm
 from z3c.relationfield.schema import RelationList
 from zope.component import getUtility
 from zope.component import queryUtility
@@ -107,7 +106,7 @@ def value_or_default(context, field):
         if default_factory:
             try:
                 if IContextAwareDefaultFactory.providedBy(default_factory):
-                    return default_factory(context)
+                    return default_factory(aq_parent(context))
                 return default_factory()
             except Exception:
                 logger.exception('Fetching default_factory failed')
@@ -345,24 +344,17 @@ def datetime_field_widget_factory(context, field):
 
 @widget_factory(AjaxSelectFieldWidget)
 def ajax_select_field_widget_factory(context, field):
+    # XXX: generalize schemafield and vocabulary lookups
     # Pattern options logic taken from
     # ``plone.app.z3cform.widget.AjaxSelectWidget``.
-    # XXX: pass view and request to widget factories
-    request = context.REQUEST
+    # widget options
+    widget = field.widget
+    separator = widget.params.get('separator', ';')
+    orderable = widget.params.get('orderable', False)
+    vocabulary_view = widget.params.get('vocabulary_view', '@@getVocabulary')
+    vocabulary_name = widget.params['vocabulary']
+    # field value
     value = value_or_default(context, field)
-    separator = ';'
-    orderable = False
-    vocabulary_view = '@@getVocabulary'
-    vocabulary_name = field.widget.params['vocabulary']
-
-    view_ctx = context
-    # XXX: view_ctx = get_widget_form(view)
-    # For EditForms and non-Forms (in tests), the vocabulary is looked
-    # up on the context, otherwise on the view
-    # XXX: check for yafowil form instead of z3c form
-    #if (IEditForm.providedBy(view_ctx) or not IForm.providedBy(view_ctx)):
-    #    view_ctx = context
-
     # pattern options
     opts = dict()
     schemafield = None
@@ -371,12 +363,11 @@ def ajax_select_field_widget_factory(context, field):
         schemafield = field.schemafield
     elif ICollection.providedBy(field.schemafield):
         schemafield = field.schemafield.value_type
-    if IChoice.providedBy(field):
+    if IChoice.providedBy(schemafield):
         opts['allowNewItems'] = 'false'
-
     opts = dict_merge(
         get_ajaxselect_options(
-            view_ctx,
+            context,
             value,
             separator,
             vocabulary_name,
@@ -385,9 +376,8 @@ def ajax_select_field_widget_factory(context, field):
         ),
         opts
     )
-
+    # get ajax vocabulary
     if schemafield and getattr(schemafield, 'vocabulary', None):
-        form_url = request.getURL()
         # e.g. 'form.widgets.IDublinCore.subjects'
         # XXX: taken from the z3c form implementation, actually a hack
         #      getSource would need to be overwritten with an own implementation
@@ -397,39 +387,29 @@ def ajax_select_field_widget_factory(context, field):
             field.name
         )
         source_url = '{0:s}/++widget++{1:s}/@@getSource'.format(
-            form_url,
-            widget_name,
+            context.REQUEST.getURL(),
+            widget_name
         )
         opts['vocabularyUrl'] = source_url
-
     # ISequence represents an orderable collection
     if ISequence.providedBy(field.schemafield) or orderable:
         opts['orderable'] = True
-
     # hardcoded security check hack for keywords.
     # XXX: needs to be generalized
     if vocabulary_name == 'plone.app.vocabularies.Keywords':
         membership = getToolByName(context, 'portal_membership')
         user = membership.getAuthenticatedMember()
-
         registry = getUtility(IRegistry)
         roles_allowed_to_add_keywords = registry.get(
             'plone.roles_allowed_to_add_keywords',
             []
         )
-
         roles = set(user.getRolesInContext(context))
-
         allowNewItems = 'false'
         if roles.intersection(roles_allowed_to_add_keywords):
             allowNewItems = 'true'
         opts['allowNewItems'] = allowNewItems
-
-    # data attribute data
-    data = {
-        'pat-select2': opts
-    }
-
+    # call yafowil factory
     return factory(
         '#field:text',
         value=value,
@@ -437,8 +417,10 @@ def ajax_select_field_widget_factory(context, field):
             'label': field.label,
             'help': field.help,
             'required': field.required,
-            'class_add': 'pat-select2',
-            'data': data
+            'text.class_add': 'pat-select2',
+            'text.data': {
+                'pat-select2': opts
+            }
         },
         mode=field.mode)
 
@@ -446,53 +428,31 @@ def ajax_select_field_widget_factory(context, field):
 @widget_factory(SelectFieldWidget)
 def select_field_widget_factory(context, field):
     # XXX: check whether choice schema field uses this widget by default
-    separator = ';'
-    noValueToken = u''
-    noValueMessage = u''
-    multiple = None  # XXX: somewhere from widget?
-    orderable = False
+    # Pattern options logic taken from ``plone.app.z3cform.widget.SelectFieldWidget``.
+    # ``SelectFieldWidget`` inherits from ``plone.app.widgets.base.SelectWidget``.
+    # widget options
+    widget = field.widget
+    separator = widget.params.get('separator', ';')
+    noValueToken = widget.params.get('noValueToken', u'')
+    noValueMessage = widget.params.get('noValueMessage', u'')
+    multiple = widget.params.get('multiple', None)
+    orderable = widget.params.get('orderable', False)
     required = field.required
-
+    # pattern options
     opts = dict()
     if multiple or ICollection.providedBy(field.schemafield):
         multiple = opts['multiple'] = True
-
     # ISequence represents an orderable collection
     if orderable or ISequence.providedBy(field.schemafield):
         opts['orderable'] = True
-
     if multiple:
         opts['separator'] = separator
-
     # Allow to clear field value if it is not required
     if not required:
         opts['allowClear'] = True
-
+    # vocabulary for selection
     vocab = lookup_vocabulary(context, field)
-
-    # XXX: this can probably be deleted
-    #base_items = self.items
-    #if callable(base_items):
-        # items used to be a property in all widgets, then in the select
-        # widget it became a method, then in a few others too, but never in
-        # all, so this was reverted to let it be a property again.  Let's
-        # support both here to avoid breaking on some z3c.form versions.
-        # See https://github.com/zopefoundation/z3c.form/issues/44
-    #    base_items = base_items()
-    #items = []
-    #for item in base_items:
-    #    if not isinstance(item['content'], six.string_types):
-    #        item['content'] = translate(
-    #            item['content'],
-    #            context=self.request,
-    #            default=item['value'])
-    #    items.append((item['value'], item['content']))
-    #args['items'] = items
-
-    data = {
-        'pat-select2': opts
-    }
-
+    # call yafowil factory
     return factory(
         '#field:select',
         value=value_or_default(context, field),
@@ -501,51 +461,52 @@ def select_field_widget_factory(context, field):
             'help': field.help,
             'required': field.required,
             'vocabulary': vocab,
-            'class_add': 'pat-select2',
-            'data': data
+            'select.class_add': 'pat-select2',
+            'select.data': {
+                'pat-select2': opts
+            }
         },
         mode=field.mode)
 
 
 @widget_factory(RelatedItemsFieldWidget)
 def related_items_field_widget_factory(context, field):
-    # XXX: pass view and request to widget factories
-    request = context.REQUEST
-    value = value_or_default(context, field)
-    separator = ';'
-    vocabulary = None
-    # XXX: check where vocabulary_override comes from
+    # XXX: generalize schemafield and vocabulary lookups
+    # Pattern options logic taken from ``plone.app.z3cform.widget.RelatedItemsWidget``.
+    # widget options
+    widget = field.widget
+    separator = widget.params.get('separator', ';')
+    vocabulary_view = widget.params.get('vocabulary_view', '@@getVocabulary')
+    vocabulary_name = widget.params.get('vocabulary', 'plone.app.vocabularies.Catalog')
+    orderable = widget.params.get('orderable', False)
     vocabulary_override = False
-    vocabulary_view = '@@getVocabulary'
-    vocabulary_name = field.widget.params['vocabulary']
-    orderable = False
-    opts = dict()
-
     schemafield = None
     if IChoice.providedBy(field.schemafield):
-        opts['maximumSelectionSize'] = 1
         schemafield = field.schemafield
     elif ICollection.providedBy(field.schemafield):
         schemafield = field.schemafield.value_type
-
-    view_ctx = context
-    # XXX: view_ctx = get_widget_form(view)
-    # For EditForms and non-Forms (in tests), the vocabulary is looked
-    # up on the context, otherwise on the view
-    # XXX: check for yafowil form instead of z3c form
-    #if (IEditForm.providedBy(view_ctx) or not IForm.providedBy(view_ctx)):
-    #    view_ctx = context
-
+    if (
+        not vocabulary_name and
+        schemafield is not None and
+        getattr(schemafield, 'vocabularyName', None)
+    ):
+        vocabulary_name = field.vocabularyName
+        vocabulary_override = True
+    # field value
+    value = value_or_default(context, field)
+    # pattern options
+    opts = dict()
+    if IChoice.providedBy(field.schemafield):
+        opts['maximumSelectionSize'] = 1
     # XXX: check where original implementation gets ``mode`` and ``basePath``
     #      from. probably ``widget.params``
     root_search_mode = (
         opts.get('mode', None) and
         'basePath' not in opts
     )
-
     opts = dict_merge(
         get_relateditems_options(
-            view_ctx,
+            context,
             value,
             separator,
             vocabulary_name,
@@ -558,12 +519,11 @@ def related_items_field_widget_factory(context, field):
         # Delete default basePath option in search mode, when no basePath
         # was explicitly set.
         del opts['basePath']
-
     if not vocabulary_override \
             and schemafield \
             and getattr(schemafield, 'vocabulary', None):
         # widget vocab takes precedence over field
-        form_url = request.getURL()
+        form_url = context.REQUEST.getURL()
         # e.g. 'form.widgets.IDublinCore.subjects'
         # XXX: taken from the z3c form implementation, actually a hack
         #      getSource would need to be overwritten with an own implementation
@@ -577,11 +537,7 @@ def related_items_field_widget_factory(context, field):
             widget_name,
         )
         opts['vocabularyUrl'] = source_url
-
-    data = {
-        'pat-relateditems': opts
-    }
-
+    # call yafowil factory
     return factory(
         '#field:text',
         value=value,
@@ -589,7 +545,9 @@ def related_items_field_widget_factory(context, field):
             'label': field.label,
             'help': field.help,
             'required': field.required,
-            'class_add': 'pat-relateditems',
-            'data': data
+            'text.class_add': 'pat-relateditems',
+            'text.data': {
+                'pat-relateditems': opts
+            }
         },
         mode=field.mode)
