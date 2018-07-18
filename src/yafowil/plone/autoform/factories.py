@@ -15,6 +15,7 @@ from plone.app.z3cform.widget import RelatedItemsFieldWidget
 from plone.app.z3cform.widget import RichTextFieldWidget
 from plone.app.z3cform.widget import SelectFieldWidget
 from plone.registry.interfaces import IRegistry
+from plone.uuid.interfaces import IUUID
 from yafowil.base import factory
 from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
@@ -395,7 +396,11 @@ def ajax_select_field_widget_factory(context, field):
     vocabulary_view = widget.params.get('vocabulary_view', '@@getVocabulary')
     vocabulary_name = widget.params['vocabulary']
     # field value
-    value = value_or_default(context, field)
+    raw_value = value_or_default(context, field)
+    if raw_value:
+        value = separator.join(raw_value)
+    else:
+        value = ''
     # pattern options
     opts = dict()
     schemafield = None
@@ -563,7 +568,12 @@ def related_items_field_widget_factory(context, field):
         vocabulary_name = field.vocabularyName
         vocabulary_override = True
     # field value
-    value = value_or_default(context, field)
+    raw_value = value_or_default(context, field)
+    if raw_value:
+        uuids = [IUUID(ob.to_object) for ob in raw_value]
+        value = separator.join(uuids)
+    else:
+        value = ''
     # pattern options
     opts = dict()
     if IChoice.providedBy(field.schemafield):
