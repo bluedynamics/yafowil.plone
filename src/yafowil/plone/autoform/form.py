@@ -1,6 +1,10 @@
+from AccessControl import Unauthorized
+from Acquisition import aq_inner
+from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.dexterity.browser.add import DefaultAddView as DefaultAddViewBase
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import createContentInContainer
 from plone.dexterity.utils import iterSchemata
 from plone.dexterity.utils import iterSchemataForType
@@ -14,7 +18,76 @@ from yafowil.plone.autoform.persistence import YafowilAutoformPersistWriter
 from yafowil.plone.autoform.schema import resolve_schemata
 from yafowil.plone.form import BaseForm
 from yafowil.plone.form import CSRFProtectionBehavior
+from zope.component import createObject
+from zope.component import getUtility
+from zope.event import notify
+from zope.lifecycleevent import ObjectCreatedEvent
 
+
+###############################################################################
+# plone.dexterity.utils related
+###############################################################################
+
+def createContent(portal_type, suppressNotify=False, **kw):
+    """Same function as ``plone.dexterity.utils.createContent`` except
+    ``suppressNotify`` keyword argument in signature.
+
+    XXX: Update original function in ``plone.dexterity.utils``.
+    """
+    fti = getUtility(IDexterityFTI, name=portal_type)
+    content = createObject(fti.factory)
+
+    # Note: The factory may have done this already, but we want to be sure
+    # that the created type has the right portal type. It is possible
+    # to re-define a type through the web that uses the factory from an
+    # existing type, but wants a unique portal_type!
+    content.portal_type = fti.getId()
+    schemas = iterSchemataForType(portal_type)
+    fields = dict(kw)  # create a copy
+
+    for schema in schemas:
+        # schema.names() doesn't return attributes from superclasses in derived
+        # schemas. therefore we have to iterate over all items from the passed
+        # keywords arguments and set it, if the behavior has the questioned
+        # attribute.
+        behavior = schema(content)
+        for name, value in fields.items():
+            try:
+                # hasattr swallows exceptions.
+                getattr(behavior, name)
+            except AttributeError:
+                # fieldname not available
+                continue
+            setattr(behavior, name, value)
+            del fields[name]
+
+    for (key, value) in fields.items():
+        setattr(content, key, value)
+
+    if not suppressNotify:
+        notify(ObjectCreatedEvent(content))
+    return content
+
+
+def checkContentConstraints(container, child):
+    """Check whether child is allowed in container.
+
+    XXX: Move to ``plone.dexterity.utils`` and use in ``addContentToContainer``.
+    """
+    container = aq_inner(container)
+    container_fti = container.getTypeInfo()
+    fti = getUtility(IDexterityFTI, name=child.portal_type)
+    if not fti.isConstructionAllowed(container):
+        raise Unauthorized('Cannot create {}'.format(child.portal_type))
+    if container_fti is not None \
+        and not container_fti.allowType(child.portal_type):
+        msg = 'Disallowed subobject type: {}'.format(child.portal_type)
+        raise ValueError(msg)
+
+
+###############################################################################
+# default add view
+###############################################################################
 
 class DefaultAddView(DefaultAddViewBase):
     """Replacement of default add view considering whether content type
@@ -36,9 +109,25 @@ class DefaultAddView(DefaultAddViewBase):
     def __call__(self):
         if not self.is_yafowil_form:
             return super(DefaultAddView, self).__call__()
-        form = AddAutoForm(self.context, self.request, self.ti)
+        # Create dummy add context. Used to render the add form.
+        # This context does not get persisted. It's just used to render the
+        # add form and gets dropped afterwards. In order to make this work
+        # we need to do acquisition wrapping.
+        # Yafowil autoforms behave differently from autoforms based on z3zform
+        # here. We're convinced that having the correct context a form is
+        # supposed to be rendered on is the way a form engine must work.
+        add_context = createContent(
+            self.ti.getId(),
+            suppressNotify=True
+        ).__of__(aq_inner(self.context))
+        checkContentConstraints(self.context, add_context)
+        form = AddAutoForm(add_context, self.request, self.ti)
         return form()
 
+
+###############################################################################
+# yafowil base autoform
+###############################################################################
 
 @plumbing(CSRFProtectionBehavior)
 class BaseAutoForm(BaseForm):
@@ -132,6 +221,10 @@ class BaseAutoForm(BaseForm):
         return self.template()
 
 
+###############################################################################
+# yafowil autoform addform
+###############################################################################
+
 class AddAutoForm(BaseAutoForm):
     """Yafowil add form.
     """
@@ -146,9 +239,9 @@ class AddAutoForm(BaseAutoForm):
     def form_title(self):
         return 'Add {}'.format(self.ti.Title())
 
-    @property
-    def action_resource(self):
-        return u'++add++{tid}'.format(tid=self.ti.getId())
+    def form_action(self, widget, data):
+        action_resource = u'++add++{tid}'.format(tid=self.ti.getId())
+        return u'%s/%s' % (aq_parent(self.context).absolute_url(), action_resource)
 
     def get_schemata(self):
         return iterSchemataForType(self.ti.getId())
@@ -161,6 +254,10 @@ class AddAutoForm(BaseAutoForm):
         child = createContentInContainer(self.context, self.ti.getId())
         data.write(child)
 
+
+###############################################################################
+# yafowil autoform editform
+###############################################################################
 
 class EditAutoForm(BaseAutoForm):
     """Yafowil edit form.
