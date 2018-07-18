@@ -1,25 +1,29 @@
 from Acquisition import aq_parent
+from Products.CMFCore.utils import getToolByName
 from node.utils import UNSET
 from plone.app.textfield import RichText
+from plone.app.textfield.value import RichTextValue
 from plone.app.widgets.base import dict_merge
 from plone.app.widgets.utils import get_ajaxselect_options
 from plone.app.widgets.utils import get_relateditems_options
 from plone.app.widgets.utils import get_tinymce_options
 from plone.app.widgets.utils import get_widget_form
+from plone.app.uuid.utils import uuidToObject
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.app.z3cform.widget import DatetimeFieldWidget
 from plone.app.z3cform.widget import RelatedItemsFieldWidget
 from plone.app.z3cform.widget import RichTextFieldWidget
 from plone.app.z3cform.widget import SelectFieldWidget
 from plone.registry.interfaces import IRegistry
-from Products.CMFCore.utils import getToolByName
 from yafowil.base import factory
 from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
+from z3c.relationfield.relation import RelationValue
 from z3c.relationfield.schema import RelationList
 from zope.component import getUtility
 from zope.component import queryUtility
+from zope.intid.interfaces import IIntIds
 from zope.schema import ASCIILine
 from zope.schema import Bool
 from zope.schema import Choice
@@ -167,6 +171,25 @@ def lookup_vocabulary(context, field):
     return ret
 
 
+class RichtextValueExtractor(object):
+
+    def __init__(self, field):
+        self.field = field
+
+    def __call__(self, widget, data):
+        extracted = data.extracted
+        if extracted is UNSET:
+            return extracted
+        # XXX: extract mimetype from request
+        mime_type = self.field.schemafield.default_mime_type
+        output_mime_type = self.field.schemafield.output_mime_type
+        return RichTextValue(
+            raw=extracted,
+            mimeType=mime_type,
+            outputMimeType=output_mime_type
+        )
+
+
 def create_richtext_widget(context, field):
     """Reads tinymce pattern options and creates a richtext field using related
     mockup pattern.
@@ -185,7 +208,7 @@ def create_richtext_widget(context, field):
             }
         }
     return factory(
-        '#field:richtext',
+        '#field:*richtext_value:richtext',
         value=value_or_default(context, field),
         props={
             'label': field.label,
@@ -194,6 +217,11 @@ def create_richtext_widget(context, field):
             'mimetypes': ['text/html', 'text/x-web-textile'],
             'mimetypes_class': 'pat-textareamimetypeselector',
             'mimetypes_data': mimetypes_data
+        },
+        custom={
+            'richtext_value': {
+                'extractors': [RichtextValueExtractor(field)]
+            }
         },
         mode=field.mode)
 
@@ -342,6 +370,19 @@ def datetime_field_widget_factory(context, field):
     return create_datetime_widget(context, field)
 
 
+class AjaxSelectValueExtractor(object):
+
+    def __init__(self, field):
+        self.field = field
+
+    def __call__(self, widget, data):
+        extracted = data.extracted
+        if extracted is UNSET:
+            return extracted
+        seperator = self.field.widget.params.get('separator', ';')
+        return tuple(extracted.split(seperator))
+
+
 @widget_factory(AjaxSelectFieldWidget)
 def ajax_select_field_widget_factory(context, field):
     # XXX: generalize schemafield and vocabulary lookups
@@ -411,7 +452,7 @@ def ajax_select_field_widget_factory(context, field):
         opts['allowNewItems'] = allowNewItems
     # call yafowil factory
     return factory(
-        '#field:text',
+        '#field:*ajax_select_value:text',
         value=value,
         props={
             'label': field.label,
@@ -420,6 +461,11 @@ def ajax_select_field_widget_factory(context, field):
             'text.class_add': 'pat-select2',
             'text.data': {
                 'pat-select2': opts
+            }
+        },
+        custom={
+            'ajax_select_value': {
+                'extractors': [AjaxSelectValueExtractor(field)]
             }
         },
         mode=field.mode)
@@ -467,6 +513,30 @@ def select_field_widget_factory(context, field):
             }
         },
         mode=field.mode)
+
+
+class RelatedItemsValueExtractor(object):
+
+    def __init__(self, field):
+        self.field = field
+
+    def __call__(self, widget, data):
+        extracted = data.extracted
+        if extracted is UNSET:
+            return extracted
+        intids = getUtility(IIntIds)
+        seperator = self.field.widget.params.get('seperator', ';')
+        values = list()
+        for item in extracted.split(seperator):
+            to_id = intids.getId(uuidToObject(item))
+            values.append(RelationValue(to_id))
+            #try:
+            #    to_id = intids.getId(uuidToObject(item))
+            #    values.append(RelationValue(to_id))
+            #except:
+            #    # ignore if object not exists any more
+            #    pass
+        return values
 
 
 @widget_factory(RelatedItemsFieldWidget)
@@ -539,7 +609,7 @@ def related_items_field_widget_factory(context, field):
         opts['vocabularyUrl'] = source_url
     # call yafowil factory
     return factory(
-        '#field:text',
+        '#field:*related_items_value:text',
         value=value,
         props={
             'label': field.label,
@@ -548,6 +618,11 @@ def related_items_field_widget_factory(context, field):
             'text.class_add': 'pat-relateditems',
             'text.data': {
                 'pat-relateditems': opts
+            }
+        },
+        custom={
+            'related_items_value': {
+                'extractors': [RelatedItemsValueExtractor(field)]
             }
         },
         mode=field.mode)

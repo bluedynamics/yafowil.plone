@@ -248,10 +248,8 @@ class AddAutoForm(BaseAutoForm):
 
     def save(self, widget, data):
         print 'AddAutoForm.save()'
-        # XXX: trigger object events
-        # XXX: name choosing
-        # XXX: rename object in container
-        child = createContentInContainer(self.context, self.ti.getId())
+        container = aq_parent(self.context)
+        child = createContentInContainer(container, self.ti.getId())
         data.write(child)
 
 
