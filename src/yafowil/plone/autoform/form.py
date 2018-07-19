@@ -3,7 +3,10 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.statusmessages.interfaces import IStatusMessage
 from plone.dexterity.browser.add import DefaultAddView as DefaultAddViewBase
+from plone.dexterity.events import AddCancelledEvent
+from plone.dexterity.i18n import MessageFactory as _dx
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import createContentInContainer
 from plone.dexterity.utils import iterSchemata
@@ -133,6 +136,7 @@ class DefaultAddView(DefaultAddViewBase):
 class BaseAutoForm(BaseForm):
     """Yafowil base autoform.
     """
+    ti = None
     form_name = ''
     form_title = ''
     template = ViewPageTemplateFile('../content.pt')
@@ -201,8 +205,8 @@ class BaseAutoForm(BaseForm):
             props={
                 'action': 'cancel',
                 'expression': True,
-                'handler': self.cancel,
-                'next': self.next,
+                'skip': True,
+                'next': self.cancel,
             }
         )
 
@@ -211,11 +215,11 @@ class BaseAutoForm(BaseForm):
             'Abstract ``BaseAutoForm`` does not implement ``save``'
         )
 
-    def cancel(self, widget, data):
-        print 'BaseAutoForm.cancel()'
+    def cancel(self, request):
+        self.request.response.redirect(self.context.absolute_url())
 
     def next(self, request):
-        print 'BaseAutoForm.next()'
+        self.request.response.redirect(self.context.absolute_url())
 
     def __call__(self):
         return self.template()
@@ -247,10 +251,24 @@ class AddAutoForm(BaseAutoForm):
         return iterSchemataForType(self.ti.getId())
 
     def save(self, widget, data):
-        print 'AddAutoForm.save()'
         container = aq_parent(self.context)
         child = createContentInContainer(container, self.ti.getId())
         data.write(child)
+
+    def cancel(self, request):
+        container = aq_parent(self.context)
+        notify(AddCancelledEvent(container))
+        IStatusMessage(self.request).addStatusMessage(
+            _dx(u"Add New Item operation cancelled"), "info"
+        )
+        self.request.response.redirect(container.absolute_url())
+
+    def next(self, request):
+        immediate_view = self.ti.immediate_view
+        next_url = self.context.absolute_url()
+        if immediate_view:
+            next_url = u'{}/{}'.format(next_url, immediate_view)
+        self.request.response.redirect(next_url)
 
 
 ###############################################################################
@@ -279,6 +297,5 @@ class EditAutoForm(BaseAutoForm):
         return iterSchemata(self.context)
 
     def save(self, widget, data):
-        print 'EditAutoForm.save()'
         # XXX: trigger object events
         data.write(self.context)
