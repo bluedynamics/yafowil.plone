@@ -219,7 +219,8 @@ def create_datetime_widget(context, field):
             'datepicker': True,
             'time': True,
             'timepicker': True,
-            'persist': True
+            'persist': True,
+            'emptyvalue': None
         },
         mode=field.mode)
 
