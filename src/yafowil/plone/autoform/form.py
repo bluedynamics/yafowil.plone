@@ -433,4 +433,4 @@ class EditAutoForm(BaseAutoForm):
         IStatusMessage(self.request).addStatusMessage(
             _dx(u"Edit cancelled"), "info"
         )
-        self.request.response.redirect(container.absolute_url())
+        self.request.response.redirect(self.context.absolute_url())
