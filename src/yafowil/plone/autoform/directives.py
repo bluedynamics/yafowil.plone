@@ -104,3 +104,23 @@ class TGVCache(object):
         return modifier if modifier else []
 
 tgv_cache = TGVCache()
+
+
+class ContextAwareCallable(object):
+    """Any kind of callable can be passed to yafowil factory which gets passed
+    the widget instance and the runtime data instance. In case such callables
+    are set via ``yafowil.plone.autoform.directives.factory``, additionally
+    the context is needed.
+
+    This object acts as bridge between yafowil callable contract, and passes
+    ``context``, ``widget`` and ``data`` to callables set via factory directive.
+    """
+
+    def __init__(self, context, callback):
+        self.context = context
+        self.callback = callback
+        self.__name__ = callback.__name__
+        self.__doc__ = callback.__doc__
+
+    def __call__(self, widget, data):
+        return self.callback(self.context, widget, data)

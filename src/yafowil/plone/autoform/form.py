@@ -140,26 +140,6 @@ class DefaultAddView(DefaultAddViewBase):
 # yafowil base autoform
 ###############################################################################
 
-class ContextAwareCallable(object):
-    """Any kind of callable can be passed to yafowil factory which gets passed
-    the widget instance and the runtime data instance. In case such callables
-    are set via ``yafowil.plone.autoform.directives.factory``, additionally
-    the context is needed.
-
-    This object acts as bridge between yafowil callable contract, and passes
-    ``context``, ``widget`` and ``data`` to callables set via factory directive.
-    """
-
-    def __init__(self, context, callback):
-        self.context = context
-        self.callback = callback
-        self.__name__ = callback.__name__
-        self.__doc__ = callback.__doc__
-
-    def __call__(self, widget, data):
-        return self.callback(self.context, widget, data)
-
-
 @plumbing(CSRFProtectionBehavior)
 class BaseAutoForm(BaseForm):
     """Yafowil base autoform.
@@ -238,7 +218,7 @@ class BaseAutoForm(BaseForm):
                     # wrap callables
                     for k, v in factory_kw.items():
                         if callable(v):
-                            factory_kw[k] = ContextAwareCallable(v)
+                            factory_kw[k] = directives.ContextAwareCallable(v)
                     # call factory
                     form_field = fieldset[field_name] = factory(
                         blueprints,
