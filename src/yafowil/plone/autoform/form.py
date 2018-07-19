@@ -1,16 +1,23 @@
 from AccessControl import Unauthorized
+from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
+from Acquisition.interfaces import IAcquirer
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.dexterity.browser.add import DefaultAddView as DefaultAddViewBase
+from plone.dexterity.events import AddBegunEvent
 from plone.dexterity.events import AddCancelledEvent
+from plone.dexterity.events import EditBegunEvent
+from plone.dexterity.events import EditCancelledEvent
+from plone.dexterity.events import EditFinishedEvent
 from plone.dexterity.i18n import MessageFactory as _dx
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.dexterity.utils import createContentInContainer
+from plone.dexterity.utils import addContentToContainer
 from plone.dexterity.utils import iterSchemata
 from plone.dexterity.utils import iterSchemataForType
+from plone.registry.interfaces import IRegistry
 from plumber import plumbing
 from yafowil.base import factory
 from yafowil.plone.autoform import FORM_SCOPE_ADD
@@ -141,11 +148,25 @@ class BaseAutoForm(BaseForm):
     form_title = ''
     template = ViewPageTemplateFile('../content.pt')
 
+    @property
+    def action_triggered(self):
+        """Flag whether form action has been triggered.
+        """
+        actions = [
+            self.form['save'],
+            self.form['cancel']
+        ]
+        for action in actions:
+            if self.request.get('action.{0}'.format(action.dottedpath)):
+                return True
+        return False
+
     def get_schemata(self):
         """Return all schemata to generate form fields for.
         """
         raise NotImplementedError(
-            '``BaseAutoForm`` does not implement ``get_schemata``')
+            '``BaseAutoForm`` does not implement ``get_schemata``'
+        )
 
     def prepare(self):
         form_class = (
@@ -215,11 +236,15 @@ class BaseAutoForm(BaseForm):
             'Abstract ``BaseAutoForm`` does not implement ``save``'
         )
 
-    def cancel(self, request):
-        self.request.response.redirect(self.context.absolute_url())
-
     def next(self, request):
-        self.request.response.redirect(self.context.absolute_url())
+        raise NotImplementedError(
+            'Abstract ``BaseAutoForm`` does not implement ``next``'
+        )
+
+    def cancel(self, request):
+        raise NotImplementedError(
+            'Abstract ``BaseAutoForm`` does not implement ``cancel``'
+        )
 
     def __call__(self):
         return self.template()
@@ -250,10 +275,48 @@ class AddAutoForm(BaseAutoForm):
     def get_schemata(self):
         return iterSchemataForType(self.ti.getId())
 
+    def prepare(self):
+        super(AddAutoForm, self).prepare()
+        if not self.action_triggered:
+            notify(AddBegunEvent(aq_parent(self.context)))
+
     def save(self, widget, data):
         container = aq_parent(self.context)
-        child = createContentInContainer(container, self.ti.getId())
-        data.write(child)
+        content = createObject(self.ti.factory)
+        # Note: The factory may have done this already, but we want to be sure
+        # that the created type has the right portal type. It is possible
+        # to re-define a type through the web that uses the factory from an
+        # existing type, but wants a unique portal_type!
+        if hasattr(content, '_setPortalTypeName'):
+            content._setPortalTypeName(self.ti.getId())
+        # Acquisition wrap temporarily to satisfy things like vocabularies
+        # depending on tools
+        if IAcquirer.providedBy(content):
+            content = content.__of__(container)
+        # write data from form to content
+        data.write(content)
+        # unwrap acquisition
+        content = aq_base(content)
+        # notify object created
+        notify(ObjectCreatedEvent(content))
+        # add content to container
+        content = addContentToContainer(container, content)
+        # remember content id for redirection
+        self.new_content_id = content.id
+        # set status message
+        IStatusMessage(self.request).addStatusMessage(
+            _dx(u"Item created"), "info"
+        )
+
+    def next(self, request):
+        container = aq_parent(self.context)
+        next_url = u'{}/{}'.format(
+            container.absolute_url(),
+            self.new_content_id
+        )
+        if self.ti.immediate_view:
+            next_url = u'{}/{}'.format(next_url, self.ti.immediate_view)
+        self.request.response.redirect(next_url)
 
     def cancel(self, request):
         container = aq_parent(self.context)
@@ -262,13 +325,6 @@ class AddAutoForm(BaseAutoForm):
             _dx(u"Add New Item operation cancelled"), "info"
         )
         self.request.response.redirect(container.absolute_url())
-
-    def next(self, request):
-        immediate_view = self.ti.immediate_view
-        next_url = self.context.absolute_url()
-        if immediate_view:
-            next_url = u'{}/{}'.format(next_url, immediate_view)
-        self.request.response.redirect(next_url)
 
 
 ###############################################################################
@@ -296,6 +352,33 @@ class EditAutoForm(BaseAutoForm):
     def get_schemata(self):
         return iterSchemata(self.context)
 
+    def prepare(self):
+        super(EditAutoForm, self).prepare()
+        if not self.action_triggered:
+            notify(EditBegunEvent(self.context))
+
     def save(self, widget, data):
-        # XXX: trigger object events
         data.write(self.context)
+        notify(EditFinishedEvent(self.context))
+        IStatusMessage(self.request).addStatusMessage(
+            _dx(u"Changes saved"), "info"
+        )
+
+    def next(self, request):
+        next_url = self.context.absolute_url()
+        portal_type = self.context.portal_type
+        registry = getUtility(IRegistry)
+        use_view_action = registry.get(
+            'plone.types_use_view_action_in_listings',
+            []
+        )
+        if portal_type in use_view_action:
+            next_url = u'{}/view'.format(next_url)
+        self.request.response.redirect(next_url)
+
+    def cancel(self, request):
+        notify(EditCancelledEvent(self.context))
+        IStatusMessage(self.request).addStatusMessage(
+            _dx(u"Edit cancelled"), "info"
+        )
+        self.request.response.redirect(container.absolute_url())
