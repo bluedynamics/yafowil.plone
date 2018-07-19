@@ -32,16 +32,6 @@ class RichtextPersistWriter(YafowilAutoformPersistWriter):
         super(RichtextPersistWriter, self).__call__(model, target, value)
 
 
-class DatetimePersistWriter(YafowilAutoformPersistWriter):
-
-    def __call__(self, model, target, value):
-        if value:
-            value = DateTime(value)
-        else:
-            value = None
-        super(DatetimePersistWriter, self).__call__(model, target, value)
-
-
 class AjaxSelectPersistWriter(YafowilAutoformPersistWriter):
 
     def __call__(self, model, target, value):

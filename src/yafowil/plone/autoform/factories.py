@@ -19,7 +19,6 @@ from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
 from yafowil.plone.autoform.persistence import AjaxSelectPersistWriter
-from yafowil.plone.autoform.persistence import DatetimePersistWriter
 from yafowil.plone.autoform.persistence import RelatedItemsPersistWriter
 from yafowil.plone.autoform.persistence import RichtextPersistWriter
 from z3c.relationfield.schema import RelationList
@@ -189,9 +188,12 @@ def create_richtext_widget(context, field):
                 },
             }
         }
+    value = value_or_default(context, field)
+    if value:
+        value = value.raw
     return factory(
         '#field:richtext',
-        value=value_or_default(context, field),
+        value=value,
         props={
             'label': field.label,
             'help': field.help,
@@ -199,18 +201,16 @@ def create_richtext_widget(context, field):
             'mimetypes': ['text/html', 'text/x-web-textile'],
             'mimetypes_class': 'pat-textareamimetypeselector',
             'mimetypes_data': mimetypes_data,
-            'persist-writer': RichtextPersistWriter(field)
+            'persist': True,
+            'persist_writer': RichtextPersistWriter(field)
         },
         mode=field.mode)
 
 
 def create_datetime_widget(context, field):
-    value = value_or_default(context, field)
-    if value:
-        value = value.asdatetime()
     return factory(
         '#field:datetime',
-        value=value,
+        value=value_or_default(context, field),
         props={
             'label': field.label,
             'help': field.help,
@@ -219,7 +219,7 @@ def create_datetime_widget(context, field):
             'datepicker': True,
             'time': True,
             'timepicker': True,
-            'persist-writer': DatetimePersistWriter(field)
+            'persist': True
         },
         mode=field.mode)
 
