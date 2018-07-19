@@ -23,6 +23,7 @@ from yafowil.base import factory
 from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
+from yafowil.plone.autoform import directives
 from yafowil.plone.autoform.factories import widget_factory
 from yafowil.plone.autoform.persistence import YafowilAutoformPersistWriter
 from yafowil.plone.autoform.schema import resolve_schemata
@@ -139,6 +140,26 @@ class DefaultAddView(DefaultAddViewBase):
 # yafowil base autoform
 ###############################################################################
 
+class ContextAwareCallable(object):
+    """Any kind of callable can be passed to yafowil factory which gets passed
+    the widget instance and the runtime data instance. In case such callables
+    are set via ``yafowil.plone.autoform.directives.factory``, additionally
+    the context is needed.
+
+    This object acts as bridge between yafowil callable contract, and passes
+    ``context``, ``widget`` and ``data`` to callables set via factory directive.
+    """
+
+    def __init__(self, context, callback):
+        self.context = context
+        self.callback = callback
+        self.__name__ = callback.__name__
+        self.__doc__ = callback.__doc__
+
+    def __call__(self, widget, data):
+        return self.callback(self.context, widget, data)
+
+
 @plumbing(CSRFProtectionBehavior)
 class BaseAutoForm(BaseForm):
     """Yafowil base autoform.
@@ -191,6 +212,8 @@ class BaseAutoForm(BaseForm):
             })
         # resolve schema and add fieldsets to form
         fieldset_definitions = resolve_schemata(self.get_schemata())
+        # form order definitions
+        order_defs = list()
         for idx, fieldset_definition in enumerate(fieldset_definitions):
             fieldset_class = 'autotoc-section'
             if idx == 0:
@@ -203,16 +226,45 @@ class BaseAutoForm(BaseForm):
                 })
             # add fields to fieldset
             for field_definition in fieldset_definition:
-                # XXX: consider schema/behavior name in field name
+                # XXX: consider schema/behavior name in field name?
                 field_name = field_definition.name
-                form_field = fieldset[field_name] = widget_factory.widget_for(
-                    self.context,
-                    field_definition
+                factory_kw = directives.tgv_cache.get_factory(
+                    field_definition.schema,
+                    field_name
                 )
+                # check if factory directive called for field
+                if factory_kw:
+                    blueprints = factory_kw.pop('blueprints')
+                    # wrap callables
+                    for k, v in factory_kw.items():
+                        if callable(v):
+                            factory_kw[k] = ContextAwareCallable(v)
+                    # call factory
+                    form_field = fieldset[field_name] = factory(
+                        blueprints,
+                        **factory_kw
+                    )
+                # if no factory directive, use widget_factory
+                else:
+                    form_field = fieldset[field_name] = widget_factory.widget_for(
+                        self.context,
+                        field_definition
+                    )
                 if not form_field.attrs.get('persist_writer'):
                     writer = YafowilAutoformPersistWriter(field_definition)
                     form_field.attrs['persist_writer'] = writer
-        self.form['save'] = factory(
+                # remember order definition for field if defined
+                order_def = directives.tgv_cache.get_order(
+                    field_definition.schema,
+                    field_name
+                )
+                if order_def:
+                    order_defs.append((
+                        fieldset_definition.name,
+                        field_name,
+                        order_def
+                    ))
+        form['save'] = factory(
             'submit',
             props={
                 'action': 'save',
@@ -221,7 +273,7 @@ class BaseAutoForm(BaseForm):
                 'next': self.next,
             }
         )
-        self.form['cancel'] = factory(
+        form['cancel'] = factory(
             'submit',
             props={
                 'action': 'cancel',
@@ -230,6 +282,26 @@ class BaseAutoForm(BaseForm):
                 'next': self.cancel,
             }
         )
+        # resolve field order
+        for fieldset_name, field_name, order_def in order_defs:
+            source_fieldset = target_fieldset = form[fieldset_name]
+            if order_def['fieldset']:
+                target_fieldset = form[order_def['fieldset']]
+            if order_def['before']:
+                form_field = source_fieldset.detach(field_name)
+                anchor_field = target_fieldset[order_def['before']]
+                target_fieldset.insertbefore(form_field, anchor_field)
+            elif order_def['after']:
+                form_field = source_fieldset.detach(field_name)
+                anchor_field = target_fieldset[order_def['after']]
+                target_fieldset.insertafter(form_field, anchor_field)
+            elif order_def['fieldset']:
+                form_field = source_fieldset.detach(field_name)
+                target_fieldset[field_name] = form_field
+        # call form modifiers
+        for schema in self.get_schemata():
+            for modifier in directives.tgv_cache.get_modifier(schema):
+                modifier(form)
 
     def save(self, widget, data):
         raise NotImplementedError(

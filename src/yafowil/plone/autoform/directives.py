@@ -2,10 +2,10 @@
 from plone.supermodel.directives import MetadataDictDirective
 from plone.supermodel.directives import MetadataListDirective
 
+
 FACTORY_KEY = 'yafowil.plone.metainfo.factory'
 ORDER_KEY = 'yafowil.plone.metainfo.order'
 MODIFER_KEY = 'yafowil.plone.metainfo.modifier'
-
 
 _marker = set()
 
@@ -72,3 +72,35 @@ class modifier(MetadataListDirective):
         modifier,
     ):
         return [modifier]
+
+
+class TGVCache(object):
+    """Tagged value cache.
+    """
+    _cache = {
+        FACTORY_KEY: {},
+        ORDER_KEY: {},
+        MODIFER_KEY: {},
+    }
+
+    def _query(self, key, schema):
+        tgv = self._cache[key].get(schema)
+        if tgv is None:
+            tgv = self._cache[key][schema] = schema.queryTaggedValue(key)
+        return tgv
+
+    def get_factory(self, schema, field_name):
+        tgv = self._query(FACTORY_KEY, schema)
+        if tgv:
+            return tgv.get(field_name)
+
+    def get_order(self, schema, field_name):
+        tgv = self._query(ORDER_KEY, schema)
+        if tgv:
+            return tgv.get(field_name)
+
+    def get_modifier(self, schema):
+        modifier = self._query(MODIFER_KEY, schema)
+        return modifier if modifier else []
+
+tgv_cache = TGVCache()
