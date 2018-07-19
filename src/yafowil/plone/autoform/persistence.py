@@ -12,6 +12,7 @@ class YafowilAutoformPersistWriter(object):
         self.field = field
 
     def __call__(self, model, target, value):
+        # XXX: only write if changed
         if self.field.is_behavior:
             setattr(self.field.schema(model), target, value)
         else:
