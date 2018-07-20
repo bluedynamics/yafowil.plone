@@ -281,7 +281,7 @@ class BaseAutoForm(BaseForm):
         # call form modifiers
         for schema in self.get_schemata():
             for modifier in directives.tgv_cache.get_modifier(schema):
-                modifier(form)
+                modifier(self.context, form)
 
     def save(self, widget, data):
         raise NotImplementedError(

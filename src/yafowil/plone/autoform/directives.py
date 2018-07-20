@@ -4,14 +4,15 @@ from plone.supermodel.directives import MetadataListDirective
 
 
 FACTORY_KEY = 'yafowil.plone.metainfo.factory'
+FACTORY_CALLABLE_KEY = 'yafowil.plone.metainfo.factory_callable'
 ORDER_KEY = 'yafowil.plone.metainfo.order'
-MODIFER_KEY = 'yafowil.plone.metainfo.modifier'
+MODIFIER_KEY = 'yafowil.plone.metainfo.modifier'
 
 _marker = set()
 
 
 class factory(MetadataDictDirective):
-    """Directive used to define factory infos for
+    """Directive used to define yafowil factory call options for a field.
     """
     key = FACTORY_KEY
 
@@ -42,18 +43,22 @@ class factory(MetadataDictDirective):
         return {field_name: data}
 
 
+class factory_callable(MetadataDictDirective):
+    """Directive used to define a callable returning a yafowil widget for a
+    schema field.
+    """
+    key = FACTORY_CALLABLE_KEY
+
+    def factory(self, field_name, func):
+        return {field_name: func}
+
+
 class order(MetadataDictDirective):
-    """Directive used to define order infos for a schema field
+    """Directive used to define order infos for a schema field.
     """
     key = ORDER_KEY
 
-    def factory(
-        self,
-        field_name,
-        fieldset=None,
-        after=None,
-        before=None,
-    ):
+    def factory(self, field_name, fieldset=None, after=None, before=None):
         data = {
             'fieldset': fieldset,
             'after': after,
@@ -63,14 +68,11 @@ class order(MetadataDictDirective):
 
 
 class modifier(MetadataListDirective):
-    """Directive used to define factory infos for
+    """Directive used to define a form modifier callable.
     """
-    key = MODIFER_KEY
+    key = MODIFIER_KEY
 
-    def factory(
-        self,
-        modifier,
-    ):
+    def factory(self, modifier):
         return [modifier]
 
 
@@ -79,8 +81,9 @@ class TGVCache(object):
     """
     _cache = {
         FACTORY_KEY: {},
+        FACTORY_CALLABLE_KEY: {},
         ORDER_KEY: {},
-        MODIFER_KEY: {},
+        MODIFIER_KEY: {},
     }
 
     def _query(self, key, schema):
@@ -94,13 +97,18 @@ class TGVCache(object):
         if tgv:
             return tgv.get(field_name)
 
+    def get_factory_callable(self, schema, field_name):
+        tgv = self._query(FACTORY_CALLABLE_KEY, schema)
+        if tgv:
+            return tgv.get(field_name)
+
     def get_order(self, schema, field_name):
         tgv = self._query(ORDER_KEY, schema)
         if tgv:
             return tgv.get(field_name)
 
     def get_modifier(self, schema):
-        modifier = self._query(MODIFER_KEY, schema)
+        modifier = self._query(MODIFIER_KEY, schema)
         return modifier if modifier else []
 
 tgv_cache = TGVCache()
