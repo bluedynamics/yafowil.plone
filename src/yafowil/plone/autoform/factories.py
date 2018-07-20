@@ -6,7 +6,6 @@ from plone.app.widgets.base import dict_merge
 from plone.app.widgets.utils import get_ajaxselect_options
 from plone.app.widgets.utils import get_relateditems_options
 from plone.app.widgets.utils import get_tinymce_options
-from plone.app.widgets.utils import get_widget_form
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.app.z3cform.widget import DatetimeFieldWidget
 from plone.app.z3cform.widget import RelatedItemsFieldWidget

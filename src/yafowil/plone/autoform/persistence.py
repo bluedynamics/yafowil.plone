@@ -1,4 +1,3 @@
-from DateTime import DateTime
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from z3c.relationfield.relation import RelationValue
