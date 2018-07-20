@@ -33,6 +33,7 @@ from zope.component import createObject
 from zope.component import getUtility
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
+import copy
 
 
 ###############################################################################
@@ -140,6 +141,18 @@ class DefaultAddView(DefaultAddViewBase):
 # yafowil base autoform
 ###############################################################################
 
+def wrap_callables(context, dct):
+    # recursively wrap callables into ContextAwareCallable
+    for k, v in dct.items():
+        if callable(v):
+            dct[k] = directives.ContextAwareCallable(context, v)
+        if isinstance(v, dict):
+            wrap_callables(context, v)
+        if isinstance(v, list) or isinstance(v, tuple):
+            for it in v:
+                wrap_callables(context, it)
+
+
 @plumbing(CSRFProtectionBehavior)
 class BaseAutoForm(BaseForm):
     """Yafowil base autoform.
@@ -221,12 +234,9 @@ class BaseAutoForm(BaseForm):
                     form_field = fieldset[field_name] = factory_cb(self.context)
                 # check if factory directive called for field
                 elif factory_kw:
+                    factory_kw = copy.deepcopy(factory_kw)
                     blueprints = factory_kw.pop('blueprints')
-                    # wrap callables
-                    for k, v in factory_kw.items():
-                        if callable(v):
-                            factory_kw[k] = directives.ContextAwareCallable(v)
-                    # call factory
+                    wrap_callables(self.context, factory_kw)
                     form_field = fieldset[field_name] = factory(
                         blueprints,
                         **factory_kw
