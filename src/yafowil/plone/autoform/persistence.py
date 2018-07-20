@@ -1,3 +1,4 @@
+from node.utils import UNSET
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from z3c.relationfield.relation import RelationValue
@@ -11,11 +12,13 @@ class YafowilAutoformPersistWriter(object):
         self.field = field
 
     def __call__(self, model, target, value):
-        # XXX: only write if changed
         if self.field.is_behavior:
-            setattr(self.field.schema(model), target, value)
+            behavior = self.field.schema(model)
+            if getattr(behavior, target, UNSET) != value:
+                setattr(behavior, target, value)
         else:
-            setattr(model, target, value)
+            if getattr(model, target, UNSET) != value:
+                setattr(model, target, value)
 
 
 class RichtextPersistWriter(YafowilAutoformPersistWriter):
