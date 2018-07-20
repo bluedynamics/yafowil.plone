@@ -208,12 +208,19 @@ class BaseAutoForm(BaseForm):
             for field_definition in fieldset_definition:
                 # XXX: consider schema/behavior name in field name?
                 field_name = field_definition.name
+                factory_cb = directives.tgv_cache.get_factory_callable(
+                    field_definition.schema,
+                    field_name
+                )
                 factory_kw = directives.tgv_cache.get_factory(
                     field_definition.schema,
                     field_name
                 )
+                # check if factory_callable directive called for field
+                if factory_cb:
+                    form_field = fieldset[field_name] = factory_cb(self.context)
                 # check if factory directive called for field
-                if factory_kw:
+                elif factory_kw:
                     blueprints = factory_kw.pop('blueprints')
                     # wrap callables
                     for k, v in factory_kw.items():
@@ -224,7 +231,7 @@ class BaseAutoForm(BaseForm):
                         blueprints,
                         **factory_kw
                     )
-                # if no factory directive, use widget_factory
+                # if no directive called for field, use widget_factory
                 else:
                     form_field = fieldset[field_name] = widget_factory.widget_for(
                         self.context,
