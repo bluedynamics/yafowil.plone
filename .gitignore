@@ -4,6 +4,7 @@
 *.pyo
 *.mo
 *.egg-info
+.python-version
 /develop-eggs/
 /parts/
 /bin/
