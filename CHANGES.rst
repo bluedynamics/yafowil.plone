@@ -2,8 +2,14 @@
 History
 =======
 
-2.4.2 (unreleased)
+2.5.0 (unreleased)
 ------------------
+
+- Add resources explicit in pages using YAFOWIL.
+  Do not deliver the CSS/JS chunk on every request.
+  Code using yafoil w/o the ``yafowil.plone.form.*`` as base class need a minimal modification.
+  See README.
+  [jensens]
 
 - Use ``self.context`` instead of ``context`` in ``CSRFProtectionBehavior``
   when looking up fallback root key manager.

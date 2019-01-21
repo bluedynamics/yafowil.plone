@@ -5,6 +5,7 @@ from plone.registry.interfaces import IRegistry
 from yafowil.base import factory
 from yafowil.utils import get_plugin_names
 from zope.component import getUtility
+
 import logging
 import os
 import sys
