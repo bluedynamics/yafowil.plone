@@ -22,6 +22,14 @@ History
 - Deliver resources as `plone.stableResource` to cache JS/CSS in browser.
   [jensens]
 
+- Python 3 support:
+  [reinhardt]
+
+  - Replaced UserDict
+  - Replaced old-style relative import
+  - Fixed StringIO import
+  - Fixed text handling
+
 
 2.4.1 (2017-03-10)
 ------------------

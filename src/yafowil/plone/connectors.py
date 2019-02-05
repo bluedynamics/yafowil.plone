@@ -1,8 +1,12 @@
-from UserDict import DictMixin
+try:
+    from UserDict import DictMixin
+except ImportError:
+    from collections import MutableMapping as DictMixin
 from ZPublisher.HTTPRequest import FileUpload
 from ZPublisher.HTTPRequest import HTTPRequest
 from zope.i18n import translate
 from zope.i18nmessageid import Message
+import six
 
 
 class Zope2RequestAdapter(DictMixin):
@@ -41,6 +45,12 @@ class Zope2RequestAdapter(DictMixin):
 
     def __delitem__(self, key):
         raise AttributeError('read only, __delitem__ is not supported')
+
+    def __len__(self):
+        return len(self.zrequest.form)
+
+    def __iter__(self):
+        return six.iterkeys(self.zrequest.form.keys())
 
 
 class ZopeTranslation(object):
