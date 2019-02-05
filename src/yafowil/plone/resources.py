@@ -1,5 +1,6 @@
+from Products.CMFPlone.utils import safe_text
 from Products.Five import BrowserView
-from StringIO import StringIO
+from six import StringIO
 from operator import itemgetter
 from plone.registry.interfaces import IRegistry
 from yafowil.base import factory
@@ -81,10 +82,7 @@ class Resources(BrowserView):
                 continue
             with open(resource['path'], 'r') as fd:
                 content = fd.read()
-            try:
-                content = unicode(content)
-            except Exception:
-                content = unicode(content.decode('utf-8'))
+            content = safe_text(content)
             data.write(content)
             data.write(u"\n")
         return data.getvalue()
