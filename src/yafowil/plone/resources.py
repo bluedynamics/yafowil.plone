@@ -1,4 +1,4 @@
-from Products.CMFPlone.utils import safe_text
+from Products.CMFPlone.utils import safe_unicode
 from Products.Five import BrowserView
 from six import StringIO
 from operator import itemgetter
@@ -82,7 +82,7 @@ class Resources(BrowserView):
                 continue
             with open(resource['path'], 'r') as fd:
                 content = fd.read()
-            content = safe_text(content)
+            content = safe_unicode(content)
             data.write(content)
             data.write(u"\n")
         return data.getvalue()
