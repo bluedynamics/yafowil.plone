@@ -2,7 +2,7 @@
 History
 =======
 
-2.5.0 (unreleased)
+3.0.0 (unreleased)
 ------------------
 
 - Add resources explicit in pages using YAFOWIL.
@@ -26,6 +26,8 @@ History
   - Fixed StringIO import
   - Fixed text handling
 
+- Deliver jqueryui on request and remove dependency on collective.js.jqueryui
+  [agitator]
 
 2.4.1 (2017-03-10)
 ------------------

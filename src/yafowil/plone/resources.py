@@ -15,7 +15,7 @@ import sys
 logger = logging.getLogger('yafowil.plone')
 
 
-def enabled_resources(which, verbose=False):
+def enabled_resources(which, verbose=True):
     """Return enabled YAFOWIL resources.
 
     ``which`` is either "js" or "css".
@@ -46,8 +46,8 @@ def enabled_resources(which, verbose=False):
                 record['path'] = os.path.join(resourcedir, record['resource'])
             result.append(record)
             verbose and logger.info(
-                "Activate resource '%s' for group '%s'" % (
-                    record['resource'], record['group']
+                "Activate resource '%s' for group '%s' order: '%s'" % (
+                    record['resource'], record['group'], record['order']
                 )
             )
     return sorted(result, key=itemgetter('order'))
