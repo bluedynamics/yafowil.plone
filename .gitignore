@@ -4,6 +4,7 @@
 *.pyo
 *.mo
 *.egg-info
+.python-version
 /develop-eggs/
 /parts/
 /bin/
@@ -23,3 +24,4 @@
 /.DS_Store
 /.mr.developer.cfg
 /.settings/
+.DS_Store

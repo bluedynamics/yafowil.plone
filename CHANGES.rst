@@ -2,8 +2,14 @@
 History
 =======
 
-2.4.2 (unreleased)
+3.0.0 (unreleased)
 ------------------
+
+- Add resources explicit in pages using YAFOWIL.
+  Do not deliver the CSS/JS chunk on every request.
+  Code using yafoil w/o the ``yafowil.plone.form.*`` as base class need a minimal modification.
+  See README.
+  [jensens]
 
 - Use ``self.context`` instead of ``context`` in ``CSRFProtectionBehavior``
   when looking up fallback root key manager.
@@ -20,6 +26,8 @@ History
   - Fixed StringIO import
   - Fixed text handling
 
+- Deliver jqueryui on request and remove dependency on collective.js.jqueryui
+  [agitator]
 
 2.4.1 (2017-03-10)
 ------------------

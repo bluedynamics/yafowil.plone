@@ -11,6 +11,13 @@ from yafowil.yaml import parse_from_YAML
 from zope.component import ComponentLookupError
 from zope.component import getUtility
 
+try:
+    # plone 5 only
+    from Products.CMFPlone.resources import add_bundle_on_request
+except ImportError:
+    def add_bundle_on_request(request, name):
+        pass
+
 
 class CSRFProtectionBehavior(Behavior):
     """Plumbing behavior for hooking up CSRF protection to YAFOWIL forms.
@@ -37,10 +44,15 @@ class BaseForm(BrowserView):
     form = None
     action_resource = u''
 
+    def __init__(self, context, request):
+        super(BaseForm, self).__init__(context, request)
+        add_bundle_on_request(request, 'yafowil')
+
     def form_action(self, widget, data):
         return '%s/%s' % (self.context.absolute_url(), self.action_resource)
 
     def render_form(self):
+        add_bundle_on_request(self.request, 'yafowil')
         self.prepare()
         controller = Controller(self.form, self.request)
         if not controller.next:

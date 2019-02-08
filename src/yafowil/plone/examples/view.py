@@ -1,10 +1,19 @@
+# -*- coding: utf-8 -*-
 from Products.Five import BrowserView
 from yafowil.base import factory
 from yafowil.controller import Controller
 from yafowil.utils import get_example
 from yafowil.utils import get_example_names
 from zExceptions import NotFound
-import yafowil.loader  # nopep8  # loads registry
+
+import yafowil.loader  # noqa  # loads registry
+
+try:
+    # plone 5 only
+    from Products.CMFPlone.resources import add_bundle_on_request
+except ImportError:
+    def add_bundle_on_request(request, name):
+        pass
 
 
 class ExampleResponseView(BrowserView):
@@ -17,6 +26,9 @@ class ExampleResponseView(BrowserView):
 
 
 class ExampleView(BrowserView):
+    def __init__(self, context, request):
+        super(ExampleView, self).__init__(context, request)
+        add_bundle_on_request(request, 'yafowil')
 
     @property
     def example_names(self):

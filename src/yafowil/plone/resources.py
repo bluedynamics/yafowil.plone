@@ -1,4 +1,4 @@
-from Products.CMFPlone.utils import safe_text
+from Products.CMFPlone.utils import safe_unicode
 from Products.Five import BrowserView
 from six import StringIO
 from operator import itemgetter
@@ -6,6 +6,7 @@ from plone.registry.interfaces import IRegistry
 from yafowil.base import factory
 from yafowil.utils import get_plugin_names
 from zope.component import getUtility
+
 import logging
 import os
 import sys
@@ -14,7 +15,7 @@ import sys
 logger = logging.getLogger('yafowil.plone')
 
 
-def enabled_resources(which, verbose=False):
+def enabled_resources(which, verbose=True):
     """Return enabled YAFOWIL resources.
 
     ``which`` is either "js" or "css".
@@ -45,8 +46,8 @@ def enabled_resources(which, verbose=False):
                 record['path'] = os.path.join(resourcedir, record['resource'])
             result.append(record)
             verbose and logger.info(
-                "Activate resource '%s' for group '%s'" % (
-                    record['resource'], record['group']
+                "Activate resource '%s' for group '%s' order: '%s'" % (
+                    record['resource'], record['group'], record['order']
                 )
             )
     return sorted(result, key=itemgetter('order'))
@@ -81,7 +82,7 @@ class Resources(BrowserView):
                 continue
             with open(resource['path'], 'r') as fd:
                 content = fd.read()
-            content = safe_text(content)
+            content = safe_unicode(content)
             data.write(content)
             data.write(u"\n")
         return data.getvalue()
