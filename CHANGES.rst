@@ -2,7 +2,7 @@
 History
 =======
 
-3.0.0 (unreleased)
+3.0.0 (2019-02-19)
 ------------------
 
 - Add resources explicit in pages using YAFOWIL.
