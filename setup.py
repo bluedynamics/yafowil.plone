@@ -35,7 +35,7 @@ setup(
     keywords='zope2 plone request response html input widgets',
     author='BlueDynamics Alliance',
     author_email='dev@bluedynamics.com',
-    url=u'http://pypi.python.org/pypi/yafowil.plone',
+    url=u'https://github.com/bluedynamics/yafowil.plone',
     license='BSD',
     packages=find_packages('src'),
     package_dir={'': 'src'},
