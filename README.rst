@@ -13,13 +13,13 @@ Addon widgets may provide custom javascripts, CSS, images and so on.
 
 This package registers the directories containing these assets as
 resource directories. Thus they can be accessed from the webbrowser.
-The registration schema is ``++resource++MODULENAME/...``. 
+The registration schema is ``++resource++MODULENAME/...``.
 
 The "YAFOWIL Form Library" GS profile registers all resources related to
 so called "resource groups" in the CSS and javascript registries.
 
 This resource groups must be enabled explicitly(!). The resource groups
-configuration happens via the portal registry. 
+configuration happens via the portal registry.
 
 You need to provide a Generic setup profile containing a ``registry.xml`` with
 the resource groups configuration, e.g.::
@@ -115,7 +115,7 @@ Concrete implementation may look like::
 
     >>> class MyForm(Form):
     ...     action_resource = '@@view_name_callable_by_browser'
-    ...     
+    ...
     ...     def prepare(self):
     ...         form = factory(
     ...             'form',
@@ -123,9 +123,9 @@ Concrete implementation may look like::
     ...             props={
     ...                 'action': self.form_action,
     ...             })
-    ... 
+    ...
     ...         # form widgets creation here...
-    ... 
+    ...
     ...         self.form = form
 
 Convenience for creating YAML forms::
@@ -168,6 +168,22 @@ wrapper template ```myform.yaml```::
         </metal:content-core>
       </body>
     </html>
+
+
+In Plone 5.x, when not using one of the BaseForms,
+the **CSS/JS resources for YAFOWIL are not loaded** automatically.
+
+Add the following lines in order to load it::
+
+    from Products.CMFPlone.resources import add_bundle_on_request
+
+    ...
+
+    class MyViewWithYafowil(BrowserView):
+
+    def __init__(self, context, request):
+        super(MyViewWithYafowil, self).__init__(context, request)
+        add_bundle_on_request(request, 'yafowil')
 
 
 Detailed Documentation

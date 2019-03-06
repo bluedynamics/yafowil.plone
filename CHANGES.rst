@@ -2,8 +2,8 @@
 History
 =======
 
-2.5 (unreleased)
-----------------
+3.1.0 (unreleased)
+------------------
 
 - Move ``plonelabel`` blueprint to ``yafowil.plone.widgets.label``.
   [rnix]
@@ -14,6 +14,16 @@ History
 - ``Zope2RequestAdapter`` always returns non-iterable request parameter values
   as unicode.
   [rnix, jensens]
+
+
+3.0.0 (2019-02-19)
+------------------
+
+- Add resources explicit in pages using YAFOWIL.
+  Do not deliver the CSS/JS chunk on every request.
+  Code using yafoil w/o the ``yafowil.plone.form.*`` as base class need a
+  minimal modification. See README.
+  [jensens]
 
 - Use ``self.context`` instead of ``context`` in ``CSRFProtectionBehavior``
   when looking up fallback root key manager.
@@ -29,6 +39,9 @@ History
   - Replaced old-style relative import
   - Fixed StringIO import
   - Fixed text handling
+
+- Deliver jqueryui on request and remove dependency on collective.js.jqueryui
+  [agitator]
 
 
 2.4.1 (2017-03-10)

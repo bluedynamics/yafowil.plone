@@ -8,11 +8,31 @@ import os
 ###############################################################################
 
 resourcedir = os.path.join(os.path.dirname(__file__), 'resources', 'plone5')
-css = [{
-    'group': 'yafowil.plone.common',
-    'resource': 'yafowil-fontello.css',
-    'order': 10,
-}]
+css = [
+    {
+        'group': 'yafowil.plone.common',
+        'resource': 'yafowil-fontello.css',
+        'order': 10,
+    },
+    {
+        'group': 'yafowil.plone.jqueryui',
+        'resource': 'jqueryui/jquery-ui-1.10.3.custom.css',
+        'order': 10,
+    },
+]
+
+js = [
+    {
+        'group': 'yafowil.plone.jqueryui',
+        'resource': 'jquery.migrate-1.2.1.min.js',
+        'order': 5,
+    },
+    {
+        'group': 'yafowil.plone.jqueryui',
+        'resource': 'jqueryui/jquery-ui-1.10.3.custom.min.js',
+        'order': 10,
+    },
+]
 
 
 ###############################################################################
@@ -59,7 +79,7 @@ def register_macros():
 def register():
     from yafowil.plone.widgets import label  # noqa: E501
     factory.register_global_preprocessors([plone_preprocessor])
-    factory.register_theme('plone5', 'yafowil.plone', resourcedir, css=css)
+    factory.register_theme('plone5', 'yafowil.plone', resourcedir, css=css, js=js)
 
 
 def configure():
