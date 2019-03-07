@@ -1,5 +1,13 @@
 <registry>
 
+  <!-- yafowil.plone.jqueryui -->
+  <record name="yafowil.plone.jqueryui">
+    <field type="plone.registry.field.Bool">
+      <title>jQuery UI Dpendencies</title>
+    </field>
+    <value>True</value>
+  </record>
+
   <!-- yafowil.widget.array -->
   <record name="yafowil.widget.array.common">
     <field type="plone.registry.field.Bool">
