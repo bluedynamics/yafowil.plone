@@ -52,7 +52,6 @@ class BaseForm(BrowserView):
         return '%s/%s' % (self.context.absolute_url(), self.action_resource)
 
     def render_form(self):
-        add_bundle_on_request(self.request, 'yafowil')
         self.prepare()
         controller = Controller(self.form, self.request)
         if not controller.next:
