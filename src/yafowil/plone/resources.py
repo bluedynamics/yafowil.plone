@@ -1,3 +1,4 @@
+from Products.CMFPlone.utils import safe_unicode
 from Products.Five import BrowserView
 from six import StringIO
 from operator import itemgetter
@@ -9,14 +10,6 @@ from zope.component import getUtility
 import logging
 import os
 import sys
-
-
-try:
-    # plone >= 5.2
-    from Products.CMFPlone.utils import safe_text
-except ImportError:
-    # plone 5.1
-    from Products.CMFPlone.utils import safe_unicode as safe_text
 
 
 logger = logging.getLogger('yafowil.plone')
