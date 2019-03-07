@@ -1,58 +1,5 @@
 <registry>
 
-  <!-- collective.js.jqueryui -->
-  <records interface="collective.js.jqueryui.controlpanel.IJQueryUIPlugins">
-    <value key="ui_core">True</value>
-    <value key="ui_widget">True</value>
-    <value key="ui_mouse">True</value>
-    <value key="ui_position">True</value>
-    <value key="ui_draggable">True</value>
-    <value key="ui_droppable">True</value>
-    <value key="ui_resizable">True</value>
-    <value key="ui_selectable">False</value>
-    <value key="ui_sortable">False</value>
-    <value key="ui_accordion">False</value>
-    <!-- ui_autocomplete currently delivered via yafowil -->
-    <value key="ui_autocomplete">False</value>
-    <value key="ui_button">False</value>
-    <!-- ui_datepicker currently delivered via yafowil -->
-    <value key="ui_datepicker">False</value>
-    <value key="ui_dialog">False</value>
-    <value key="ui_menu">False</value>
-    <value key="ui_progressbar">False</value>
-    <!-- ui_datepicker currently delivered via yafowil -->
-    <value key="ui_datepicker">False</value>
-    <value key="ui_spinner">False</value>
-    <value key="ui_tabs">False</value>
-    <value key="ui_tooltip">False</value>
-    <value key="ui_effect">False</value>
-    <value key="ui_effect_blind">False</value>
-    <value key="ui_effect_bounce">False</value>
-    <value key="ui_effect_clip">False</value>
-    <value key="ui_effect_drop">False</value>
-    <value key="ui_effect_explode">False</value>
-    <value key="ui_effect_fade">False</value>
-    <value key="ui_effect_fold">False</value>
-    <value key="ui_effect_highlight">False</value>
-    <value key="ui_effect_pulsate">False</value>
-    <value key="ui_effect_scale">False</value>
-    <value key="ui_effect_shake">False</value>
-    <value key="ui_effect_slide">False</value>
-    <value key="ui_effect_transfer">False</value>
-  </records>
-
-  <records interface="collective.js.jqueryui.controlpanel.IJQueryUICSS">
-    <value key="css">False</value>
-    <value key="patch">False</value>
-  </records>
-
-  <!-- depend yafowil bundle on jqueryui instead of plone -->
-  <records prefix="plone.bundles/yafowil"
-           interface='Products.CMFPlone.interfaces.IBundleRegistry'
-           purge="False">
-    <value key="depends">jqueryui</value>
-  </records>
-
   <!-- yafowil.widget.array -->
   <record name="yafowil.widget.array.common">
     <field type="plone.registry.field.Bool">
