@@ -466,10 +466,6 @@ class DisplayAutoForm(BaseAutoForm):
         super(DisplayAutoForm, self).__init__(context, request)
         setattr(request, FORM_SCOPE_HOSTILE_ATTR, FORM_SCOPE_DISPLAY)
 
-    @property
-    def form_title(self):
-        return ''
-
     def get_schemata(self):
         return iterSchemata(self.context)
 
