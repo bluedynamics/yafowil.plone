@@ -5,3 +5,5 @@ FORM_SCOPE_HOSTILE_ATTR = '_yafowil_autoform_scope'
 FORM_SCOPE_ADD = 'add'
 # edit form scope
 FORM_SCOPE_EDIT = 'edit'
+# display form scope
+FORM_SCOPE_DISPLAY = 'display'

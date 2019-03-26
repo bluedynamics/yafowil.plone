@@ -16,6 +16,7 @@ from plone.uuid.interfaces import IUUID
 from yafowil.base import factory
 from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
+from yafowil.plone.autoform import FORM_SCOPE_DISPLAY
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
 from yafowil.plone.autoform.persistence import AjaxSelectPersistWriter
 from yafowil.plone.autoform.persistence import RelatedItemsPersistWriter
@@ -114,7 +115,7 @@ def value_or_default(context, field):
             except Exception:
                 logger.exception('Fetching default_factory failed')
         return UNSET
-    elif scope == FORM_SCOPE_EDIT:
+    elif scope in [FORM_SCOPE_EDIT, FORM_SCOPE_DISPLAY]:
         if field.is_behavior:
             return getattr(field.schema(context), field.name, UNSET)
         return getattr(context, field.name, UNSET)
