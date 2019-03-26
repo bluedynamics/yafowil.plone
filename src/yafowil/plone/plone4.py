@@ -79,7 +79,7 @@ def register_macros():
 ###############################################################################
 
 def register():
-    from yafowil.plone.widgets import label
+    from yafowil.plone import widgets  # noqa: E501
     factory.register_global_preprocessors([plone_preprocessor])
 
 
