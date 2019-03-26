@@ -39,9 +39,10 @@ def relation_edit_renderer(widget, data):
     )
     if root_search_mode:
         del opts['basePath']
-    widget.attrs['class_add'] = 'pat-relateditems'
+    pattern_name = attr_value('pattern_name', widget, data)
+    widget.attrs['class_add'] = pattern_name
     widget.attrs['data'] = {
-        'pat-relateditems': opts
+        pattern_name: opts
     }
     return input_generic_renderer(widget, data)
 
@@ -59,6 +60,10 @@ factory.register(
 factory.doc['blueprint']['relation'] = """\
 Relation blueprint.
 """
+
+factory.defaults['relation.class'] = 'relateditems'
+
+factory.defaults['relation.pattern_name'] = 'pat-relateditems'
 
 factory.defaults['relation.context'] = None
 

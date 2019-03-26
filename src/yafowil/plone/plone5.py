@@ -8,31 +8,29 @@ import os
 ###############################################################################
 
 resourcedir = os.path.join(os.path.dirname(__file__), 'resources', 'plone5')
-css = [
-    {
-        'group': 'yafowil.plone.common',
-        'resource': 'yafowil-fontello.css',
-        'order': 10,
-    },
-    {
-        'group': 'yafowil.plone.jqueryui',
-        'resource': 'jqueryui/jquery-ui-1.10.3.custom.css',
-        'order': 10,
-    },
-]
+css = [{
+    'group': 'yafowil.plone.common',
+    'resource': 'yafowil-fontello.css',
+    'order': 10,
+}, {
+    'group': 'yafowil.plone.jqueryui',
+    'resource': 'jqueryui/jquery-ui-1.10.3.custom.css',
+    'order': 10,
+}]
 
-js = [
-    {
-        'group': 'yafowil.plone.jqueryui',
-        'resource': 'jquery.migrate-1.2.1.min.js',
-        'order': 5,
-    },
-    {
-        'group': 'yafowil.plone.jqueryui',
-        'resource': 'jqueryui/jquery-ui-1.10.3.custom.min.js',
-        'order': 10,
-    },
-]
+js = [{
+    'group': 'yafowil.plone.jqueryui',
+    'resource': 'jquery.migrate-1.2.1.min.js',
+    'order': 5,
+}, {
+    'group': 'yafowil.plone.jqueryui',
+    'resource': 'jqueryui/jquery-ui-1.10.3.custom.min.js',
+    'order': 10,
+}, {
+    'group': 'yafowil.plone.common',
+    'resource': 'widgets.js',
+    'order': 30,
+}]
 
 
 ###############################################################################
