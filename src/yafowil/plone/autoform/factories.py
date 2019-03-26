@@ -513,10 +513,7 @@ def related_items_field_widget_factory(context, field):
         opts['maximumSelectionSize'] = 1
     # XXX: check where original implementation gets ``mode`` and ``basePath``
     #      from. probably ``widget.params``
-    root_search_mode = (
-        opts.get('mode', None) and
-        'basePath' not in opts
-    )
+    root_search_mode = opts.get('mode', None) and 'basePath' not in opts
     opts = dict_merge(
         get_relateditems_options(
             context,

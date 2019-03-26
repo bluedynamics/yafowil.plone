@@ -77,7 +77,7 @@ def register_macros():
 ###############################################################################
 
 def register():
-    from yafowil.plone.widgets import label  # noqa: E501
+    from yafowil.plone import widgets  # noqa: E501
     factory.register_global_preprocessors([plone_preprocessor])
     factory.register_theme('plone5', 'yafowil.plone', resourcedir, css=css, js=js)
 
