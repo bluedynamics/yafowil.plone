@@ -37,5 +37,3 @@ class TestAutoformForm(unittest.TestCase):
         fti.behaviors = (IYafowilFormBehavior.__identifier__,)
         addview = DefaultAddView(context, request, fti)
         self.assertTrue(addview.is_yafowil_form)
-
-    

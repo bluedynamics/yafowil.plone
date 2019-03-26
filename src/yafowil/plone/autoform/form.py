@@ -3,9 +3,6 @@ from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.statusmessages.interfaces import IStatusMessage
 from plone.dexterity.browser.add import DefaultAddView as DefaultAddViewBase
 from plone.dexterity.events import AddBegunEvent
 from plone.dexterity.events import AddCancelledEvent
@@ -19,15 +16,19 @@ from plone.dexterity.utils import iterSchemata
 from plone.dexterity.utils import iterSchemataForType
 from plone.registry.interfaces import IRegistry
 from plumber import plumbing
+from Products.CMFCore.utils import getToolByName
+from Products.statusmessages.interfaces import IStatusMessage
 from yafowil.base import factory
+from yafowil.plone.autoform import directives
 from yafowil.plone.autoform import FORM_SCOPE_ADD
+from yafowil.plone.autoform import FORM_SCOPE_DISPLAY
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
-from yafowil.plone.autoform import directives
 from yafowil.plone.autoform.factories import widget_factory
 from yafowil.plone.autoform.persistence import YafowilAutoformPersistWriter
 from yafowil.plone.autoform.schema import resolve_schemata
 from yafowil.plone.form import BaseForm
+from yafowil.plone.form import ContentForm
 from yafowil.plone.form import CSRFProtectionBehavior
 from zope.component import createObject
 from zope.component import getUtility
@@ -92,7 +93,7 @@ def checkContentConstraints(container, child):
     if not fti.isConstructionAllowed(container):
         raise Unauthorized('Cannot create {}'.format(child.portal_type))
     if container_fti is not None \
-        and not container_fti.allowType(child.portal_type):
+            and not container_fti.allowType(child.portal_type):
         msg = 'Disallowed subobject type: {}'.format(child.portal_type)
         raise ValueError(msg)
 
@@ -159,8 +160,6 @@ class BaseAutoForm(BaseForm):
     """
     ti = None
     form_name = ''
-    form_title = ''
-    template = ViewPageTemplateFile('../content.pt')
 
     @property
     def action_triggered(self):
@@ -189,6 +188,7 @@ class BaseAutoForm(BaseForm):
         )
         # XXX: make pat autotoc dedicated blueprint
         pat_autotoc = 'levels: legend; section: fieldset; className: autotabs'
+
         # XXX: no default persist writer required on widget data
         def noop_persist_writer(model, writer=None, recursiv=True):
             pass
@@ -201,7 +201,7 @@ class BaseAutoForm(BaseForm):
                 'data': {
                     'pat-autotoc': pat_autotoc
                 },
-                'persist_writer': noop_persist_writer,
+                'persist_writer': noop_persist_writer
             })
         # resolve schema and add fieldsets to form
         fieldset_definitions = resolve_schemata(self.get_schemata())
@@ -315,15 +315,12 @@ class BaseAutoForm(BaseForm):
             'Abstract ``BaseAutoForm`` does not implement ``cancel``'
         )
 
-    def __call__(self):
-        return self.template()
-
 
 ###############################################################################
 # yafowil autoform addform
 ###############################################################################
 
-class AddAutoForm(BaseAutoForm):
+class AddAutoForm(BaseAutoForm, ContentForm):
     """Yafowil add form.
     """
     form_name = 'addform'
@@ -400,7 +397,7 @@ class AddAutoForm(BaseAutoForm):
 # yafowil autoform editform
 ###############################################################################
 
-class EditAutoForm(BaseAutoForm):
+class EditAutoForm(BaseAutoForm, ContentForm):
     """Yafowil edit form.
     """
     form_name = 'editform'
@@ -451,3 +448,40 @@ class EditAutoForm(BaseAutoForm):
             _dx(u"Edit cancelled"), "info"
         )
         self.request.response.redirect(self.context.absolute_url())
+
+
+###############################################################################
+# yafowil autoform displayform
+###############################################################################
+
+class DisplayAutoForm(BaseAutoForm):
+    """Yafowil display form.
+    """
+    form_name = 'displayform'
+    action_resource = u''
+    display_fieldsets = ['default']
+    skip_fields = []
+
+    def __init__(self, context, request):
+        super(DisplayAutoForm, self).__init__(context, request)
+        setattr(request, FORM_SCOPE_HOSTILE_ATTR, FORM_SCOPE_DISPLAY)
+
+    @property
+    def form_title(self):
+        return ''
+
+    def get_schemata(self):
+        return iterSchemata(self.context)
+
+    def prepare(self):
+        super(DisplayAutoForm, self).prepare()
+        origin_form = self.form
+        self.form = form = factory('div', name=self.form_name)
+        for fieldset in origin_form.values():
+            if fieldset.name not in self.display_fieldsets:
+                continue
+            for widget in fieldset.values():
+                if widget.name in self.skip_fields:
+                    continue
+                form[widget.name] = widget
+                widget.mode = 'display'

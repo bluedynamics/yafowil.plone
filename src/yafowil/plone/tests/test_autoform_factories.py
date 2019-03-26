@@ -1,16 +1,17 @@
 from node.utils import UNSET
 from plone.app.contenttypes.interfaces import ILink
 from plone.app.dexterity.behaviors.exclfromnav import IExcludeFromNavigation
-from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
 from plone.app.z3cform.widget import RichTextFieldWidget
 from plone.autoform import directives as form
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.supermodel import model
+from yafowil.plone.autoform import factories
 from yafowil.plone.autoform import FORM_SCOPE_ADD
+from yafowil.plone.autoform import FORM_SCOPE_DISPLAY
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
-from yafowil.plone.autoform import factories
 from yafowil.plone.autoform.factories import lookup_schema_vocabulary
 from yafowil.plone.autoform.factories import lookup_vocabulary
 from yafowil.plone.autoform.factories import value_or_default
@@ -127,6 +128,31 @@ class TestAutoformFactories(unittest.TestCase):
         IExcludeFromNavigation(link).exclude_from_nav = True
 
         setattr(self.request, FORM_SCOPE_HOSTILE_ATTR, FORM_SCOPE_EDIT)
+
+        fti = queryUtility(
+            IDexterityFTI,
+            name='Link')
+        schema = fti.lookupSchema()
+
+        remote_url = Field(
+            name='remoteUrl',
+            schema=schema)
+        self.assertEqual(value_or_default(link, remote_url), 'http://example.com')
+
+        exclude_from_nav = Field(
+            name='exclude_from_nav',
+            schema=IExcludeFromNavigation)
+        self.assertEqual(value_or_default(link, exclude_from_nav), True)
+
+        delattr(self.request, FORM_SCOPE_HOSTILE_ATTR)
+
+    def test_value_or_default_scope_display(self):
+        self.portal.invokeFactory('Link', 'link')
+        link = self.portal['link']
+        link.remoteUrl = 'http://example.com'
+        IExcludeFromNavigation(link).exclude_from_nav = True
+
+        setattr(self.request, FORM_SCOPE_HOSTILE_ATTR, FORM_SCOPE_DISPLAY)
 
         fti = queryUtility(
             IDexterityFTI,
