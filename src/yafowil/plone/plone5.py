@@ -68,6 +68,9 @@ def register_macros():
     })
     factory.register_macro('array', 'array', {})
     factory.register_macro('arrayfield', 'field:plonelabel:error', {})
+    factory.register_macro('arrayrelation', 'relation', {
+        'relation.pattern_name': 'array-relateditems'
+    })
 
 
 ###############################################################################
