@@ -10,34 +10,43 @@ if (window.yafowil === undefined) {
             $.extend(window.yafowil.array.hooks.add, {
                 references_array_add: yafowil.references.array_add
             });
+            yafowil.references.initialize_array_relations(document);
         }
     });
 
     $.extend(yafowil, {
 
-
         references: {
-            array_add: function(row) {
-                // array integration for rlation blueprint
+            // array integration for relation blueprint
+
+            initialize_array_relations: function(context) {
                 // translate array-relateditems data to pat-relateditems
-                // and scan new row. needed for proper relateditems pattern
-                // initialization
-                // XXX: ignore array templates if nested arrays in row
                 var selector = 'input.relateditems';
                 var source = 'array-relateditems';
                 var target = 'pat-relateditems';
-                var relations = $(selector, row);
-                if (!relations.length) {
-                    return;
-                }
+                var relations = $(selector, context);
                 relations.each(function() {
                     var el = $(this);
+                    // ignore array templates
+                    if (el.attr('name').indexOf('.TEMPLATE.') > -1) {
+                        return;
+                    }
                     var data = el.data(source);
                     el.removeClass(source);
                     el.removeData(source);
                     el.addClass(target);
                     el.data(target, data);
                 });
+                return relations;
+            },
+
+            array_add: function(row) {
+                // scan new row. needed for proper relateditems pattern
+                // initialization
+                var relations = yafowil.references.initialize_array_relations(row);
+                if (!relations.length) {
+                    return;
+                }
                 require('pat-registry').scan(relations);
             }
         }

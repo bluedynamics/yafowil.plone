@@ -1,11 +1,48 @@
+from node.utils import UNSET
+from plone.app.uuid.utils import uuidToObject
 from plone.app.widgets.base import dict_merge
 from plone.app.widgets.utils import get_relateditems_options
-# from Products.CMFPlone import PloneMessageFactory as _
+from plone.uuid.interfaces import IUUID
 from yafowil.base import factory
+from yafowil.common import generic_extractor
+from yafowil.common import generic_required_extractor
 from yafowil.common import input_generic_renderer
 from yafowil.utils import attr_value
 from yafowil.utils import managedprops
-# from yafowil.utils import UNSET
+from z3c.relationfield.relation import RelationValue
+from zope.component import getUtility
+from zope.intid.interfaces import IIntIds
+
+
+@managedprops('context', 'separator', 'multivalued')
+def relation_extractor(widget, data):
+    context = attr_value('context', widget, data)
+    if context is None:
+        raise ValueError(u'Relation blueprint needs a context to work')
+    extracted = data.extracted
+    if extracted is UNSET:
+        return extracted
+    seperator = attr_value('seperator', widget, data)
+    intids = getUtility(IIntIds)
+    rels = list()
+    for uid in extracted.split(seperator):
+        if not uid:
+            continue
+        try:
+            to_id = intids.getId(uuidToObject(uid))
+            value = RelationValue(to_id)
+
+            # these SHOULD be set automatically by events, but not happens?
+            value.from_object = context
+            # value.__parent__ = None
+            # value.from_attribute = None
+
+            rels.append(value)
+        except KeyError:
+            continue
+    if attr_value('multivalued', widget, data):
+        return UNSET if not rels else rels[0]
+    return rels
 
 
 @managedprops(
@@ -20,7 +57,14 @@ def relation_edit_renderer(widget, data):
     vocabulary_name = attr_value('vocabulary', widget, data)
     multivalued = attr_value('multivalued', widget, data)
     root_search_mode = attr_value('root_search_mode', widget, data)
-    value = ''
+    # relations value
+    context_value = widget.getter
+    if not context_value:
+        value = ''
+    elif isinstance(context_value, RelationValue):
+        value = IUUID(context_value.to_object)
+    else:
+        value = separator.join([IUUID(rel.to_object) for rel in context_value])
     # pattern options
     opts = dict()
     if multivalued:
@@ -53,8 +97,14 @@ def relation_display_renderer(widget, data):
 
 factory.register(
     'relation',
+    extractors=[
+        generic_extractor,
+        generic_required_extractor,
+        relation_extractor
+    ],
     edit_renderers=[relation_edit_renderer],
-    display_renderers=[relation_display_renderer])
+    display_renderers=[relation_display_renderer]
+)
 
 
 factory.doc['blueprint']['relation'] = """\
