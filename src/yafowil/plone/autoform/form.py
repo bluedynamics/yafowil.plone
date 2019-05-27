@@ -133,6 +133,9 @@ class DefaultAddView(DefaultAddViewBase):
             self.ti.getId(),
             suppressNotify=True
         ).__of__(aq_inner(self.context))
+        # add dummy id to add context, otherwise adding of folderish items
+        # will fail
+        add_context.id = self.ti.getId()
         checkContentConstraints(self.context, add_context)
         form = AddAutoForm(add_context, self.request, self.ti)
         return form()
