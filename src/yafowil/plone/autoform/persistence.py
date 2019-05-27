@@ -14,11 +14,17 @@ class YafowilAutoformPersistWriter(object):
     def __call__(self, model, target, value):
         if self.field.is_behavior:
             behavior = self.field.schema(model)
-            if getattr(behavior, target, UNSET) != value:
-                setattr(behavior, target, value)
+            # comparing against value fails for RelationValue instances,
+            # because from_object cannot be resolved yet.
+            if getattr(behavior, target, UNSET) == UNSET:
+                return
+            setattr(behavior, target, value)
         else:
-            if getattr(model, target, UNSET) != value:
-                setattr(model, target, value)
+            # comparing against value fails for RelationValue instances,
+            # because from_object cannot be resolved yet.
+            if getattr(model, target, UNSET) == UNSET:
+                return
+            setattr(model, target, value)
 
 
 class RichtextPersistWriter(YafowilAutoformPersistWriter):

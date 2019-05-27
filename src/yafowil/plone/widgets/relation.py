@@ -14,11 +14,8 @@ from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 
 
-@managedprops('context', 'separator', 'multivalued')
+@managedprops('separator', 'multivalued')
 def relation_extractor(widget, data):
-    context = attr_value('context', widget, data)
-    if context is None:
-        raise ValueError(u'Relation blueprint needs a context to work')
     extracted = data.extracted
     if extracted is UNSET:
         return extracted
@@ -31,16 +28,10 @@ def relation_extractor(widget, data):
         try:
             to_id = intids.getId(uuidToObject(uid))
             value = RelationValue(to_id)
-
-            # these SHOULD be set automatically by events, but not happens?
-            value.from_object = context
-            # value.__parent__ = None
-            # value.from_attribute = None
-
             rels.append(value)
         except KeyError:
             continue
-    if attr_value('multivalued', widget, data):
+    if not attr_value('multivalued', widget, data):
         return UNSET if not rels else rels[0]
     return rels
 
@@ -88,11 +79,20 @@ def relation_edit_renderer(widget, data):
     widget.attrs['data'] = {
         pattern_name: opts
     }
-    return input_generic_renderer(widget, data)
+    return input_generic_renderer(widget, data, custom_attrs=dict(value=value))
+
+
+def relation_link(data, ob):
+    return data.tag(u'a', ob.title_or_id(), href=ob.absolute_url())
 
 
 def relation_display_renderer(widget, data):
-    return '<div>Relation</div>'
+    value = widget.getter
+    if not value:
+        return data.tag(u'div', u'No relation selected')
+    elif isinstance(value, RelationValue):
+        return data.tag(u'div', relation_link(data, value.to_object))
+    return data.tag(u'ul', *[relation_link(data, rel.to_object) for rel in value])
 
 
 factory.register(
