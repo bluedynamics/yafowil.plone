@@ -1,5 +1,4 @@
 from node.utils import UNSET
-from plone.app.contenttypes.interfaces import ILink
 from plone.app.dexterity.behaviors.exclfromnav import IExcludeFromNavigation
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID

@@ -5,10 +5,10 @@ import os
 
 
 ###############################################################################
-# plone5 specific resources
+# plone specific resources
 ###############################################################################
 
-resourcedir = os.path.join(os.path.dirname(__file__), 'resources', 'plone5')
+resourcedir = os.path.join(os.path.dirname(__file__), 'resources')
 css = [{
     'group': 'yafowil.plone.common',
     'resource': 'yafowil-fontello.css',
@@ -40,7 +40,7 @@ js = [{
 
 def configure_factory():
     # set theme
-    factory.theme = 'plone5'
+    factory.theme = 'plone'
     # selection
     factory.defaults['select.label_radio_class'] = 'radioType'
     factory.defaults['select.label_checkbox_class'] = 'checkboxType'
@@ -81,7 +81,7 @@ def register_macros():
 def register():
     from yafowil.plone import widgets  # noqa: E501
     factory.register_global_preprocessors([plone_preprocessor])
-    factory.register_theme('plone5', 'yafowil.plone', resourcedir, css=css, js=js)
+    factory.register_theme('plone', 'yafowil.plone', resourcedir, css=css, js=js)
 
 
 def configure():

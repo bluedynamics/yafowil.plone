@@ -1,7 +1,6 @@
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.dexterity.content import Container
-from plone.dexterity.content import Item
 from plone.dexterity.fti import DexterityFTI
 from yafowil.plone.autoform.behavior import IYafowilFormBehavior
 from yafowil.plone.autoform.form import DefaultAddView
