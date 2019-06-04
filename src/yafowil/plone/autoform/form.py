@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
+from plone import api
+from plone.app.lockingbehavior.behaviors import ILocking
 from plone.dexterity.browser.add import DefaultAddView as DefaultAddViewBase
 from plone.dexterity.events import AddBegunEvent
 from plone.dexterity.events import AddCancelledEvent
@@ -14,26 +17,35 @@ from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import addContentToContainer
 from plone.dexterity.utils import iterSchemata
 from plone.dexterity.utils import iterSchemataForType
+from plone.locking.interfaces import ILockable
+from plone.protect.interfaces import IDisableCSRFProtection
+from plone.protect.utils import addTokenToUrl
 from plone.registry.interfaces import IRegistry
 from plumber import plumbing
 from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 from yafowil.base import factory
+from yafowil.plone import _
 from yafowil.plone.autoform import directives
 from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_DISPLAY
 from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
+from yafowil.plone.autoform.events import ImmediateAddedEvent
 from yafowil.plone.autoform.factories import widget_factory
 from yafowil.plone.autoform.persistence import YafowilAutoformPersistWriter
 from yafowil.plone.autoform.schema import resolve_schemata
 from yafowil.plone.form import BaseForm
 from yafowil.plone.form import ContentForm
 from yafowil.plone.form import CSRFProtectionBehavior
+from zExceptions import Redirect
 from zope.component import createObject
 from zope.component import getUtility
+from zope.container.interfaces import INameChooser
 from zope.event import notify
+from zope.interface import alsoProvides
 from zope.lifecycleevent import ObjectCreatedEvent
+
 import copy
 
 
@@ -102,19 +114,29 @@ def checkContentConstraints(container, child):
 # default add view
 ###############################################################################
 
+AUTOFORM_BEHAVIOR = {
+    'yafowil.autoform',
+    'yafowil.plone.autoform.behavior.IYafowilFormBehavior'
+}
+AUTOFORM_IMMEDIATE_BEHAVIOR = {
+    'yafowil.autoform.immediatecreate',
+    'yafowil.plone.autoform.behavior.IYafowilImmediateCreateBehavior'
+}
+
+
 class DefaultAddView(DefaultAddViewBase):
     """Replacement of default add view considering whether content type
     uses yafowil forms.
     """
 
     def __init__(self, context, request, ti):
-        behaviors = ti.getProperty('behaviors')
-        self.is_yafowil_form = (
-            'yafowil.autoform' in behaviors or
-            'yafowil.plone.autoform.behavior.IYafowilFormBehavior' in behaviors
+        behaviors = set(ti.getProperty('behaviors'))
+        self.is_yafowil_form = bool(
+            (AUTOFORM_BEHAVIOR | AUTOFORM_IMMEDIATE_BEHAVIOR) & behaviors
         )
         if not self.is_yafowil_form:
             return super(DefaultAddView, self).__init__(context, request, ti)
+        self.is_immediate = bool(AUTOFORM_IMMEDIATE_BEHAVIOR & behaviors)
         self.context = context
         self.request = request
         self.ti = ti
@@ -122,6 +144,25 @@ class DefaultAddView(DefaultAddViewBase):
     def __call__(self):
         if not self.is_yafowil_form:
             return super(DefaultAddView, self).__call__()
+
+        if self.is_immediate:
+            if not self.ti.isConstructionAllowed(self.context):
+                raise Unauthorized()
+            newcontent = api.content.create(
+                container=self.context,
+                type=self.ti.getId(),
+                id="new-{0:s}".format(self.ti.getId()),
+                safe_id=True,
+                yafowil_immediatecreate="initial",
+            )
+            notify(ImmediateAddedEvent(newcontent))
+            newcontent.indexObject()
+            alsoProvides(self.request, IDisableCSRFProtection)
+            url = newcontent.absolute_url() + "/immediateadd"
+            url = addTokenToUrl(url)
+            self.request.response.redirect(url)
+            return
+
         # Create dummy add context. Used to render the add form.
         # This context does not get persisted. It's just used to render the
         # add form and gets dropped afterwards. In order to make this work
@@ -450,6 +491,63 @@ class EditAutoForm(BaseAutoForm, ContentForm):
         IStatusMessage(self.request).addStatusMessage(
             _dx(u"Edit cancelled"), "info"
         )
+        self.request.response.redirect(self.context.absolute_url())
+
+
+class ImmediateAddAutoForm(EditAutoForm):
+
+    form_name = 'addform'
+    action_resource = u'immediateadd'
+    success_message = _(u"New content saved")
+
+    @property
+    def form_title(self):
+        return 'Add {}'.format(self.ti.Title())
+
+    def prepare(self):
+        if (
+            getattr(self.context, "yafowil_immediatecreate", None) != "initial"
+        ):
+            url = self.context.absolute_url() + "/edit"
+            url = addTokenToUrl(url)
+            raise Redirect(url)
+        super(ImmediateAddAutoForm, self).prepare()
+
+    def save(self, widget, data):
+        data.write(self.context)
+        self.context.yafowil_immediatecreate = "created"
+        # unlock before rename
+        if ILocking.providedBy(self.context):
+            lockable = ILockable(self.context)
+            if lockable.locked():
+                lockable.unlock()
+        # rename
+        chooser = INameChooser(aq_parent(self.context))
+        self.new_content_id = chooser.chooseName(None, self.context)
+        api.content.rename(obj=self.context, new_id=self.new_content_id)
+        notify(EditFinishedEvent(self.context))
+        IStatusMessage(self.request).addStatusMessage(
+            _dx(u"Item created"), "info"
+        )
+
+    def next(self, request):
+        container = aq_parent(self.context)
+        next_url = u'{}/{}'.format(
+            container.absolute_url(),
+            self.new_content_id
+        )
+        if self.ti.immediate_view:
+            next_url = u'{}/{}'.format(next_url, self.ti.immediate_view)
+        self.request.response.redirect(next_url)
+
+    def cancel(self, request):
+        api.portal.show_message(
+            _dx(u"Add New Item operation cancelled"), self.request
+        )
+        notify(EditCancelledEvent(self.context))
+        parent = aq_parent(self.context)
+        api.content.delete(obj=self.context)
+        self.context = parent
         self.request.response.redirect(self.context.absolute_url())
 
 

@@ -6,10 +6,17 @@
   <include package="Products.CMFCore" />
 
   <plone:behavior
-    title="YAFOWIL forms from contenttype schemas"
+    title="YAFOWIL forms from content-type schemas"
     name="yafowil.autoform"
     description="Yet another autoform"
     provides=".behavior.IYafowilFormBehavior"
+  />
+
+  <plone:behavior
+    title="YAFOWIL forms from content-type schemas with persistent add context"
+    name="yafowil.autoform.immediatecreate"
+    description="Yet another autoform with immediate persistent context"
+    provides=".behavior.IYafowilImmediateCreateBehavior"
   />
 
   <adapter
@@ -29,6 +36,12 @@
     for="yafowil.plone.autoform.behavior.IYafowilFormBehavior"
     name="edit"
     class=".form.EditAutoForm"
+    permission="cmf.ModifyPortalContent" />
+
+  <browser:page
+    for="yafowil.plone.autoform.behavior.IYafowilImmediateCreateBehavior"
+    name="immediateadd"
+    class=".form.ImmediateAddAutoForm"
     permission="cmf.ModifyPortalContent" />
 
 </configure>
