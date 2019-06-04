@@ -6,6 +6,7 @@ from plone.app.widgets.utils import get_ajaxselect_options
 from plone.app.widgets.utils import get_relateditems_options
 from plone.app.widgets.utils import get_tinymce_options
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
+from plone.app.z3cform.widget import DateFieldWidget
 from plone.app.z3cform.widget import DatetimeFieldWidget
 from plone.app.z3cform.widget import RelatedItemsFieldWidget
 from plone.app.z3cform.widget import RichTextFieldWidget
@@ -389,6 +390,14 @@ def rich_text_field_widget_factory(context, field):
     # XXX: insert pat options logic from RichTextFieldWidget here
     # XXX: check if RichText schema field also uses this widget
     return create_richtext_widget(context, field)
+
+
+@widget_factory(DateFieldWidget)
+def date_field_widget_factory(context, field):
+    # XXX: use datetime pattern from mockup here
+    # XXX: insert pattern option logic from DatetimeFieldWidget here
+    # XXX: check if datetime schema field also uses this widget by default
+    return create_datetime_widget(context, field)
 
 
 @widget_factory(DatetimeFieldWidget)

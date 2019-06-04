@@ -11,15 +11,8 @@ from yafowil.utils import cssid
 from zope.component.hooks import getSite
 
 
-def recurrence_extractor(widget, data):
-    import pdb;pdb.set_trace()
-    return data.extracted
-
-
 def recurrence_edit_renderer(widget, data):
     value = fetch_value(widget, data)
-    if value:
-        value = value.strftime('%Y-%m-%d %H:%M')
     portal = getToolByName(getSite(), 'portal_url').getPortalObject()
     request = data.request.zrequest
     ajax_url = portal.absolute_url() + '/@@json_recurrence'
@@ -55,8 +48,6 @@ def recurrence_edit_renderer(widget, data):
 
 def recurrence_display_renderer(widget, data):
     value = fetch_value(widget, data)
-    if value:
-        value = value.strftime('%Y-%m-%d %H:%M')
     return data.tag(
         'span',
         value,
@@ -70,8 +61,7 @@ factory.register(
     'recurrence',
     extractors=[
         generic_extractor,
-        generic_required_extractor,
-        recurrence_extractor
+        generic_required_extractor
     ],
     edit_renderers=[recurrence_edit_renderer],
     display_renderers=[recurrence_display_renderer]
@@ -79,7 +69,7 @@ factory.register(
 
 
 factory.doc['blueprint']['recurrence'] = """\
-Relation blueprint.
+Recurrence blueprint.
 """
 
 factory.defaults['recurrence.type'] = 'textarea'
