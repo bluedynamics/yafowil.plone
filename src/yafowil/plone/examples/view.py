@@ -8,6 +8,7 @@ from zExceptions import NotFound
 
 import yafowil.loader  # noqa  # loads registry
 
+
 try:
     # plone 5 only
     from Products.CMFPlone.resources import add_bundle_on_request

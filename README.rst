@@ -170,8 +170,7 @@ wrapper template ```myform.yaml```::
     </html>
 
 
-In Plone 5.x,
-when not using one of the BaseForms,
+In Plone 5.x, when not using one of the BaseForms,
 the **CSS/JS resources for YAFOWIL are not loaded** automatically.
 
 Add the following lines in order to load it::
@@ -200,6 +199,48 @@ Source Code
 
 The sources are in a GIT DVCS with its main branches at
 `github <http://github.com/bluedynamics/yafowil.plone>`_.
+
+
+TODO
+====
+
+[X] - yafowil.plone.autoform.directives
+[X]   - factory -> for hooking yafowil factory call customizations
+[X]   - modifier -> for hooking a modifier callback for the entire form
+[X] - yafowil resources view caching
+[X] - yafowil resources in content form JS binding?
+[X] - yafowil resource delivery?
+[ ] - pass view and request to widget factories
+[ ] - yafowil.widget.select2 register dedicated plone5 styles, collide
+      partly with select2 delivered in plone
+[ ] - plone.app.content.interfaces.INameFromTitle
+[ ]   - title: unicode
+[ ] - plone.app.dexterity.behaviors.discussion.IAllowDiscussion
+[ ]   - allow_discussion: bool
+[ ] - plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation
+[ ]   - exclude_from_nav: bool
+[ ] - plone.app.dexterity.behaviors.id.IShortName
+[ ]   - id: str
+[ ] - plone.app.dexterity.behaviors.metadata.IDublinCore
+[ ]   - title: unicode
+[ ]   - description: unicode
+[ ]   - subjects: ??
+[ ]   - language
+[ ]   - effective: DateTime.DateTime.DateTime
+[ ]   - expires: DateTime.DateTime.DateTime
+[ ]   - creators: tuple
+[ ]   - contributors: tuple
+[ ]   - rights: unicode
+[ ] - plone.app.contenttypes.behaviors.richtext.IRichText
+[ ]   - text.raw: unicode
+[ ] - plone.app.relationfield.behavior.IRelatedItems
+[ ]   - relatedItems: [z3c.relationfield.relation.RelationValue]
+[ ] - plone.app.versioningbehavior.behaviors.IVersionable
+[ ]   - changeNote: ??
+[ ]   - versioning_enabled: bool
+[ ] - plone.app.contenttypes.behaviors.tableofcontents.ITableOfContents
+[ ]   - table_of_contents: bool
+[ ] - plone.app.lockingbehavior.behaviors.ILocking
 
 
 Contributors

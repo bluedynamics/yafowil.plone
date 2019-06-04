@@ -1,22 +1,17 @@
-from Products.Five import BrowserView
 from plone.keyring.interfaces import IKeyManager
 from plone.protect.authenticator import createToken
 from plone.protect.utils import getRoot
 from plone.protect.utils import getRootKeyManager
 from plumber import Behavior
 from plumber import plumb
+from Products.CMFPlone.resources import add_bundle_on_request
+from Products.Five import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from yafowil.base import factory
 from yafowil.controller import Controller
 from yafowil.yaml import parse_from_YAML
 from zope.component import ComponentLookupError
 from zope.component import getUtility
-
-try:
-    # plone 5 only
-    from Products.CMFPlone.resources import add_bundle_on_request
-except ImportError:
-    def add_bundle_on_request(request, name):
-        pass
 
 
 class CSRFProtectionBehavior(Behavior):
@@ -82,3 +77,11 @@ class YAMLForm(YAMLBaseForm):
 
     def __call__(self):
         return self.render_form()
+
+
+class ContentForm(BaseForm):
+    template = ViewPageTemplateFile('content.pt')
+    form_title = ''
+
+    def __call__(self):
+        return self.template()

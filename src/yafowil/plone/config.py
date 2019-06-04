@@ -1,38 +1,37 @@
 from yafowil.base import factory
 from yafowil.plone.connectors import plone_preprocessor
+
 import os
 
 
 ###############################################################################
-# plone5 specific resources
+# plone specific resources
 ###############################################################################
 
-resourcedir = os.path.join(os.path.dirname(__file__), 'resources', 'plone5')
-css = [
-    {
-        'group': 'yafowil.plone.common',
-        'resource': 'yafowil-fontello.css',
-        'order': 10,
-    },
-    {
-        'group': 'yafowil.plone.jqueryui',
-        'resource': 'jqueryui/jquery-ui-1.10.3.custom.css',
-        'order': 10,
-    },
-]
+resourcedir = os.path.join(os.path.dirname(__file__), 'resources')
+css = [{
+    'group': 'yafowil.plone.common',
+    'resource': 'yafowil-fontello.css',
+    'order': 10,
+}, {
+    'group': 'yafowil.plone.jqueryui',
+    'resource': 'jqueryui/jquery-ui-1.10.3.custom.css',
+    'order': 10,
+}]
 
-js = [
-    {
-        'group': 'yafowil.plone.jqueryui',
-        'resource': 'jquery.migrate-1.2.1.min.js',
-        'order': 5,
-    },
-    {
-        'group': 'yafowil.plone.jqueryui',
-        'resource': 'jqueryui/jquery-ui-1.10.3.custom.min.js',
-        'order': 10,
-    },
-]
+js = [{
+    'group': 'yafowil.plone.jqueryui',
+    'resource': 'jquery.migrate-1.2.1.min.js',
+    'order': 5,
+}, {
+    'group': 'yafowil.plone.jqueryui',
+    'resource': 'jqueryui/jquery-ui-1.10.3.custom.min.js',
+    'order': 10,
+}, {
+    'group': 'yafowil.plone.common',
+    'resource': 'widgets.js',
+    'order': 30,
+}]
 
 
 ###############################################################################
@@ -70,6 +69,9 @@ def register_macros():
     })
     factory.register_macro('array', 'array', {})
     factory.register_macro('arrayfield', 'field:plonelabel:error', {})
+    factory.register_macro('arrayrelation', 'relation', {
+        'relation.pattern_name': 'array-relateditems'
+    })
 
 
 ###############################################################################
@@ -77,7 +79,7 @@ def register_macros():
 ###############################################################################
 
 def register():
-    from yafowil.plone import common  # noqa: E501
+    from yafowil.plone import widgets  # noqa: E501
     factory.register_global_preprocessors([plone_preprocessor])
     factory.register_theme('plone5', 'yafowil.plone', resourcedir, css=css, js=js)
 

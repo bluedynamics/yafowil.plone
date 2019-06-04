@@ -1,0 +1,26 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="yafowil.plone">
+
+  <body>
+  
+    <metal:main fill-slot="main">
+      <tal:main-macro metal:define-macro="main">
+
+        <h1 class="documentFirstHeading"
+            tal:condition="view/form_title"
+            tal:content="view/form_title">
+          Form Title
+        </h1>
+
+        <tal:form replace="structure view/render_form" />
+
+      </tal:main-macro>
+    </metal:main>
+  
+  </body>
+
+</html>

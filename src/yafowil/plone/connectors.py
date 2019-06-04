@@ -1,15 +1,15 @@
-try:
-    from UserDict import DictMixin
-except ImportError:
-    from collections import MutableMapping as DictMixin
-from ZPublisher.HTTPRequest import FileUpload
-from ZPublisher.HTTPRequest import HTTPRequest
+# -*- coding: utf-8 -*-
+from collections import MutableMapping
 from zope.i18n import translate
 from zope.i18nmessageid import Message
+from ZPublisher.HTTPRequest import FileUpload
+from ZPublisher.HTTPRequest import HTTPRequest
+
 import six
 
 
-class Zope2RequestAdapter(DictMixin):
+class Zope2RequestAdapter(MutableMapping):
+    coding = 'utf-8'
 
     def __init__(self, request):
         if isinstance(request, self.__class__):
@@ -31,7 +31,12 @@ class Zope2RequestAdapter(DictMixin):
             fvalue['headers'] = value.headers
             fvalue['original'] = value
             return fvalue
-        return value
+        # XXX: check whether coding is defined on request and ensure proper
+        #      decoding
+        # XXX: form tag must set accept-charset to ensure proper encoding
+        if isinstance(value, six.text_type):
+            return value
+        return value.decode(self.coding)
 
     def keys(self):
         return self.zrequest.form.keys()

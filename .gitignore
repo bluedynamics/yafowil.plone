@@ -16,8 +16,10 @@
 /include/
 /lib/
 /local/
+/share/
 /pip-selfcheck.json
 /devsrc/
+/.vscode/
 /.installed.cfg
 /.pydevproject
 /.project

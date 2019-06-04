@@ -1,0 +1,47 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:plone="http://namespaces.plone.org/plone">
+
+  <include package="plone.behavior" file="meta.zcml"/>
+  <include package="Products.CMFCore" />
+
+  <plone:behavior
+    title="YAFOWIL forms from content-type schemas"
+    name="yafowil.autoform"
+    description="Yet another autoform"
+    provides=".behavior.IYafowilFormBehavior"
+  />
+
+  <plone:behavior
+    title="YAFOWIL forms from content-type schemas with persistent add context"
+    name="yafowil.autoform.immediatecreate"
+    description="Yet another autoform with immediate persistent context"
+    provides=".behavior.IYafowilImmediateCreateBehavior"
+  />
+
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         yafowil.plone.interfaces.IYafowilLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory=".form.DefaultAddView" />
+
+  <class class=".form.DefaultAddView">
+    <require
+      permission="cmf.AddPortalContent"
+      interface="zope.publisher.interfaces.browser.IBrowserPage" />
+  </class>
+
+  <browser:page
+    for="yafowil.plone.autoform.behavior.IYafowilFormBehavior"
+    name="edit"
+    class=".form.EditAutoForm"
+    permission="cmf.ModifyPortalContent" />
+
+  <browser:page
+    for="yafowil.plone.autoform.behavior.IYafowilImmediateCreateBehavior"
+    name="immediateadd"
+    class=".form.ImmediateAddAutoForm"
+    permission="cmf.ModifyPortalContent" />
+
+</configure>
