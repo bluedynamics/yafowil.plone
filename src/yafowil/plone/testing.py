@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
@@ -7,7 +8,7 @@ from plone.app.testing import applyProfile
 import yafowil.plone
 
 
-class IYafowilLayer(PloneSandboxLayer):
+class YafowilLayer(PloneSandboxLayer):
     defaultBases = (PLONE_APP_CONTENTTYPES_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
@@ -20,16 +21,16 @@ class IYafowilLayer(PloneSandboxLayer):
         applyProfile(portal, 'yafowil.plone:default')
 
 
-YAFOWIL_PLONE_FIXTURE = IYafowilLayer()
+YAFOWIL_PLONE_FIXTURE = YafowilLayer()
 
 
 YAFOWIL_PLONE_INTEGRATION_TESTING = IntegrationTesting(
     bases=(YAFOWIL_PLONE_FIXTURE,),
-    name='IYafowilLayer:IntegrationTesting'
+    name='YafowilLayer:IntegrationTesting'
 )
 
 
 YAFOWIL_PLONE_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(YAFOWIL_PLONE_FIXTURE,),
-    name='IYafowilLayer:FunctionalTesting'
+    name='YafowilLayer:FunctionalTesting'
 )
