@@ -15,6 +15,8 @@ from zope.component.hooks import getSite
 @managedprops('first_day', 'js_field', 'show_repeat_forever')
 def recurrence_edit_renderer(widget, data):
     value = fetch_value(widget, data)
+    if not value:
+        value = ''
     portal = getToolByName(getSite(), 'portal_url').getPortalObject()
     request = data.request.zrequest
     ajax_url = portal.absolute_url() + '/@@json_recurrence'
@@ -44,9 +46,9 @@ def recurrence_edit_renderer(widget, data):
     widget.attrs['data'] = {
         'pat-recurrence': opts
     }
-    ta_attrs = input_attributes_full(widget, data)
-    ta_attrs['value'] = value
-    return data.tag('textarea', **ta_attrs)
+    attrs = input_attributes_full(widget, data)
+    attrs['value'] = None
+    return data.tag('textarea', value, **attrs)
 
 
 def recurrence_display_renderer(widget, data):
@@ -74,6 +76,8 @@ factory.register(
 factory.doc['blueprint']['recurrence'] = """\
 Recurrence blueprint.
 """
+
+factory.defaults['recurrence.persist'] = True
 
 factory.defaults['recurrence.type'] = 'textarea'
 
