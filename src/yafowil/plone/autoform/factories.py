@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Acquisition import aq_parent
 from node.utils import UNSET
 from plone.app.textfield import RichText
@@ -42,7 +43,9 @@ from zope.schema.interfaces import IContextAwareDefaultFactory
 from zope.schema.interfaces import ISequence
 from zope.schema.interfaces import IVocabulary
 from zope.schema.interfaces import IVocabularyFactory
+
 import logging
+import six
 
 
 logger = logging.getLogger('yafowil.plone')
@@ -148,7 +151,7 @@ def lookup_schema_vocabulary(context, field):
     if not vocabulary:
         return None
     # try to lookup vocabulary by name
-    if isinstance(vocabulary, basestring):
+    if isinstance(vocabulary, six.string_types):
         vocabulary = queryUtility(IVocabularyFactory, vocabulary)
     # call vocabulary factory with context
     if IVocabularyFactory.providedBy(vocabulary):

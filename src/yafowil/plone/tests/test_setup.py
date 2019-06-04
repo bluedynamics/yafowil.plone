@@ -2,6 +2,8 @@ from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
 from yafowil.plone.testing import YAFOWIL_PLONE_INTEGRATION_TESTING
+from Products.CMFPlone.utils import get_installer
+
 import unittest
 
 
@@ -14,7 +16,7 @@ class TestSetup(unittest.TestCase):
         """Custom shared utility setup for tests.
         """
         self.portal = self.layer['portal']
-        self.installer = api.portal.get_tool('portal_quickinstaller')
+        self.installer = get_installer(self.portal, self.layer['request'])
 
     def test_product_installed(self):
         """Test if yafowil.plone is installed.
@@ -36,7 +38,7 @@ class TestUninstall(unittest.TestCase):
 
     def setUp(self):
         self.portal = self.layer['portal']
-        self.installer = api.portal.get_tool('portal_quickinstaller')
+        self.installer = get_installer(self.portal, self.layer['request'])
         roles_before = api.user.get(userid=TEST_USER_ID).getRoles()
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.installer.uninstallProducts(['yafowil.plone'])
