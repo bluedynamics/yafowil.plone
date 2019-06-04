@@ -8,9 +8,11 @@ from yafowil.common import generic_required_extractor
 from yafowil.common import input_attributes_full
 from yafowil.utils import attr_value
 from yafowil.utils import cssid
+from yafowil.utils import managedprops
 from zope.component.hooks import getSite
 
 
+@managedprops('first_day', 'js_field', 'show_repeat_forever')
 def recurrence_edit_renderer(widget, data):
     value = fetch_value(widget, data)
     portal = getToolByName(getSite(), 'portal_url').getPortalObject()
@@ -20,6 +22,7 @@ def recurrence_edit_renderer(widget, data):
     if first_day is UNSET:
         calendar = request.locale.dates.calendars[u'gregorian']
         first_day = calendar.week.get('firstDay', 0)
+    # XXX: start field
     start_field = attr_value('js_field', widget, data)
     if start_field is UNSET:
         start_field = cssid(widget, 'input')
@@ -39,7 +42,7 @@ def recurrence_edit_renderer(widget, data):
         configuration=conf
     )
     widget.attrs['data'] = {
-        'data-pat-recurrence': opts
+        'pat-recurrence': opts
     }
     ta_attrs = input_attributes_full(widget, data)
     ta_attrs['value'] = value

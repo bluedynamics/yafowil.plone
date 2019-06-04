@@ -179,6 +179,8 @@ def lookup_vocabulary(context, field):
 def create_richtext_widget(context, field):
     """Reads tinymce pattern options and creates a richtext field using related
     mockup pattern.
+
+    XXX: create plonerichtext blueprint in yafowil.plone.widgets.richtext
     """
     def mimetypes_data(widget, data):
         opts = get_tinymce_options(context, field.schemafield, context.REQUEST)
@@ -212,30 +214,13 @@ def create_richtext_widget(context, field):
         mode=field.mode)
 
 
-def create_datetime_widget(context, field):
-    return factory(
-        '#field:datetime',
-        value=value_or_default(context, field),
-        props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'locale': 'de',  # XXX
-            'datepicker': True,
-            'time': True,
-            'timepicker': True,
-            'persist': True,
-            'emptyvalue': None
-        },
-        mode=field.mode)
-
-
 ###############################################################################
 # schema field bound factories
 ###############################################################################
 
 @widget_factory(RichText)
 def rich_text_widget_factory(context, field):
+    # XXX: use plonerichtext blueprint when exists
     return create_richtext_widget(context, field)
 
 
@@ -296,7 +281,21 @@ def choice_widget_factory(context, field):
 
 @widget_factory(Datetime)
 def datetime_widget_factory(context, field):
-    return create_datetime_widget(context, field)
+    return factory(
+        '#field:datetime',
+        value=value_or_default(context, field),
+        props={
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
+            'locale': 'de',  # XXX
+            'datepicker': True,
+            'time': True,
+            'timepicker': True,
+            'persist': True,
+            'emptyvalue': None
+        },
+        mode=field.mode)
 
 
 @widget_factory(Text)
@@ -387,6 +386,7 @@ def text_lines_field_widget_factory(context, field):
 
 @widget_factory(RichTextFieldWidget)
 def rich_text_field_widget_factory(context, field):
+    # XXX: use plonerichtext blueprint when exists
     # XXX: insert pat options logic from RichTextFieldWidget here
     # XXX: check if RichText schema field also uses this widget
     return create_richtext_widget(context, field)
@@ -394,22 +394,55 @@ def rich_text_field_widget_factory(context, field):
 
 @widget_factory(DateFieldWidget)
 def date_field_widget_factory(context, field):
-    # XXX: use datetime pattern from mockup here
-    # XXX: insert pattern option logic from DatetimeFieldWidget here
-    # XXX: check if datetime schema field also uses this widget by default
-    return create_datetime_widget(context, field)
+    return factory(
+        '#field:plonedatetime',
+        value=value_or_default(context, field),
+        props={
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
+            'include_time': False,
+            'plonedatetime.class_add': field.widget.params.get('klass'),
+        },
+        mode=field.mode)
 
 
 @widget_factory(DatetimeFieldWidget)
 def datetime_field_widget_factory(context, field):
-    # XXX: use datetime pattern from mockup here
-    # XXX: insert pattern option logic from DatetimeFieldWidget here
-    # XXX: check if datetime schema field also uses this widget by default
-    return create_datetime_widget(context, field)
+    return factory(
+        '#field:plonedatetime',
+        value=value_or_default(context, field),
+        props={
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
+            'include_time': True,
+            'default_timezone': field.widget.params.get('default_timezone'),
+            'plonedatetime.class_add': field.widget.params.get('klass'),
+        },
+        mode=field.mode)
+
+
+@widget_factory(RecurrenceFieldWidget)
+def recurrence_field_widget_factory(context, field):
+    return factory(
+        '#field:recurrence',
+        value=value_or_default(context, field),
+        props={
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
+            'recurrence.class_add': field.widget.params.get('klass'),
+            'start_field': field.widget.params.get('start_field'),
+            'first_day': field.widget.params.get('first_day'),
+            'show_repeat_forever': field.widget.params.get('show_repeat_forever'),
+        },
+        mode=field.mode)
 
 
 @widget_factory(AjaxSelectFieldWidget)
 def ajax_select_field_widget_factory(context, field):
+    # XXX: add and use ploneselect2 blueprint in yafowil.plone.widgets.select2
     # XXX: generalize schemafield and vocabulary lookups
     # Pattern options logic taken from
     # ``plone.app.z3cform.widget.AjaxSelectWidget``.
@@ -494,6 +527,7 @@ def ajax_select_field_widget_factory(context, field):
 
 @widget_factory(SelectFieldWidget)
 def select_field_widget_factory(context, field):
+    # XXX: add and use ploneselect2 blueprint in yafowil.plone.widgets.select2
     # XXX: check whether choice schema field uses this widget by default
     # Pattern options logic taken from ``plone.app.z3cform.widget.SelectFieldWidget``.
     # ``SelectFieldWidget`` inherits from ``plone.app.widgets.base.SelectWidget``.
@@ -538,7 +572,7 @@ def select_field_widget_factory(context, field):
 
 @widget_factory(RelatedItemsFieldWidget)
 def related_items_field_widget_factory(context, field):
-    # XXX: use relation bluepring from yafowil.plone.widgets.relation
+    # XXX: use relation blueprint from yafowil.plone.widgets.relation
     # XXX: generalize schemafield and vocabulary lookups
     # Pattern options logic taken from ``plone.app.z3cform.widget.RelatedItemsWidget``.
     # widget options
@@ -546,7 +580,7 @@ def related_items_field_widget_factory(context, field):
     separator = widget.params.get('separator', ';')
     vocabulary_view = widget.params.get('vocabulary_view', '@@getVocabulary')
     vocabulary_name = widget.params.get('vocabulary', 'plone.app.vocabularies.Catalog')
-    orderable = widget.params.get('orderable', False)
+    # orderable = widget.params.get('orderable', False)
     vocabulary_override = False
     schemafield = None
     if IChoice.providedBy(field.schemafield):
@@ -616,22 +650,5 @@ def related_items_field_widget_factory(context, field):
                 'pat-relateditems': opts
             },
             'persist_writer': RelatedItemsPersistWriter(field)
-        },
-        mode=field.mode)
-
-
-@widget_factory(RecurrenceFieldWidget)
-def recurrence_field_widget_factory(context, field):
-    return factory(
-        '#field:recurrence',
-        value=value_or_default(context, field),
-        props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'recurrence.class_add': field.widget.params.get('klass'),
-            'start_field': field.widget.params.get('start_field'),
-            'first_day': field.widget.params.get('first_day'),
-            'show_repeat_forever': field.widget.params.get('show_repeat_forever'),
         },
         mode=field.mode)
