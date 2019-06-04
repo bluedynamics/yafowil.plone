@@ -2,8 +2,11 @@
 History
 =======
 
-3.1.0 (unreleased)
+4.0.0 (unreleased)
 ------------------
+
+- Add immediate create feature for autoform.
+  [jensens]
 
 - Move ``plonelabel`` blueprint to ``yafowil.plone.widgets.label``.
   [rnix]

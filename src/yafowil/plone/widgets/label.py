@@ -1,9 +1,9 @@
 from Products.CMFPlone import PloneMessageFactory as _
 from yafowil.base import factory
 from yafowil.common import generic_positional_rendering_helper
-from yafowil.utils import UNSET
 from yafowil.utils import cssid
 from yafowil.utils import managedprops
+from yafowil.utils import UNSET
 
 
 ###############################################################################

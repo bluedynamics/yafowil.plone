@@ -1,5 +1,5 @@
-from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 from plone.dexterity.fti import DexterityFTI
@@ -7,6 +7,7 @@ from yafowil.plone.autoform.behavior import IYafowilFormBehavior
 from yafowil.plone.autoform.form import DefaultAddView
 from yafowil.plone.testing import YAFOWIL_PLONE_INTEGRATION_TESTING
 from zope.publisher.browser import TestRequest as TestRequestBase
+
 import unittest
 
 

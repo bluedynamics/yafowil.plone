@@ -2,11 +2,12 @@ from plone.autoform import directives as form
 from plone.supermodel import model
 from yafowil.plone.autoform.schema import Field
 from yafowil.plone.autoform.schema import Fieldset
-from yafowil.plone.autoform.schema import Widget
 from yafowil.plone.autoform.schema import resolve_schemata
+from yafowil.plone.autoform.schema import Widget
 from z3c.form.browser.text import TextWidget
-from zope.schema import TextLine
 from zope.schema import getFieldNamesInOrder
+from zope.schema import TextLine
+
 import unittest
 
 

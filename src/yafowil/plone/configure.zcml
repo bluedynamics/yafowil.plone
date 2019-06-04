@@ -44,7 +44,6 @@
 
   <!-- Hide profiles/products from Quick Installer -->
   <utility factory=".setuphandlers.HiddenProfiles" name="yafowil.plone" />
-  <utility factory=".setuphandlers.HiddenProducts" name="yafowil.plone" />
 
   <!-- generic profiles -->
   <genericsetup:registerProfile
@@ -73,42 +72,20 @@
 
   <yafowil:resources />
 
-  <!-- plone 4 -->
   <genericsetup:registerProfile
-    zcml:condition="not-have plone-5"
     name="default"
     title="YAFOWIL Form Library"
-    directory="profiles/plone4"
-    description="YAFOWIL - Yet Another Form Widget Library - Integration for Plone."
-    provides="Products.GenericSetup.interfaces.EXTENSION" />
-
-  <genericsetup:importStep
-    zcml:condition="not-have plone-5"
-    name="yafowil.plone"
-    title="YAFOWIL: resource registries import handlers"
-    description="Registers all resources (css/js) provided by YAFOWIL and its plugins"
-    handler=".setuphandlers.setup_resource_registries">
-    <depends name="plone.app.registry" />
-  </genericsetup:importStep>
-
-  <!-- plone 5 -->
-  <genericsetup:registerProfile
-    zcml:condition="have plone-5"
-    name="default"
-    title="YAFOWIL Form Library"
-    directory="profiles/plone5"
+    directory="profiles/default"
     description="YAFOWIL - Yet Another Form Widget Library - Integration for Plone."
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
   <browser:page
-    zcml:condition="have plone-5"
     for="*"
     name="yafowil.plone.js"
     class=".resources.YafowilJS"
     permission="zope2.View" />
 
   <browser:page
-    zcml:condition="have plone-5"
     for="*"
     name="yafowil.plone.css"
     class=".resources.YafowilCSS"

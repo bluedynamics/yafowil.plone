@@ -12,6 +12,7 @@ from yafowil.yaml import parse_from_YAML
 from zope.component import ComponentLookupError
 from zope.component import getUtility
 
+
 try:
     # plone 5 only
     from Products.CMFPlone.resources import add_bundle_on_request

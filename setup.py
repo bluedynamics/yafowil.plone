@@ -3,13 +3,11 @@ from setuptools import setup
 import os
 
 
-version = '3.1.dev0'
+version = '4.0.0.dev0'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'CHANGES.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
 shortdesc = 'Plone Integration with YAFOWIL'
-tests_require = ['interlude']
-
 
 setup(
     name='yafowil.plone',
@@ -19,7 +17,7 @@ setup(
     classifiers=[
         "Environment :: Web Environment",
         "Framework :: Plone",
-        "Framework :: Plone :: 4.3",
+        "Framework :: Plone :: Addon",
         "Framework :: Plone :: 5.1",
         "Framework :: Plone :: 5.2",
         "Framework :: Zope",
@@ -45,7 +43,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
-        'Products.CMFPlone',
+        'Products.CMFPlone>=5.1',
         'yafowil>=2.1.99',
         'yafowil.yaml>=1.0.4',
     ],

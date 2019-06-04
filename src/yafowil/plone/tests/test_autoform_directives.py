@@ -4,6 +4,7 @@ from yafowil.base import factory
 from yafowil.plone.autoform import directives
 from yafowil.plone.testing import YAFOWIL_PLONE_INTEGRATION_TESTING
 from zope.schema import TextLine
+
 import unittest
 
 
