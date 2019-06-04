@@ -38,6 +38,7 @@ class TestUninstall(unittest.TestCase):
     layer = YAFOWIL_PLONE_INTEGRATION_TESTING
 
     def setUp(self):
+        self.__name__ = 'YafowilPloneTestUninstall'  # WTF?
         self.portal = self.layer['portal']
         self.installer = get_installer(self.portal, self.layer['request'])
         roles_before = api.user.get(userid=TEST_USER_ID).getRoles()
