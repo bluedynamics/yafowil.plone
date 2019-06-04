@@ -1,5 +1,4 @@
 from Acquisition import aq_parent
-from Products.CMFCore.utils import getToolByName
 from node.utils import UNSET
 from plone.app.textfield import RichText
 from plone.app.widgets.base import dict_merge
@@ -11,16 +10,21 @@ from plone.app.z3cform.widget import DatetimeFieldWidget
 from plone.app.z3cform.widget import RelatedItemsFieldWidget
 from plone.app.z3cform.widget import RichTextFieldWidget
 from plone.app.z3cform.widget import SelectFieldWidget
+from plone.formwidget.recurrence.z3cform.widget import RecurrenceFieldWidget
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
+from Products.CMFCore.utils import getToolByName
 from yafowil.base import factory
 from yafowil.plone.autoform import FORM_SCOPE_ADD
-from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_DISPLAY
+from yafowil.plone.autoform import FORM_SCOPE_EDIT
 from yafowil.plone.autoform import FORM_SCOPE_HOSTILE_ATTR
 from yafowil.plone.autoform.persistence import AjaxSelectPersistWriter
 from yafowil.plone.autoform.persistence import RelatedItemsPersistWriter
 from yafowil.plone.autoform.persistence import RichtextPersistWriter
+from z3c.form.browser.checkbox import SingleCheckBoxFieldWidget
+from z3c.form.browser.text import TextFieldWidget
+from z3c.form.browser.textlines import TextLinesFieldWidget
 from z3c.relationfield.schema import RelationList
 from zope.component import getUtility
 from zope.component import queryUtility
@@ -338,6 +342,48 @@ def tuple_widget_factory(context, field):
 # widget bound factories
 ###############################################################################
 
+@widget_factory(SingleCheckBoxFieldWidget)
+def single_checkbox_field_widget_factory(context, field):
+    return factory(
+        '#field:checkbox',
+        value=value_or_default(context, field),
+        props={
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
+            'checkbox.class_add': field.widget.params.get('klass')
+        },
+        mode=field.mode)
+
+
+@widget_factory(TextFieldWidget)
+def text_field_widget_factory(context, field):
+    return factory(
+        '#field:text',
+        value=value_or_default(context, field),
+        props={
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
+            'text.class_add': field.widget.params.get('klass')
+        },
+        mode=field.mode)
+
+
+@widget_factory(TextLinesFieldWidget)
+def text_lines_field_widget_factory(context, field):
+    return factory(
+        '#field:textarea',
+        value=value_or_default(context, field),
+        props={
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
+            'textarea.class_add': field.widget.params.get('klass')
+        },
+        mode=field.mode)
+
+
 @widget_factory(RichTextFieldWidget)
 def rich_text_field_widget_factory(context, field):
     # XXX: insert pat options logic from RichTextFieldWidget here
@@ -445,8 +491,8 @@ def select_field_widget_factory(context, field):
     # widget options
     widget = field.widget
     separator = widget.params.get('separator', ';')
-    noValueToken = widget.params.get('noValueToken', u'')
-    noValueMessage = widget.params.get('noValueMessage', u'')
+    # noValueToken = widget.params.get('noValueToken', u'')
+    # noValueMessage = widget.params.get('noValueMessage', u'')
     multiple = widget.params.get('multiple', None)
     orderable = widget.params.get('orderable', False)
     required = field.required
@@ -483,6 +529,7 @@ def select_field_widget_factory(context, field):
 
 @widget_factory(RelatedItemsFieldWidget)
 def related_items_field_widget_factory(context, field):
+    # XXX: use relation bluepring from yafowil.plone.widgets.relation
     # XXX: generalize schemafield and vocabulary lookups
     # Pattern options logic taken from ``plone.app.z3cform.widget.RelatedItemsWidget``.
     # widget options
@@ -560,5 +607,22 @@ def related_items_field_widget_factory(context, field):
                 'pat-relateditems': opts
             },
             'persist_writer': RelatedItemsPersistWriter(field)
+        },
+        mode=field.mode)
+
+
+@widget_factory(RecurrenceFieldWidget)
+def recurrence_field_widget_factory(context, field):
+    return factory(
+        '#field:recurrence',
+        value=value_or_default(context, field),
+        props={
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
+            'recurrence.class_add': field.widget.params.get('klass'),
+            'start_field': field.widget.params.get('start_field'),
+            'first_day': field.widget.params.get('first_day'),
+            'show_repeat_forever': field.widget.params.get('show_repeat_forever'),
         },
         mode=field.mode)
