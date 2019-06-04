@@ -41,7 +41,8 @@ def datetime_extractor(widget, data):
         ret = datetime(*map(int, value))
         if zone and not isinstance(zone, pytz.tzinfo.BaseTzInfo):
             zone = pytz.timezone(zone)
-        ret = zone.localize(ret)
+        if zone:
+            ret = zone.localize(ret)
         return ret
     else:
         return date(*map(int, value.split('-')))
@@ -97,7 +98,9 @@ factory.doc['blueprint']['plonedatetime'] = """\
 Datetime blueprint.
 """
 
-factory.defaults['plonedatetime.class'] = 'pat-pickadate event_start'
+factory.defaults['plonedatetime.persist'] = True
+
+factory.defaults['plonedatetime.class'] = 'pat-pickadate'
 
 factory.defaults['plonedatetime.include_time'] = True
 

@@ -179,6 +179,10 @@ def lookup_vocabulary(context, field):
     return ret
 
 
+###############################################################################
+# XXX: move to yafowil.plone.widgets
+###############################################################################
+
 def create_richtext_widget(context, field):
     """Reads tinymce pattern options and creates a richtext field using related
     mockup pattern.
