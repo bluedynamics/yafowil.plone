@@ -10,6 +10,8 @@ from yafowil.plone import _
 from zope.dottedname.resolve import resolve
 from zope.schema import getFieldNamesInOrder
 
+import six
+
 
 class Fieldset(object):
     """Represent form fieldsets defined via ``plone.supermodel.model.fieldset``.
@@ -156,7 +158,7 @@ def resolve_widget(schema_widget):
             params=schema_widget.params
         )
     # case dotted path to widget class
-    if isinstance(schema_widget, basestring):
+    if isinstance(schema_widget, six.string_types):
         return Widget(factory=resolve(schema_widget))
     raise RuntimeError('Unknown widget: {0}'.format(schema_widget))
 
