@@ -1,4 +1,5 @@
 from plone.supermodel import model
+from zope.interface import Attribute
 
 
 class IYafowilFormBehavior(model.Schema):
@@ -13,3 +14,5 @@ class IYafowilImmediateCreateBehavior(IYafowilFormBehavior):
 
     Creates immediately a pesistent context to work.
     """
+
+    yafowil_immediatecreate = Attribute(u"Was this item initially saved?")
