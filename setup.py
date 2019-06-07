@@ -47,6 +47,12 @@ setup(
         'yafowil>=2.1.99',
         'yafowil.yaml>=1.0.4',
     ],
+    extras_require={
+        'test': [
+            'plone.app.testing',
+            'plone.app.robotframework',
+        ],
+    },
     entry_points="""
     [z3c.autoinclude.plugin]
     target = plone
