@@ -6,6 +6,7 @@
 
   <browser:page
     for="*"
+    layer="..interface.IYafowilDemoLayer"
     name="yafowil_examples"
     template="view.pt"
     permission="zope.Public"
