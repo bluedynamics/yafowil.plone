@@ -18,6 +18,10 @@
     description="Yet another autoform with immediate persistent context"
     provides=".behavior.IYafowilImmediateCreateBehavior"
   />
+  <adapter
+      factory=".indexer.index_in_immediate_creation"
+      name="in_immediate_creation"
+  />
 
   <adapter
     for="Products.CMFCore.interfaces.IFolderish
