@@ -9,10 +9,8 @@
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="yafowil.plone">
 
-  <!-- register examples
-       uncomment for development purposes
-  -->
-  <!-- <include package=".examples" /> -->
+  <!-- register demo examples -->
+  <include package=".examples" />
 
   <!--yafowil autoforms -->
   <include package=".autoform" />
@@ -45,12 +43,11 @@
   <!-- Hide profiles/products from Quick Installer -->
   <utility factory=".setuphandlers.HiddenProfiles" name="yafowil.plone" />
 
-  <!-- generic profiles -->
   <genericsetup:registerProfile
-    name="demoresources"
-    title="YAFOWIL Form Library Demo Resource Integration Profile"
-    directory="profiles/demoresources"
-    description="YAFOWIL - Yet Another Form Widget Library - Demo Resources."
+    name="default"
+    title="YAFOWIL Form Library"
+    directory="profiles/default"
+    description="YAFOWIL - Yet Another Form Widget Library - Integration for Plone."
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
   <genericsetup:registerProfile
@@ -71,13 +68,6 @@
   <include package="." file="meta.zcml" />
 
   <yafowil:resources />
-
-  <genericsetup:registerProfile
-    name="default"
-    title="YAFOWIL Form Library"
-    directory="profiles/default"
-    description="YAFOWIL - Yet Another Form Widget Library - Integration for Plone."
-    provides="Products.GenericSetup.interfaces.EXTENSION" />
 
   <browser:page
     for="*"

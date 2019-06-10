@@ -10,5 +10,4 @@ class HiddenProfiles(object):
         """
         return [
             'yafowil.plone:demo',
-            'yafowil.plone:demoresources'
         ]
