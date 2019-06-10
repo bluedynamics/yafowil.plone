@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<object name="portal_catalog">
+  <index
+      meta_type="BooleanIndex"
+      name="in_immediate_creation">
+    <indexed_attr value="in_immediate_creation" />
+  </index>
+</object>
