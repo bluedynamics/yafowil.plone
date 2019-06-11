@@ -1,7 +1,7 @@
 .. image:: https://travis-ci.com/bluedynamics/yafowil.plone.svg?branch=master
     :target: https://travis-ci.com/bluedynamics/yafowil.plone
 
-<YAFOWIL http://pypi.python.org/pypi/yafowil>`_ is a form library for Python.
+`YAFOWIL <http://pypi.python.org/pypi/yafowil>`_ is a form library for Python.
 This is its **Plone Integration** package
 
 Overview
