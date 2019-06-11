@@ -184,7 +184,7 @@ wrapper template ```myform.yaml```:
 
 When not using one of the BaseForms, the **CSS/JS resources for YAFOWIL are not loaded** automatically.
 
-Add the following lines in order to load it::
+Add the following lines in order to load it:
 
 .. code:: Python
 
