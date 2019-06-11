@@ -222,7 +222,7 @@ YAFOWIL offers a layer to read ``z3c.form`` ``zope.schema`` annotations and buil
 
 Furthermore it offers an own ``zope.schema`` annotations named ``factory`` and ``factory_callable`` to build rich custom YAFOWIL forms without any ``z3c.form`` references.
 
-Examples can be found within the `bda.plone.yafowil_autoform_example behavior<https://github.com/bluedynamics/bda.plone.yafowil_autoform_example/blob/master/src/bda/plone/yafowil_autoform_example/behaviors.py>`_
+Examples can be found within the `bda.plone.yafowil_autoform_example behavior <https://github.com/bluedynamics/bda.plone.yafowil_autoform_example/blob/master/src/bda/plone/yafowil_autoform_example/behaviors.py>`_
 
 
 Usage as z3c.form drop-in replacement
