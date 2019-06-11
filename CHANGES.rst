@@ -2,8 +2,8 @@
 History
 =======
 
-4.0.0 (unreleased)
-------------------
+4.0.0a1 (2019-06-11)
+--------------------
 
 - Add Autoform functionality.
   [rnix, jensens]
