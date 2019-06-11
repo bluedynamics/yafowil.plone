@@ -73,8 +73,7 @@ Request wrapper
 This package registers a global preprocessor for YAFOWIL.
 It wraps the Zope2 request by an own request instance providing the behavior expected by YAFOWIL.
 
-File Uploads provided by Zope2 as ``ZPublisher.HTTPRequest.Fileupload``
-objects are turned into python ``dict``s with the keys:
+File Uploads provided by Zope2 as ``ZPublisher.HTTPRequest.Fileupload`` objects are turned into a python ``dict`` with the keys:
 
 **file**
     file-like object to read data from
