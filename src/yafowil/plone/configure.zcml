@@ -47,21 +47,21 @@
     name="default"
     title="YAFOWIL Form Library"
     directory="profiles/default"
-    description="YAFOWIL - Yet Another Form Widget Library - Integration for Plone."
+    description="YYet Another Form Widget Library - Basic Integration for Plone."
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
   <genericsetup:registerProfile
     name="demo"
-    title="YAFOWIL Form Library Demo Profile"
+    title="YAFOWIL Form Library Demo"
     directory="profiles/demo"
-    description="YAFOWIL - Yet Another Form Widget Library - Demo Setup."
+    description="Yet Another Form Widget Library - Demo Setup."
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
   <genericsetup:registerProfile
     name="autoform"
-    title="YAFOWIL Form Library Autoform Profile"
+    title="YAFOWIL Autoform"
     directory="profiles/autoform"
-    description="YAFOWIL - Yet Another Form Widget Library - Autoform Setup."
+    description="Yet Another Form Widget Library - Plone Autoform Integrationas z3c.form frop-in replacement for content types."
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
   <!-- yafowil resource directories -->
