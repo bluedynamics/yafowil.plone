@@ -27,3 +27,5 @@ devsrc/
 .mr.developer.cfg
 .settings/
 .DS_Store
+lib64
+pyvenv.cfg
