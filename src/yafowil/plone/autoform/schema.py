@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from operator import attrgetter
+from plone.autoform.interfaces import MODES_KEY
 from plone.autoform.interfaces import WIDGETS_KEY
 from plone.autoform.widgets import ParameterizedWidget
 from plone.supermodel.interfaces import DEFAULT_ORDER
@@ -163,6 +164,14 @@ def resolve_widget(schema_widget):
     raise RuntimeError('Unknown widget: {0}'.format(schema_widget))
 
 
+# aliases from plone autoform widget modes to yafowil widget modes
+mode_aliases = {
+    'input': 'edit',
+    'display': 'display',
+    'hidden': 'skip'
+}
+
+
 def resolve_schemata(schemata):
     """Resolve list of schemata to fieldsets.
 
@@ -184,6 +193,12 @@ def resolve_schemata(schemata):
         is_behavior = idx != 0
         # collect annotated widgets for schema
         widgets = mergedTaggedValueDict(schema, WIDGETS_KEY)
+        # get annotated widget modes for schema
+        modes = {
+            mode[1]: mode_aliases[mode[2]]
+            for mode in mergedTaggedValueList(schema, MODES_KEY)
+        }
+        # XXX: omitted, no_omit from plone.autoform.directives
         # collect all fields from schema and create ``Field`` instances
         fields = OrderedDict()
         for name in getFieldNamesInOrder(schema):
@@ -191,7 +206,7 @@ def resolve_schemata(schemata):
                 name=name,
                 schema=schema,
                 widget=resolve_widget(widgets.get(name)),
-                mode='edit',  # XXX
+                mode=modes.get(name, 'edit'),
                 is_behavior=is_behavior
             )
         # collect fieldsets from schema and add related fields

@@ -5,6 +5,10 @@ History
 4.0.0a2 (unreleased)
 --------------------
 
+- Consider values from ``plone.autoform.directives.mode`` in
+  ``yafowil.plone.autoform.schema.resolve_schemata``.
+  [rnix]
+
 - Fix autoform default fieldset label.
   [rnix, jensens]
 
