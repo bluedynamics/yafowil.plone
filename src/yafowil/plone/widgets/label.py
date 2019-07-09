@@ -11,7 +11,7 @@ from yafowil.utils import UNSET
 ###############################################################################
 
 @managedprops('label', 'for', 'help', 'title')
-def plone_label_renderer(widget, data):
+def label_renderer(widget, data):
     tag = data.tag
     label_text = widget.attrs.get('label', widget.__name__)
     if callable(label_text):
@@ -53,8 +53,8 @@ def plone_label_renderer(widget, data):
 
 factory.register(
     'plonelabel',
-    edit_renderers=[plone_label_renderer],
-    display_renderers=[plone_label_renderer])
+    edit_renderers=[label_renderer],
+    display_renderers=[label_renderer])
 
 factory.doc['blueprint']['plonelabel'] = """\
 Label for Plone blueprint.

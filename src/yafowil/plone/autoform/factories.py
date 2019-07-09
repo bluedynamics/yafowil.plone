@@ -5,7 +5,6 @@ from plone.app.textfield import RichText
 from plone.app.widgets.base import dict_merge
 from plone.app.widgets.utils import get_ajaxselect_options
 from plone.app.widgets.utils import get_relateditems_options
-from plone.app.widgets.utils import get_tinymce_options
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.app.z3cform.widget import DateFieldWidget
 from plone.app.z3cform.widget import DatetimeFieldWidget
@@ -43,7 +42,6 @@ from zope.schema.interfaces import IContextAwareDefaultFactory
 from zope.schema.interfaces import ISequence
 from zope.schema.interfaces import IVocabulary
 from zope.schema.interfaces import IVocabularyFactory
-
 import logging
 import six
 
@@ -180,55 +178,24 @@ def lookup_vocabulary(context, field):
 
 
 ###############################################################################
-# XXX: move to yafowil.plone.widgets
-###############################################################################
-
-def create_richtext_widget(context, field):
-    """Reads tinymce pattern options and creates a richtext field using related
-    mockup pattern.
-
-    XXX: create plonerichtext blueprint in yafowil.plone.widgets.richtext
-    """
-    def mimetypes_data(widget, data):
-        opts = get_tinymce_options(context, field.schemafield, context.REQUEST)
-        return {
-            'pat-textareamimetypeselector': {
-                'textareaName': widget.dottedpath,
-                'widgets': {
-                    'text/html': {
-                        'pattern': 'tinymce',
-                        'patternOptions': opts
-                    },
-                },
-            }
-        }
-    value = value_or_default(context, field)
-    if value:
-        value = value.raw
-    return factory(
-        '#field:richtext',
-        value=value,
-        props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'mimetypes': ['text/html', 'text/x-web-textile'],
-            'mimetypes_class': 'pat-textareamimetypeselector',
-            'mimetypes_data': mimetypes_data,
-            'persist': True,
-            'persist_writer': RichtextPersistWriter(field)
-        },
-        mode=field.mode)
-
-
-###############################################################################
 # schema field bound factories
 ###############################################################################
 
 @widget_factory(RichText)
 def rich_text_widget_factory(context, field):
-    # XXX: use plonerichtext blueprint when exists
-    return create_richtext_widget(context, field)
+    return factory(
+        '#field:plonerichtext',
+        value=value_or_default(context, field),
+        props={
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
+            'persist': True,
+            'persist_writer': RichtextPersistWriter(field),
+            'default': field.schemafield.missing_value,
+            'context': context
+        },
+        mode=field.mode)
 
 
 @widget_factory(RelationList)
@@ -393,10 +360,20 @@ def text_lines_field_widget_factory(context, field):
 
 @widget_factory(RichTextFieldWidget)
 def rich_text_field_widget_factory(context, field):
-    # XXX: use plonerichtext blueprint when exists
-    # XXX: insert pat options logic from RichTextFieldWidget here
-    # XXX: check if RichText schema field also uses this widget
-    return create_richtext_widget(context, field)
+    return factory(
+        '#field:plonerichtext',
+        value=value_or_default(context, field),
+        props={
+            'label': field.label,
+            'help': field.help,
+            'required': field.required,
+            'persist': True,
+            'persist_writer': RichtextPersistWriter(field),
+            'pattern_options': field.widget.params.get('pattern_options'),
+            'default': field.schemafield.missing_value,
+            'context': context
+        },
+        mode=field.mode)
 
 
 @widget_factory(DateFieldWidget)
