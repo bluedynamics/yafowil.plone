@@ -5,7 +5,9 @@ History
 4.0.0a2 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Add ``plonerichtext`` blueprint and use in
+  ``yafowil.plone.autoform.factories``.
+  [rnix]
 
 
 4.0.0a1 (2019-06-11)
