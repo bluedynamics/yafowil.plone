@@ -198,7 +198,11 @@ def resolve_schemata(schemata):
             mode[1]: mode_aliases[mode[2]]
             for mode in mergedTaggedValueList(schema, MODES_KEY)
         }
-        # XXX: omitted, no_omit from plone.autoform.directives
+        # XXX: omitted from plone.autoform.directives
+        # XXX: read_permission from plone.autoform.directives
+        # XXX: write_permission from plone.autoform.directives
+        # XXX: order_before from plone.autoform.directives
+        # XXX: order_after from plone.autoform.directives
         # collect all fields from schema and create ``Field`` instances
         fields = OrderedDict()
         for name in getFieldNamesInOrder(schema):
