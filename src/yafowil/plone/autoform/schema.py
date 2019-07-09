@@ -6,7 +6,7 @@ from plone.supermodel.interfaces import DEFAULT_ORDER
 from plone.supermodel.interfaces import FIELDSETS_KEY
 from plone.supermodel.utils import mergedTaggedValueDict
 from plone.supermodel.utils import mergedTaggedValueList
-from yafowil.plone import _
+from Products.CMFPlone import PloneMessageFactory as _
 from zope.dottedname.resolve import resolve
 from zope.schema import getFieldNamesInOrder
 
@@ -172,11 +172,11 @@ def resolve_schemata(schemata):
     :return: list of ``yafowil.plone.autoform.schema.Fieldset`` instances.
     """
     # fieldset definitions
-    fieldsets = dict()
+    fieldsets = OrderedDict()
     # create default fieldset, not resolved by plone.autoform
     fieldsets['default'] = Fieldset(
         name='default',
-        label=_('default', default='Default')
+        label=_('label_schema_default', default='Default')
     )
     for idx, schema in enumerate(schemata):
         # assume first schema in list is main schema, all remaining are

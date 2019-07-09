@@ -5,6 +5,12 @@ History
 4.0.0a2 (unreleased)
 --------------------
 
+- Fix autoform default fieldset label.
+  [rnix, jensens]
+
+- Fix autoform fieldset order.
+  [rnix, jensens]
+
 - Add ``plonerichtext`` blueprint and use in
   ``yafowil.plone.autoform.factories``.
   [rnix]
