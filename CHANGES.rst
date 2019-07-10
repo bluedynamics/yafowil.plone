@@ -2,8 +2,12 @@
 History
 =======
 
-4.0.0a2 (unreleased)
+4.0.0a2 (2019-07-10)
 --------------------
+
+- Consider values from ``plone.autoform.directives.order_before`` and
+  ``order_after`` in ``yafowil.plone.autoform.schema.resolve_schemata``.
+  [rnix]
 
 - Consider values from ``plone.autoform.directives.mode`` in
   ``yafowil.plone.autoform.schema.resolve_schemata``.
