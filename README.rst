@@ -115,35 +115,35 @@ An in practice implementation may look like:
 
 .. code:: python
 
-    >>> from yafowil.base import factory
-    >>> from yafowil.plone.form import Form
+    from yafowil.base import factory
+    from yafowil.plone.form import Form
 
-    >>> class MyForm(Form):
-    ...     action_resource = '@@view_name_callable_by_browser'
-    ...
-    ...     def prepare(self):
-    ...         form = factory(
-    ...             'form',
-    ...             name='myform',
-    ...             props={
-    ...                 'action': self.form_action,
-    ...             })
-    ...
-    ...         # form widgets creation here...
-    ...
-    ...         self.form = form
+    class MyForm(Form):
+        action_resource = '@@view_name_callable_by_browser'
+
+        def prepare(self):
+            form = factory(
+                'form',
+                name='myform',
+                props={
+                    'action': self.form_action,
+                })
+
+            # form widgets creation here...
+
+            self.form = form
 
 Convenience code for creating YAML forms:
 
 .. code:: python
 
-    >>> from zope.i18nmessageid import MessageFactory
-    >>> from yafowil.plone.form import YAMLBaseForm
+    from zope.i18nmessageid import MessageFactory
+    from yafowil.plone.form import YAMLBaseForm
 
-    >>> class MyYAMLForm(YAMLBaseForm):
-    ...     action_resource = '@@view_name_callable_by_browser'
-    ...     form_template = 'package.name:forms/myform.yaml'
-    ...     message_factory = MessageFactory('package.name')
+    class MyYAMLForm(YAMLBaseForm):
+        action_resource = '@@view_name_callable_by_browser'
+        form_template = 'package.name:forms/myform.yaml'
+        message_factory = MessageFactory('package.name')
 
 Form classes inherit from ``Products.Five.BrowserPage``, thus they
 must be registered via ZCML ``browser:page`` directive:
