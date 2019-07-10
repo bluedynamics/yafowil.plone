@@ -58,6 +58,34 @@ class IWidgetUsingModel(model.Schema):
     form.widget('field4', label=u'Label 4')
 
 
+class IModeUsingModel(IBasicModel):
+    form.mode(field='hidden')
+
+    field1 = TextLine(title=u'Field 1')
+    form.mode(field1='hidden')
+
+
+class IOrderUsingMainSchema(model.Schema):
+    field_m_1 = TextLine(title=u'Field m 1')
+    field_m_2 = TextLine(title=u'Field m 2')
+
+
+class IOrderUsingBehavior1(model.Schema):
+    field_1_1 = TextLine(title=u'Field 1 1')
+    form.order_before(field_1_1='field_m_1')
+
+    field_1_2 = TextLine(title=u'Field 1 2')
+    form.order_after(field_1_2='.field_1_1')
+
+
+class IOrderUsingBehavior2(model.Schema):
+    field_2_1 = TextLine(title=u'Field 2 1')
+    form.order_after(field_2_1='IOrderUsingBehavior1.field_1_2')
+
+    field_2_2 = TextLine(title=u'Field 2 2')
+    form.order_before(field_2_2='*')
+
+
 ###############################################################################
 # tests
 ###############################################################################
@@ -110,7 +138,7 @@ class TestAutoformSchema(unittest.TestCase):
         fieldset = fieldsets[0]
         self.assertEqual(len(fieldset.children), 1)
         self.assertEqual(fieldset.name, 'default')
-        self.assertEqual(fieldset.label, 'default')
+        self.assertEqual(fieldset.label, 'label_schema_default')
 
         field = next(fieldset.__iter__())
         self.assertEqual(field.name, 'field')
@@ -213,3 +241,40 @@ class TestAutoformSchema(unittest.TestCase):
         widget = field.widget
         self.assertEqual(widget.factory, None)
         self.assertEqual(widget.params, {'label': 'Label 4'})
+
+    def test_resolve_schemata_field_modes(self):
+        fieldsets = resolve_schemata([IModeUsingModel])
+        self.assertEqual(len(fieldsets), 1)
+
+        fieldset = fieldsets[0]
+        self.assertEqual(len(fieldset.children), 2)
+        self.assertEqual(fieldset.name, 'default')
+
+        field = fieldset.children[0]
+        self.assertEqual(field.name, 'field')
+        self.assertEqual(field.mode, 'skip')
+
+        field = fieldset.children[1]
+        self.assertEqual(field.name, 'field1')
+        self.assertEqual(field.mode, 'skip')
+
+    def test_resolve_schemata_field_order(self):
+        fieldsets = resolve_schemata([
+            IOrderUsingMainSchema,
+            IOrderUsingBehavior1,
+            IOrderUsingBehavior2
+        ])
+        self.assertEqual(len(fieldsets), 1)
+
+        fieldset = fieldsets[0]
+        self.assertEqual(len(fieldset.children), 6)
+        self.assertEqual(fieldset.name, 'default')
+
+        self.assertEqual([field.name for field in fieldset.children], [
+            'field_2_2',
+            'field_1_1',
+            'field_1_2',
+            'field_2_1',
+            'field_m_1',
+            'field_m_2'
+        ])

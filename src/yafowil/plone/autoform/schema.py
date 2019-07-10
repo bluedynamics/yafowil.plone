@@ -193,6 +193,7 @@ def collect_fields_order(order, schema, main_schema):
         # ignore empty order definition
         if not o_def:
             continue
+        o_def = list(o_def)
         # handle related field notation
         if o_def[2] != '*':
             # field is from the same schema, its name can be abbreviated by
@@ -220,13 +221,22 @@ def order_fieldset(order, fieldset):
         field_fqn = field.fqn
         if field_fqn not in order:
             continue
+        direction = order[field_fqn][0]
         relative_to = order[field_fqn][1]
-        ref = data.get(relative_to)
+        if direction == 'before':
+            if relative_to == '*':
+                ref = data.values()[0]
+            else:
+                ref = data.get(relative_to)
+        else:
+            if relative_to == '*':
+                ref = data.values()[-1]
+            else:
+                ref = data.get(relative_to)
         # anchor field not found
         if not ref:
             # XXX: log warning
             continue
-        direction = order[field_fqn][0]
         field = data.pop(field_fqn)
         if direction == 'before':
             if relative_to == '*':
