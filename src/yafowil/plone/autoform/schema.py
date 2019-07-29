@@ -216,13 +216,13 @@ def order_fieldset(order, fieldset):
     :param fieldset: ``yafowil.plone.autoform.schema.Fieldset`` instance.
     """
     data = fieldset.data
-    for field in data.values():
-        # no order def for field name
-        field_fqn = field.fqn
-        if field_fqn not in order:
+    for field_fqn, o_def in order.items():
+        field = data.get(field_fqn)
+        # field by fqn not in fieldset
+        if not field:
             continue
-        direction = order[field_fqn][0]
-        relative_to = order[field_fqn][1]
+        direction = o_def[0]
+        relative_to = o_def[1]
         if direction == 'before':
             if relative_to == '*':
                 ref = data.values()[0]
