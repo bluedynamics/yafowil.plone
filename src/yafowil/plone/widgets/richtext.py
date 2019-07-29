@@ -39,13 +39,14 @@ def richtext_edit_renderer(widget, data):
     pattern_options_overrides = attr_value('pattern_options', widget, data)
     if pattern_options_overrides:
         pattern_options_dict.update(pattern_options_overrides)
+    pattern_name = attr_value('pattern_name', widget, data)
     select_attrs = {
         'name_': '{}.mimetype'.format(widget.dottedpath),
         'id': cssid(widget, 'input.mimetype'),
-        'class': 'pat-textareamimetypeselector'
+        'class': '{} plonerichtext'.format(pattern_name)
     }
     select_attrs.update(as_data_attrs({
-        'pat-textareamimetypeselector': {
+        pattern_name: {
             'textareaName': widget.dottedpath,
             'widgets': {
                 'text/html': {
@@ -76,5 +77,7 @@ Richtext blueprint.
 factory.defaults['plonerichtext.default'] = ''
 
 factory.defaults['plonerichtext.context'] = None
+
+factory.defaults['plonerichtext.pattern_name'] = 'pat-textareamimetypeselector'
 
 factory.defaults['plonerichtext.pattern_options'] = {}

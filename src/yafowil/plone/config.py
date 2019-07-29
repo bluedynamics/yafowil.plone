@@ -51,10 +51,12 @@ def configure_factory():
 ###############################################################################
 
 def register_macros():
+    # form macro
     factory.register_macro('form', 'form', {
         'form.class': 'enableUnloadProtection enableAutoFocus '
                       'enableFormTabbing edit-form',
     })
+    # field macro
     factory.register_macro('field', 'field:plonelabel:error', {
         'field.class': 'field',
         'field.error_class': 'error',
@@ -63,14 +65,22 @@ def register_macros():
         'error.render_empty': True,
         'error.position': 'before',
     })
+    # button macro
     factory.register_macro('button', 'field:submit', {
         'field.class': 'formControls',
         'submit.class': 'context',
     })
+    # array macro
     factory.register_macro('array', 'array', {})
+    # array field macro
     factory.register_macro('arrayfield', 'field:plonelabel:error', {})
+    # relation as array entry macro
     factory.register_macro('arrayrelation', 'relation', {
         'relation.pattern_name': 'array-relateditems'
+    })
+    # richtext as array entry macro
+    factory.register_macro('arrayrichtext', 'plonerichtext', {
+        'plonerichtext.pattern_name': 'array-textareamimetypeselector'
     })
 
 
