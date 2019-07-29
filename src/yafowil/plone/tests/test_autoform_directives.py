@@ -3,8 +3,8 @@ from plone.supermodel import model
 from yafowil.base import factory
 from yafowil.plone.autoform import directives
 from yafowil.plone.testing import YAFOWIL_PLONE_INTEGRATION_TESTING
+from zope.interface import Interface
 from zope.schema import TextLine
-
 import unittest
 
 
@@ -71,6 +71,7 @@ class IDummySchema2(model.Schema):
 
 class TestAutoformDirectives(unittest.TestCase):
     layer = YAFOWIL_PLONE_INTEGRATION_TESTING
+    maxDiff = None
 
     def test_factory_tagged_values(self):
         self.assertEqual(
@@ -123,7 +124,9 @@ class TestAutoformDirectives(unittest.TestCase):
                     'props': {}
                 },
                 'bar': {'blueprints': '#field:*my:text'}
-            }
+            },
+            Interface: None,
+            model.Schema: None
         })
         self.assertEqual(cache.get_factory(IDummySchema, 'bar'), {
             'blueprints': '#field:*my:text'
@@ -138,7 +141,11 @@ class TestAutoformDirectives(unittest.TestCase):
         )
         self.assertEqual(
             cache._cache[directives.FACTORY_CALLABLE_KEY],
-            {IDummySchema: {'qux': dummy_factory_callable}}
+            {
+                IDummySchema: {'qux': dummy_factory_callable},
+                Interface: None,
+                model.Schema: None
+            }
         )
         self.assertEqual(
             cache.get_factory_callable(IDummySchema, 'qux'),
@@ -154,7 +161,9 @@ class TestAutoformDirectives(unittest.TestCase):
                 'bar': {'after': None, 'before': 'foo', 'fieldset': None},
                 'baz': {'after': 'qux', 'before': None, 'fieldset': None},
                 'qix': {'after': None, 'before': None, 'fieldset': 'other'}
-            }
+            },
+            Interface: None,
+            model.Schema: None
         })
         self.assertEqual(cache.get_order(IDummySchema, 'bar'), {
             'after': None,
@@ -170,12 +179,16 @@ class TestAutoformDirectives(unittest.TestCase):
             [dummy_modifier_1, dummy_modifier_2, dummy_modifier_3]
         )
         self.assertEqual(cache._cache[directives.MODIFIER_KEY], {
-            IDummySchema: [dummy_modifier_1, dummy_modifier_2, dummy_modifier_3]
+            IDummySchema: [dummy_modifier_1, dummy_modifier_2, dummy_modifier_3],
+            Interface: None,
+            model.Schema: None
         })
         self.assertEqual(cache.get_modifier(IDummySchema2), [])
         self.assertEqual(cache._cache[directives.MODIFIER_KEY], {
             IDummySchema: [dummy_modifier_1, dummy_modifier_2, dummy_modifier_3],
-            IDummySchema2: None
+            IDummySchema2: None,
+            Interface: None,
+            model.Schema: None
         })
 
     def test_context_aware_callable(self):

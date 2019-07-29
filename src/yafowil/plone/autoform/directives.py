@@ -87,29 +87,41 @@ class TGVCache(object):
     }
 
     def _query(self, key, schema):
-        tgv = self._cache[key].get(schema)
-        if tgv is None:
+        tgv = self._cache[key].get(schema, _marker)
+        if tgv is _marker:
             tgv = self._cache[key][schema] = schema.queryTaggedValue(key)
         return tgv
 
-    def get_factory(self, schema, field_name):
-        tgv = self._query(FACTORY_KEY, schema)
+    def _query_dict_value(self, key, schema, field_name):
+        tgv = self._query(key, schema)
         if tgv:
-            return tgv.get(field_name)
+            val = tgv.get(field_name)
+            if val:
+                return val
+        for base in schema.__bases__:
+            val = self._query_dict_value(key, base, field_name)
+            if val:
+                return val
+
+    def get_factory(self, schema, field_name):
+        return self._query_dict_value(FACTORY_KEY, schema, field_name)
 
     def get_factory_callable(self, schema, field_name):
-        tgv = self._query(FACTORY_CALLABLE_KEY, schema)
-        if tgv:
-            return tgv.get(field_name)
+        return self._query_dict_value(FACTORY_CALLABLE_KEY, schema, field_name)
 
     def get_order(self, schema, field_name):
-        tgv = self._query(ORDER_KEY, schema)
-        if tgv:
-            return tgv.get(field_name)
+        return self._query_dict_value(ORDER_KEY, schema, field_name)
 
     def get_modifier(self, schema):
+        # XXX: modifier gets aggregated from bases. duscuss whether this
+        #      behavior is desired
+        ret = list()
         modifier = self._query(MODIFIER_KEY, schema)
-        return modifier if modifier else []
+        if modifier:
+            ret += modifier
+        for base in schema.__bases__:
+            ret += self.get_modifier(base)
+        return ret
 
 
 tgv_cache = TGVCache()
