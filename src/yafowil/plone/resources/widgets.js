@@ -7,127 +7,112 @@ if (window.yafowil === undefined) {
 
     $(document).ready(function() {
         if (window.yafowil.array !== undefined) {
-            $.extend(window.yafowil.array.hooks.add, {
-                patterns_array_add: yafowil.arraypatterns.add
-            });
-            //$.extend(window.yafowil.array.hooks.up, {
-            //    patterns_array_add: yafowil.arraypatterns.update
-            //});
-            //$.extend(window.yafowil.array.hooks.down, {
-            //    patterns_array_add: yafowil.arraypatterns.update
-            //});
-            yafowil.arraypatterns.initialize();
+            var hooks = window.yafowil.array.hooks;
+            for (var name in yafowil.arraypatterns) {
+                var pattern = yafowil.arraypatterns[name];
+                if (pattern.add !== undefined) {
+                    var hook = pattern.add.bind(pattern);
+                    hooks.add['patterns_' + name + '_add'] = hook;
+                }
+                if (pattern.update !== undefined) {
+                    var hook = pattern.update.bind(pattern);
+                    hooks.update['patterns_' + name + '_update'] = hook;
+                }
+                pattern.initialize();
+            }
         }
     });
 
     $.extend(yafowil, {
 
-        // patterns integration for array blueprint
         arraypatterns: {
 
-            mapping: [{
+            relations: {
                 selector: 'input.relateditems',
                 source: 'array-relateditems',
-                target: 'pat-relateditems'
-            }, {
-                selector: 'select.plonerichtext',
+                target: 'pat-relateditems',
+
+                initialize: function() {
+                    this._initialize_relations(document);
+                },
+
+                add: function(row) {
+                    var relations = this._initialize_relations(row);
+                    if (!relations.length) {
+                        return;
+                    }
+                    require('pat-registry').scan(relations);
+                },
+
+                _initialize_relations: function(context) {
+                    var relations = $(this.selector, context);
+                    var that = this;
+                    relations.each(function() {
+                        var relation = $(this);
+                        if (relation.parents('.arraytemplate').length) {
+                            return;
+                        }
+                        var data = relation.data(that.source);
+                        relation.removeClass(that.source)
+                                .removeData(that.source)
+                                .addClass(that.target)
+                                .data(that.target, data);
+                    });
+                    return relations;
+                }
+            },
+
+            richtext: {
+                selector: 'select.plonearrayrichtext',
                 source: 'array-textareamimetypeselector',
                 target: 'pat-textareamimetypeselector',
 
-                add_mod: function(context, data) {
-                    //console.log('Richtext add modifier');
-                    //console.log($('textarea', context).attr('name'));
-                    //console.log(data);
-                    data.textareaName = $('textarea', context).attr('name');
+                initialize: function() {
+                    this._initialize_richtexts(document);
                 },
 
-                update_mod: function(context, data) {
-                    //console.log('Richtext update modifier');
-                    //console.log($('textarea', context).attr('name'));
-                    //console.log(data);
-                    //data.textareaName = $('textarea', context).attr('name');
+                add: function(row) {
+                    var richtexts = this._initialize_richtexts(row);
+                    if (!richtexts.length) {
+                        return;
+                    }
+                    require('pat-registry').scan(richtexts);
+                },
+
+                update: function(row, index) {
+                    var richtext = $(this.selector, row);
+                    if (!richtext.length) {
+                        return;
+                    }
+                    if (richtext.parents('.arraytemplate').length) {
+                        return;
+                    }
+                    var data = richtext.data(this.target);
+                    if (!data) {
+                        return;
+                    }
+                    var name = $('textarea', richtext.parent()).attr('name');
+                    data.textareaName = name;
+                },
+
+                _initialize_richtexts: function(context) {
+                    var richtexts = $(this.selector, context);
+                    var that = this;
+                    richtexts.each(function() {
+                        var richtext = $(this);
+                        if (richtext.parents('.arraytemplate').length) {
+                            return;
+                        }
+                        var data = richtext.data(that.source);
+                        var name = $('textarea', richtext.parent()).attr('name');
+                        data.textareaName = name;
+                        richtext.removeClass(that.source)
+                                .removeData(that.source)
+                                .addClass(that.target)
+                                .data(that.target, data);
+                    });
+                    return richtexts;
                 }
-            }],
-
-            initialize: function() {
-                $(yafowil.arraypatterns.mapping).each(function() {
-                    yafowil.arraypatterns.initialize_pattern(
-                        document,
-                        this.selector,
-                        this.source,
-                        this.target,
-                        null
-                    );
-                });
-            },
-
-            initialize_pattern: function(context, selector, source, target, data_mod) {
-                var elements = $(selector, context);
-                elements.each(function() {
-                    var el = $(this);
-                    // ignore array template
-                    if (el.parents('.arraytemplate').length) {
-                        console.log('Ignore template');
-                        console.log(el)
-                        return;
-                    }
-                    var data = el.data(source);
-                    if (data_mod) {
-                        data_mod(context, data);
-                    }
-                    el.removeClass(source);
-                    el.removeData(source);
-                    el.addClass(target);
-                    el.data(target, data);
-                });
-                return elements;
-            },
-
-            update_pattern: function(context, selector, target, data_mod) {
-                console.log('update');
-                if (!data_mod) {
-                    return;
-                }
-                var elements = $(selector, context);
-                elements.each(function() {
-                    var el = $(this);
-                    var data = el.data(target);
-                    data_mod(context, data);
-                });
-                return elements;
-            },
-
-            add: function(row) {
-                // scan new row for proper pattern initialization
-                $(yafowil.arraypatterns.mapping).each(function() {
-                    var elements = yafowil.arraypatterns.initialize_pattern(
-                        row,
-                        this.selector,
-                        this.source,
-                        this.target,
-                        this.add_mod
-                    );
-                    if (!elements.length) {
-                        return;
-                    }
-                    require('pat-registry').scan(elements);
-                });
-            },
-
-            update: function(row) {
-                // update row data if necessary
-                $(yafowil.arraypatterns.mapping).each(function() {
-                    var elements = yafowil.arraypatterns.update_pattern(
-                        row,
-                        this.selector,
-                        this.target,
-                        this.update_mod
-                    );
-                    if (!elements.length) {
-                        return;
-                    }
-                    require('pat-registry').scan(elements);
-                });
             }
         }
     });

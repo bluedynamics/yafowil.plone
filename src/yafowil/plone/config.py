@@ -80,6 +80,7 @@ def register_macros():
     })
     # richtext as array entry macro
     factory.register_macro('arrayrichtext', 'plonerichtext', {
+        'plonerichtext.mimetype_selector_class': 'plonearrayrichtext',
         'plonerichtext.pattern_name': 'array-textareamimetypeselector'
     })
 
