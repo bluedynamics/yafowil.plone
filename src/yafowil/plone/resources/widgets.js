@@ -121,23 +121,20 @@ if (window.yafowil === undefined) {
                     if (!data) {
                         return;
                     }
-                    var name = $('textarea', mt_sel.parent()).attr('name');
-                    data.textareaName = name;
-                    //mt_sel.data(this.target, data);
-                    console.log('scan now');
-                    console.log(mt_sel.data(this.target));
-                    require('pat-registry').scan(mt_sel);
-                    mt_sel.val('text/html');
+                    var ta = $('textarea', mt_sel.parent());
+                    data.textareaName = ta.attr('name');
+                    var new_mt_sel = mt_sel.clone();
+                    new_mt_sel.data(this.target, data);
+                    ta.after(new_mt_sel);
+                    mt_sel.remove();
+                    require('pat-registry').scan(new_mt_sel);
                 },
 
                 destroy_editors: function(container) {
                     $(this.selector, container).each(function() {
-                        var sel = $(this);
-                        var ta = $('textarea', sel.parent());
+                        var ta = $('textarea', $(this).parent());
                         var editor = tinymce.get(ta.attr('id'));
                         if (editor) {
-                            console.log('destroy editor');
-                            console.log(editor);
                             editor.destroy();
                         }
                     });
