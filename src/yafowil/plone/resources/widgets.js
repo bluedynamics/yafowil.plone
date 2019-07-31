@@ -6,20 +6,19 @@ if (window.yafowil === undefined) {
     "use strict";
 
     $(document).ready(function() {
-        if (window.yafowil.array !== undefined) {
-            var hooks = window.yafowil.array.hooks;
-            for (var name in yafowil.arraypatterns) {
-                var pattern = yafowil.arraypatterns[name];
-                if (pattern.add !== undefined) {
-                    var hook = pattern.add.bind(pattern);
-                    hooks.add['patterns_' + name + '_add'] = hook;
+        if (window.yafowil.array === undefined) {
+            return;
+        }
+        var hooks = window.yafowil.array.hooks;
+        for (var name in yafowil.arraypatterns) {
+            var pattern = yafowil.arraypatterns[name];
+            for (var hookname in yafowil.array.hooks) {
+                if (pattern[hookname] !== undefined) {
+                    var hook = pattern[hookname].bind(pattern);
+                    hooks[hookname]['patterns_' + name + '_' + hookname] = hook;
                 }
-                if (pattern.update !== undefined) {
-                    var hook = pattern.update.bind(pattern);
-                    hooks.update['patterns_' + name + '_update'] = hook;
-                }
-                pattern.initialize();
             }
+            pattern.initialize();
         }
     });
 
@@ -33,19 +32,20 @@ if (window.yafowil === undefined) {
                 target: 'pat-relateditems',
 
                 initialize: function() {
-                    this._initialize_relations(document);
+                    var relations = $(this.selector, document);
+                    this.prepare_data(relations);
                 },
 
                 add: function(row) {
-                    var relations = this._initialize_relations(row);
+                    var relations = $(this.selector, row);
                     if (!relations.length) {
                         return;
                     }
+                    this.prepare_data(relations);
                     require('pat-registry').scan(relations);
                 },
 
-                _initialize_relations: function(context) {
-                    var relations = $(this.selector, context);
+                prepare_data: function(relations) {
                     var that = this;
                     relations.each(function() {
                         var relation = $(this);
@@ -58,7 +58,6 @@ if (window.yafowil === undefined) {
                                 .addClass(that.target)
                                 .data(that.target, data);
                     });
-                    return relations;
                 }
             },
 
@@ -68,51 +67,81 @@ if (window.yafowil === undefined) {
                 target: 'pat-textareamimetypeselector',
 
                 initialize: function() {
-                    this._initialize_richtexts(document);
+                    var mimetype_selectors = $(this.selector, document);
+                    var that = this;
+                    mimetype_selectors.each(function() {
+                        var mt_sel = $(this);
+                        if (mt_sel.parents('.arraytemplate').length) {
+                            return;
+                        }
+                        var data = mt_sel.data(that.source);
+                        var name = $('textarea', mt_sel.parent()).attr('name');
+                        data.textareaName = name;
+                        mt_sel.removeClass(that.source)
+                              .removeData(that.source)
+                              .addClass(that.target)
+                              .data(that.target, data);
+                    });
                 },
 
-                add: function(row) {
-                    var richtexts = this._initialize_richtexts(row);
-                    if (!richtexts.length) {
+                before_add: function(row, container) {
+                    this.destroy_editors(container);
+                    var mt_sel = $(this.selector, row);
+                    if (!mt_sel.length) {
                         return;
                     }
-                    require('pat-registry').scan(richtexts);
+                    var data = mt_sel.data(this.source);
+                    mt_sel.removeClass(this.source)
+                          .removeData(this.source)
+                          .addClass(this.target)
+                          .data(this.target, data);
                 },
 
-                update: function(row, index) {
-                    var richtext = $(this.selector, row);
-                    if (!richtext.length) {
+                before_up: function(row) {
+                    this.destroy_editors(row.parent());
+                },
+
+                before_down: function(row) {
+                    this.destroy_editors(row.parent());
+                },
+
+                remove: function(row) {
+                    this.destroy_editors(row.parent());
+                },
+
+                index: function(row, index) {
+                    var mt_sel = $(this.selector, row);
+                    if (!mt_sel.length) {
                         return;
                     }
-                    if (richtext.parents('.arraytemplate').length) {
+                    if (mt_sel.parents('.arraytemplate').length) {
                         return;
                     }
-                    var data = richtext.data(this.target);
+                    var data = mt_sel.data(this.target);
                     if (!data) {
                         return;
                     }
-                    var name = $('textarea', richtext.parent()).attr('name');
+                    var name = $('textarea', mt_sel.parent()).attr('name');
                     data.textareaName = name;
+                    //mt_sel.data(this.target, data);
+                    console.log('scan now');
+                    console.log(mt_sel.data(this.target));
+                    require('pat-registry').scan(mt_sel);
+                    mt_sel.val('text/html');
                 },
 
-                _initialize_richtexts: function(context) {
-                    var richtexts = $(this.selector, context);
-                    var that = this;
-                    richtexts.each(function() {
-                        var richtext = $(this);
-                        if (richtext.parents('.arraytemplate').length) {
-                            return;
+                destroy_editors: function(container) {
+                    $(this.selector, container).each(function() {
+                        var sel = $(this);
+                        var ta = $('textarea', sel.parent());
+                        var editor = tinymce.get(ta.attr('id'));
+                        if (editor) {
+                            console.log('destroy editor');
+                            console.log(editor);
+                            editor.destroy();
                         }
-                        var data = richtext.data(that.source);
-                        var name = $('textarea', richtext.parent()).attr('name');
-                        data.textareaName = name;
-                        richtext.removeClass(that.source)
-                                .removeData(that.source)
-                                .addClass(that.target)
-                                .data(that.target, data);
                     });
-                    return richtexts;
-                }
+                },
             }
         }
     });
