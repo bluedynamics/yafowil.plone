@@ -12,9 +12,9 @@ import json
 
 def richtext_display_renderer(widget, data):
     value = widget.getter
-    if value:
+    if value and hasattr(value, 'raw'):
         value = value.raw
-    else:
+    if not value:
         value = ''
     return data.tag('div', value, **{'class': 'display-richtext'})
 
@@ -22,7 +22,7 @@ def richtext_display_renderer(widget, data):
 @managedprops('context', 'pattern_options', 'default')
 def richtext_edit_renderer(widget, data):
     value = widget.getter
-    if value:
+    if value and hasattr(value, 'raw'):
         data.value = value.raw
     rendered = textarea_renderer(widget, data)
     optiontags = []
