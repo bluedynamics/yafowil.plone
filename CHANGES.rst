@@ -2,10 +2,22 @@
 History
 =======
 
-4.0.0a3 (unreleased)
+4.0.0a3 (2019-07-31)
 --------------------
 
-- No changes yet.
+- Also accept string values in ``plonerichtext`` blueprint.
+  [rnix]
+
+- Array widget now supports richtext entries. Therefor ``arrayrichtext`` macro
+  was added.
+  [rnix]
+
+- Fix resolving field order defined with plone.autoform.directives.
+  [rnix]
+
+- Fix autoform directives TGV cache to lookup values from derived schemata as
+  well.
+  [rnix]
 
 
 4.0.0a2 (2019-07-10)
