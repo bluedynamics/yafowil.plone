@@ -5,7 +5,9 @@ History
 4.0.0a4 (unreleased)
 --------------------
 
-- No changes yet.
+- Use ``plone.app.widgets.base.dict_merge`` to update pattern options in
+  ``plonerichtext`` blueprint.
+  [rnix]
 
 
 4.0.0a3 (2019-07-31)
