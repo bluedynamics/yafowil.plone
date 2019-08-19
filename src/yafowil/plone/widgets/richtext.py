@@ -1,3 +1,4 @@
+from plone.app.widgets.base import dict_merge
 from yafowil.base import factory
 from yafowil.common import generic_extractor
 from yafowil.common import generic_required_extractor
@@ -38,7 +39,10 @@ def richtext_edit_renderer(widget, data):
     pattern_options_dict = json.loads(pattern_options)
     pattern_options_overrides = attr_value('pattern_options', widget, data)
     if pattern_options_overrides:
-        pattern_options_dict.update(pattern_options_overrides)
+        pattern_options_dict = dict_merge(
+            pattern_options_dict,
+            pattern_options_overrides
+        )
     pattern_name = attr_value('pattern_name', widget, data)
     mimetype_selector_class = attr_value('mimetype_selector_class', widget, data)
     select_attrs = {
