@@ -5,6 +5,9 @@ History
 4.0.0a4 (unreleased)
 --------------------
 
+- Style Bool-Widget as usual in Plone.
+  [jensens]
+
 - Style autoform form-controls (save/cancel buttons) as usual in Plone.
   [jensens]
 

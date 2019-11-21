@@ -234,7 +234,8 @@ def bool_widget_factory(context, field):
             'label': field.label,
             'help': field.help,
             'required': field.required,
-            'plonelabel.position': 'after'
+            'plonelabel.position': 'after',
+            'class': 'single-checkbox-bool-widget bool-field',
         },
         mode=field.mode)
 
