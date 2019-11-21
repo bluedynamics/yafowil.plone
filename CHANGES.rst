@@ -5,6 +5,9 @@ History
 4.0.0a4 (unreleased)
 --------------------
 
+- Style autoform form-controls (save/cancel buttons) as usual in Plone.
+  [jensens]
+
 - Use ``plone.app.widgets.base.dict_merge`` to update pattern options in
   ``plonerichtext`` blueprint.
   [rnix]

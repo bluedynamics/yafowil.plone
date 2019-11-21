@@ -210,8 +210,8 @@ class BaseAutoForm(BaseForm):
         """Flag whether form action has been triggered.
         """
         actions = [
-            self.form['save'],
-            self.form['cancel']
+            self.form['controls']['save'],
+            self.form['controls']['cancel']
         ]
         for action in actions:
             if self.request.get('action.{0}'.format(action.dottedpath)):
@@ -305,22 +305,31 @@ class BaseAutoForm(BaseForm):
                         field_name,
                         order_def
                     ))
-        form['save'] = factory(
+        form['controls'] = factory(
+            'div',
+            props={
+                'class': 'formControls',
+                # 'structural': True, # -> does not work on div
+            }
+        )
+        form['controls']['save'] = factory(
             'submit',
             props={
                 'action': 'save',
                 'expression': True,
                 'handler': self.save,
                 'next': self.next,
+                'class': 'submit-widget button-field context',
             }
         )
-        form['cancel'] = factory(
+        form['controls']['cancel'] = factory(
             'submit',
             props={
                 'action': 'cancel',
                 'expression': True,
                 'skip': True,
                 'next': self.cancel,
+                'class': 'submit-widget button-field standalone',
             }
         )
         # resolve field order
