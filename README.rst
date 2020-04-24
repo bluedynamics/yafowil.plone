@@ -196,6 +196,25 @@ Add the following lines in order to load it:
     def __init__(self, context, request):
         super(MyViewWithYafowil, self).__init__(context, request)
         add_bundle_on_request(request, 'yafowil')
+        
+CSRF Protection
+---------------
+
+To write into the database in Plone a CSRF protection authenticator key must be provided as a hidden form field.
+This can be done by adding a plumbing behavior to the forms created as above.
+
+.. code:: Python
+ 
+    from plumber import plumbing
+    from yafowil.plone.form import BaseForm
+    from yafowil.plone.form import CSRFProtectionBehavior
+    
+    ...
+    
+    @plumbing(CSRFProtectionBehavior)
+    class ImportForm(BaseForm):
+        """Form with CSRF protection"""
+
 
 Autoform
 ========
