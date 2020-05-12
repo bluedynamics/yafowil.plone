@@ -10,12 +10,12 @@ _ = MessageFactory('yafowil.plone')
 logger = logging.getLogger('yafowil.plone')
 
 
-@entry_point(order=20)
+@entry_point(order=25)
 def register():
     config.register()
 
 
-@entry_point(order=20)
+@entry_point(order=25)
 def configure():
     if not os.environ.get('TESTRUN_MARKER'):
         config.configure()
