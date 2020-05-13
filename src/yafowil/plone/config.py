@@ -42,8 +42,8 @@ def configure_factory():
     # set theme
     factory.theme = 'bootstrap'
     # selection
-    factory.defaults['select.label_radio_class'] = 'radioType'
-    factory.defaults['select.label_checkbox_class'] = 'checkboxType'
+    #factory.defaults['select.label_radio_class'] = 'radioType'
+    #factory.defaults['select.label_checkbox_class'] = 'checkboxType'
 
 
 ###############################################################################
@@ -64,11 +64,6 @@ def register_macros():
         'error.message_class': 'error',
         'error.render_empty': True,
         'error.position': 'before',
-    })
-    # button macro
-    factory.register_macro('button', 'field:submit', {
-        'field.class': 'formControls',
-        'submit.class': 'context',
     })
     # array macro
     factory.register_macro('array', 'array', {})
