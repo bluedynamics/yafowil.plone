@@ -1,7 +1,6 @@
 <metadata>
   <version>1</version>
   <dependencies>
-    <dependency>profile-yafowil.plone:demoresources</dependency>
     <dependency>profile-yafowil.plone:default</dependency>
   </dependencies>
 </metadata>

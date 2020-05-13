@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <layers>
   <layer
-    name="yafowil.plone"
+    name="yafowil.plone.demo"
     interface="yafowil.plone.interfaces.IYafowilDemoLayer" />
 </layers>
