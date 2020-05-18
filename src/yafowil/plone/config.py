@@ -1,4 +1,5 @@
 from yafowil.base import factory
+from yafowil import bootstrap
 from yafowil.plone.connectors import plone_preprocessor
 
 import os
@@ -38,9 +39,13 @@ js = [{
 # configure factory
 ###############################################################################
 
-def configure_factory():
+def configure():
+    # configure bootstrap 4
+    bootstrap.configure_factory('bootstrap4')
+
     # set theme
     factory.theme = 'bootstrap'
+
     # selection
     #factory.defaults['select.label_radio_class'] = 'radioType'
     #factory.defaults['select.label_checkbox_class'] = 'checkboxType'
