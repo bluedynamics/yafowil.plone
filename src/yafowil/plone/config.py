@@ -96,5 +96,5 @@ def register():
 
 
 def configure():
-    configure_factory()
+    bootstrap.configure_factory()
     # register_macros()
