@@ -5,6 +5,9 @@ History
 5.0.0a1 (unreleased)
 --------------------
 
+- Switch to Bootstrap 5
+  [agitator]
+
 - Style Bool-Widget as usual in Plone.
   [jensens]
 
