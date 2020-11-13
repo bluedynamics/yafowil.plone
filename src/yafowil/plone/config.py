@@ -40,8 +40,8 @@ js = [{
 ###############################################################################
 
 def configure():
-    # configure bootstrap 4
-    bootstrap.configure_factory('bootstrap4')
+    # configure bootstrap 5
+    bootstrap.configure_factory('bootstrap5')
 
     # set theme
     factory.theme = 'bootstrap'
@@ -96,5 +96,5 @@ def register():
 
 
 def configure():
-    bootstrap.configure_factory('bootstrap4')
+    bootstrap.configure_factory('bootstrap5')
     # register_macros()
