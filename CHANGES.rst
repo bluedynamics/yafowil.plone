@@ -5,6 +5,9 @@ History
 5.0.0a1 (unreleased)
 --------------------
 
+- Fixed IObjectEvent and ObjectEvent import (issue https://github.com/bluedynamics/yafowil.plone/issues/32)
+  [gogobd]
+
 - Switch to Bootstrap 5
   [agitator]
 
