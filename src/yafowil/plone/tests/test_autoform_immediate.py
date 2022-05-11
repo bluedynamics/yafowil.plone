@@ -9,8 +9,7 @@ import unittest
 
 
 class TestAdding(unittest.TestCase):
-    """Test that collective.immediatecreate adding traverse and view creates.
-    """
+    """Test that collective.immediatecreate adding traverse and view creates."""
 
     layer = YAFOWIL_PLONE_INTEGRATION_TESTING
 
@@ -44,9 +43,7 @@ class TestAdding(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ["Contributor", "Editor"])
         view = self.portal.restrictedTraverse("++add++Folder")
         view()
-        self.assertEqual(
-            self.portal["new-folder"].yafowil_immediatecreate, "initial"
-        )
+        self.assertEqual(self.portal["new-folder"].yafowil_immediatecreate, "initial")
 
     def test_event_handler(self):
         sm = getGlobalSiteManager()

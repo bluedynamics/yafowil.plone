@@ -29,22 +29,22 @@ class CSRFProtectionBehavior(Behavior):
             key_manager = getUtility(IKeyManager)
         except ComponentLookupError:
             key_manager = getRootKeyManager(getRoot(self.context))
-        self.form['_authenticator'] = factory(
-            'proxy',
+        self.form["_authenticator"] = factory(
+            "proxy",
             value=createToken(manager=key_manager),
         )
 
 
 class BaseForm(BrowserView):
     form = None
-    action_resource = u''
+    action_resource = ""
 
     def __init__(self, context, request):
         super(BaseForm, self).__init__(context, request)
-        add_bundle_on_request(request, 'yafowil')
+        add_bundle_on_request(request, "yafowil")
 
     def form_action(self, widget, data):
-        return '%s/%s' % (self.context.absolute_url(), self.action_resource)
+        return "%s/%s" % (self.context.absolute_url(), self.action_resource)
 
     def render_form(self):
         self.prepare()
@@ -54,12 +54,10 @@ class BaseForm(BrowserView):
         return controller.next
 
     def prepare(self):
-        raise NotImplementedError(u"Abstract Form does not implement "
-                                  u"``prepare``.")
+        raise NotImplementedError("Abstract Form does not implement " "``prepare``.")
 
 
 class Form(BaseForm):
-
     def __call__(self):
         return self.render_form()
 
@@ -69,19 +67,17 @@ class YAMLBaseForm(BaseForm):
     message_factory = None
 
     def prepare(self):
-        self.form = parse_from_YAML(
-            self.form_template, self, self.message_factory)
+        self.form = parse_from_YAML(self.form_template, self, self.message_factory)
 
 
 class YAMLForm(YAMLBaseForm):
-
     def __call__(self):
         return self.render_form()
 
 
 class ContentForm(BaseForm):
-    template = ViewPageTemplateFile('content.pt')
-    form_title = ''
+    template = ViewPageTemplateFile("content.pt")
+    form_title = ""
 
     def __call__(self):
         return self.template()

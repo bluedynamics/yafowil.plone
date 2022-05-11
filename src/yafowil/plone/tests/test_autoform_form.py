@@ -23,14 +23,14 @@ class TestAutoformForm(unittest.TestCase):
     layer = YAFOWIL_PLONE_INTEGRATION_TESTING
 
     def setUp(self):
-        self.portal = self.layer['portal']
-        self.request = self.layer['request']
-        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
+        self.portal = self.layer["portal"]
+        self.request = self.layer["request"]
+        setRoles(self.portal, TEST_USER_ID, ["Contributor"])
 
     def test_default_add_view(self):
-        context = Container(u"container")
+        context = Container("container")
         request = TestRequest()
-        fti = DexterityFTI(u"testtype")
+        fti = DexterityFTI("testtype")
         addview = DefaultAddView(context, request, fti)
         self.assertFalse(addview.is_yafowil_form)
 

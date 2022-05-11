@@ -15,4 +15,4 @@ class IYafowilImmediateCreateBehavior(IYafowilFormBehavior):
     Creates immediately a pesistent context to work.
     """
 
-    yafowil_immediatecreate = Attribute(u"Was this item initially saved?")
+    yafowil_immediatecreate = Attribute("Was this item initially saved?")

@@ -5,8 +5,7 @@ from zope.interface import Interface
 
 
 class IYAFOWILResourceDirective(Interface):
-    """Loader for plugin resources.
-    """
+    """Loader for plugin resources."""
 
 
 def yafowil_resource_directive(_context):
@@ -17,4 +16,4 @@ def yafowil_resource_directive(_context):
         resources = factory.resources_for(plugin_name)
         if not resources:
             continue
-        resourceDirectory(_context, plugin_name, resources['resourcedir'])
+        resourceDirectory(_context, plugin_name, resources["resourcedir"])

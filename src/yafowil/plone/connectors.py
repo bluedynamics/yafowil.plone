@@ -9,7 +9,7 @@ import six
 
 
 class Zope2RequestAdapter(MutableMapping):
-    coding = 'utf-8'
+    coding = "utf-8"
 
     def __init__(self, request):
         if isinstance(request, self.__class__):
@@ -18,18 +18,19 @@ class Zope2RequestAdapter(MutableMapping):
         else:
             self.zrequest = request.REQUEST
         if not isinstance(self.zrequest, HTTPRequest):
-            raise ValueError('Expecting request based on '
-                             'ZPublisher.HTTPRequest.HTTPRequest')
+            raise ValueError(
+                "Expecting request based on " "ZPublisher.HTTPRequest.HTTPRequest"
+            )
 
     def __getitem__(self, key):
         value = self.zrequest.form[key]
         if isinstance(value, FileUpload):
             fvalue = dict()
-            fvalue['file'] = value
-            fvalue['filename'] = value.filename
-            fvalue['mimetype'] = value.headers.get('content-type', '')
-            fvalue['headers'] = value.headers
-            fvalue['original'] = value
+            fvalue["file"] = value
+            fvalue["filename"] = value.filename
+            fvalue["mimetype"] = value.headers.get("content-type", "")
+            fvalue["headers"] = value.headers
+            fvalue["original"] = value
             return fvalue
         # XXX: check whether coding is defined on request and ensure proper
         #      decoding
@@ -42,10 +43,10 @@ class Zope2RequestAdapter(MutableMapping):
         return self.zrequest.form.keys()
 
     def __setitem__(self, key, item):
-        raise AttributeError('read only, __setitem__ is not supported')
+        raise AttributeError("read only, __setitem__ is not supported")
 
     def __delitem__(self, key):
-        raise AttributeError('read only, __delitem__ is not supported')
+        raise AttributeError("read only, __delitem__ is not supported")
 
     def __len__(self):
         return len(self.zrequest.form)
@@ -55,7 +56,6 @@ class Zope2RequestAdapter(MutableMapping):
 
 
 class ZopeTranslation(object):
-
     def __init__(self, data):
         self.zrequest = data.request.zrequest
 
