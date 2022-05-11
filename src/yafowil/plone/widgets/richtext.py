@@ -8,6 +8,7 @@ from yafowil.utils import attr_value
 from yafowil.utils import cssid
 from yafowil.utils import managedprops
 from zope.component import getMultiAdapter
+
 import json
 
 

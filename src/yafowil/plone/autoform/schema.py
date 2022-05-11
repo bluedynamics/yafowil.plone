@@ -11,6 +11,7 @@ from plone.supermodel.utils import mergedTaggedValueList
 from Products.CMFPlone import PloneMessageFactory as _
 from zope.dottedname.resolve import resolve
 from zope.schema import getFieldNamesInOrder
+
 import six
 
 

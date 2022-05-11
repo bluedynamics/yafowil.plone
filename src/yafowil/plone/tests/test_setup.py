@@ -27,8 +27,8 @@ class TestSetup(unittest.TestCase):
     def test_browserlayer(self):
         """Test that IYafowilLayer is registered.
         """
-        from yafowil.plone.interfaces import IYafowilLayer
         from plone.browserlayer import utils
+        from yafowil.plone.interfaces import IYafowilLayer
         self.assertIn(IYafowilLayer, utils.registered_layers())
 
 
@@ -56,6 +56,6 @@ class TestUninstall(unittest.TestCase):
     def test_browserlayer_removed(self):
         """Test that IYafowilLayer is removed.
         """
-        from yafowil.plone.interfaces import IYafowilLayer
         from plone.browserlayer import utils
+        from yafowil.plone.interfaces import IYafowilLayer
         self.assertNotIn(IYafowilLayer, utils.registered_layers())
