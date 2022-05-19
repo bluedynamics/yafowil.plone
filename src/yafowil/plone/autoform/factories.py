@@ -42,16 +42,17 @@ from zope.schema.interfaces import IContextAwareDefaultFactory
 from zope.schema.interfaces import ISequence
 from zope.schema.interfaces import IVocabulary
 from zope.schema.interfaces import IVocabularyFactory
+
 import logging
 import six
 
 
-logger = logging.getLogger('yafowil.plone')
+logger = logging.getLogger("yafowil.plone")
 
 
 class widget_factory(object):
-    """Decorator and registry for zope.schema related yafowil widget factories.
-    """
+    """Decorator and registry for zope.schema related yafowil widget factories."""
+
     _registry = dict()
 
     def __init__(self, ob):
@@ -119,7 +120,7 @@ def value_or_default(context, field):
                     return default_factory(aq_parent(context))
                 return default_factory()
             except Exception:
-                logger.exception('Fetching default_factory failed')
+                logger.exception("Fetching default_factory failed")
         return UNSET
     elif scope in [FORM_SCOPE_EDIT, FORM_SCOPE_DISPLAY]:
         if field.is_behavior:
@@ -138,13 +139,13 @@ def lookup_schema_vocabulary(context, field):
     vocabulary = None
     # try to find vocabulary on widget params
     if field.widget:
-        vocabulary = field.widget.params.get('vocabulary')
+        vocabulary = field.widget.params.get("vocabulary")
     # try to find vocabulary at schemafield.vocabulary if not found on widget
     if not vocabulary:
-        vocabulary = getattr(field.schemafield, 'vocabulary', vocabulary)
+        vocabulary = getattr(field.schemafield, "vocabulary", vocabulary)
     # try to find vocabulary at schemafield.vocabularyName if still not found
     if not vocabulary:
-        vocabulary = getattr(field.schemafield, 'vocabularyName', vocabulary)
+        vocabulary = getattr(field.schemafield, "vocabularyName", vocabulary)
     # return empty list if no vocabulary found
     if not vocabulary:
         return None
@@ -158,7 +159,7 @@ def lookup_schema_vocabulary(context, field):
     if IVocabulary.providedBy(vocabulary):
         return vocabulary
     # lookup failed
-    raise ValueError('lookup_schema_vocabulary(): {0}'.format(vocabulary))
+    raise ValueError("lookup_schema_vocabulary(): {0}".format(vocabulary))
 
 
 def lookup_vocabulary(context, field):
@@ -181,248 +182,254 @@ def lookup_vocabulary(context, field):
 # schema field bound factories
 ###############################################################################
 
+
 @widget_factory(RichText)
 def rich_text_widget_factory(context, field):
     return factory(
-        '#field:plonerichtext',
+        "#field:plonerichtext",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'persist': True,
-            'persist_writer': RichtextPersistWriter(field),
-            'default': field.schemafield.missing_value,
-            'context': context
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "persist": True,
+            "persist_writer": RichtextPersistWriter(field),
+            "default": field.schemafield.missing_value,
+            "context": context,
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(RelationList)
 def relation_list_widget_factory(context, field):
     return factory(
-        '#field:select',
+        "#field:select",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'vocabulary': lookup_vocabulary(context, field)
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "vocabulary": lookup_vocabulary(context, field),
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(ASCIILine)
 def ascii_line_widget_factory(context, field):
     return factory(
-        '#field:text',
+        "#field:text",
         value=value_or_default(context, field),
-        props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required
-        },
-        mode=field.mode)
+        props={"label": field.label, "help": field.help, "required": field.required},
+        mode=field.mode,
+    )
 
 
 @widget_factory(Bool)
 def bool_widget_factory(context, field):
     return factory(
-        '#field:checkbox',
+        "#field:checkbox",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'plonelabel.position': 'after',
-            'class': 'single-checkbox-bool-widget bool-field',
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "plonelabel.position": "after",
+            "class": "single-checkbox-bool-widget bool-field",
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(Choice)
 def choice_widget_factory(context, field):
     return factory(
-        '#field:select',
+        "#field:select",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'vocabulary': lookup_vocabulary(context, field)
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "vocabulary": lookup_vocabulary(context, field),
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(Datetime)
 def datetime_widget_factory(context, field):
     return factory(
-        '#field:datetime',
+        "#field:datetime",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'locale': 'de',  # XXX
-            'datepicker': True,
-            'time': True,
-            'timepicker': True,
-            'persist': True,
-            'emptyvalue': None
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "locale": "de",  # XXX
+            "datepicker": True,
+            "time": True,
+            "timepicker": True,
+            "persist": True,
+            "emptyvalue": None,
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(Text)
 def text_widget_factory(context, field):
     return factory(
-        '#field:textarea',
+        "#field:textarea",
         value=value_or_default(context, field),
-        props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required
-        },
-        mode=field.mode)
+        props={"label": field.label, "help": field.help, "required": field.required},
+        mode=field.mode,
+    )
 
 
 @widget_factory(TextLine)
 def text_line_widget_factory(context, field):
     return factory(
-        '#field:text',
+        "#field:text",
         value=value_or_default(context, field),
-        props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required
-        },
-        mode=field.mode)
+        props={"label": field.label, "help": field.help, "required": field.required},
+        mode=field.mode,
+    )
 
 
 @widget_factory(Tuple)
 def tuple_widget_factory(context, field):
     return factory(
-        '#field:select',
+        "#field:select",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'vocabulary': lookup_vocabulary(context, field)
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "vocabulary": lookup_vocabulary(context, field),
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 ###############################################################################
 # widget bound factories
 ###############################################################################
 
+
 @widget_factory(SingleCheckBoxFieldWidget)
 def single_checkbox_field_widget_factory(context, field):
     return factory(
-        '#field:checkbox',
+        "#field:checkbox",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'checkbox.class_add': field.widget.params.get('klass')
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "checkbox.class_add": field.widget.params.get("klass"),
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(TextFieldWidget)
 def text_field_widget_factory(context, field):
     return factory(
-        '#field:text',
+        "#field:text",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'text.class_add': field.widget.params.get('klass')
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "text.class_add": field.widget.params.get("klass"),
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(TextLinesFieldWidget)
 def text_lines_field_widget_factory(context, field):
     return factory(
-        '#field:textarea',
+        "#field:textarea",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'textarea.class_add': field.widget.params.get('klass')
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "textarea.class_add": field.widget.params.get("klass"),
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(RichTextFieldWidget)
 def rich_text_field_widget_factory(context, field):
     return factory(
-        '#field:plonerichtext',
+        "#field:plonerichtext",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'persist': True,
-            'persist_writer': RichtextPersistWriter(field),
-            'pattern_options': field.widget.params.get('pattern_options'),
-            'default': field.schemafield.missing_value,
-            'context': context
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "persist": True,
+            "persist_writer": RichtextPersistWriter(field),
+            "pattern_options": field.widget.params.get("pattern_options"),
+            "default": field.schemafield.missing_value,
+            "context": context,
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(DateFieldWidget)
 def date_field_widget_factory(context, field):
     return factory(
-        '#field:plonedatetime',
+        "#field:plonedatetime",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'include_time': False,
-            'plonedatetime.class_add': field.widget.params.get('klass'),
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "include_time": False,
+            "plonedatetime.class_add": field.widget.params.get("klass"),
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(DatetimeFieldWidget)
 def datetime_field_widget_factory(context, field):
     return factory(
-        '#field:plonedatetime',
+        "#field:plonedatetime",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'include_time': True,
-            'default_timezone': field.widget.params.get('default_timezone'),
-            'plonedatetime.class_add': field.widget.params.get('klass'),
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "include_time": True,
+            "default_timezone": field.widget.params.get("default_timezone"),
+            "plonedatetime.class_add": field.widget.params.get("klass"),
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(RecurrenceFieldWidget)
 def recurrence_field_widget_factory(context, field):
     return factory(
-        '#field:recurrence',
+        "#field:recurrence",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'recurrence.class_add': field.widget.params.get('klass'),
-            'start_field': field.widget.params.get('start_field'),
-            'first_day': field.widget.params.get('first_day'),
-            'show_repeat_forever': field.widget.params.get('show_repeat_forever'),
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "recurrence.class_add": field.widget.params.get("klass"),
+            "start_field": field.widget.params.get("start_field"),
+            "first_day": field.widget.params.get("first_day"),
+            "show_repeat_forever": field.widget.params.get("show_repeat_forever"),
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(AjaxSelectFieldWidget)
@@ -433,22 +440,22 @@ def ajax_select_field_widget_factory(context, field):
     # ``plone.app.z3cform.widget.AjaxSelectWidget``.
     # widget options
     widget = field.widget
-    separator = widget.params.get('separator', ';')
-    orderable = widget.params.get('orderable', False)
-    vocabulary_view = widget.params.get('vocabulary_view', '@@getVocabulary')
-    vocabulary_name = widget.params['vocabulary']
+    separator = widget.params.get("separator", ";")
+    orderable = widget.params.get("orderable", False)
+    vocabulary_view = widget.params.get("vocabulary_view", "@@getVocabulary")
+    vocabulary_name = widget.params["vocabulary"]
     value = value_or_default(context, field)
-    value = separator.join(value) if value else ''
+    value = separator.join(value) if value else ""
     # pattern options
     opts = dict()
     schemafield = None
     if IChoice.providedBy(field.schemafield):
-        opts['maximumSelectionSize'] = 1
+        opts["maximumSelectionSize"] = 1
         schemafield = field.schemafield
     elif ICollection.providedBy(field.schemafield):
         schemafield = field.schemafield.value_type
     if IChoice.providedBy(schemafield):
-        opts['allowNewItems'] = 'false'
+        opts["allowNewItems"] = "false"
     opts = dict_merge(
         get_ajaxselect_options(
             context,
@@ -456,58 +463,52 @@ def ajax_select_field_widget_factory(context, field):
             separator,
             vocabulary_name,
             vocabulary_view,
-            field_name=field.name
+            field_name=field.name,
         ),
-        opts
+        opts,
     )
     # get ajax vocabulary
-    if schemafield and getattr(schemafield, 'vocabulary', None):
+    if schemafield and getattr(schemafield, "vocabulary", None):
         # e.g. 'form.widgets.IDublinCore.subjects'
         # XXX: taken from the z3c form implementation, actually a hack
         #      getSource would need to be overwritten with an own implementation
         # XXX: check how getSource refers to field name
-        widget_name = 'form.widgets.{}.{}'.format(
-            field.schemafield.name,
-            field.name
+        widget_name = "form.widgets.{}.{}".format(field.schemafield.name, field.name)
+        source_url = "{0:s}/++widget++{1:s}/@@getSource".format(
+            context.REQUEST.getURL(), widget_name
         )
-        source_url = '{0:s}/++widget++{1:s}/@@getSource'.format(
-            context.REQUEST.getURL(),
-            widget_name
-        )
-        opts['vocabularyUrl'] = source_url
+        opts["vocabularyUrl"] = source_url
     # ISequence represents an orderable collection
     if ISequence.providedBy(field.schemafield) or orderable:
-        opts['orderable'] = True
+        opts["orderable"] = True
     # hardcoded security check hack for keywords.
     # XXX: needs to be generalized
-    if vocabulary_name == 'plone.app.vocabularies.Keywords':
-        membership = getToolByName(context, 'portal_membership')
+    if vocabulary_name == "plone.app.vocabularies.Keywords":
+        membership = getToolByName(context, "portal_membership")
         user = membership.getAuthenticatedMember()
         registry = getUtility(IRegistry)
         roles_allowed_to_add_keywords = registry.get(
-            'plone.roles_allowed_to_add_keywords',
-            []
+            "plone.roles_allowed_to_add_keywords", []
         )
         roles = set(user.getRolesInContext(context))
-        allowNewItems = 'false'
+        allowNewItems = "false"
         if roles.intersection(roles_allowed_to_add_keywords):
-            allowNewItems = 'true'
-        opts['allowNewItems'] = allowNewItems
+            allowNewItems = "true"
+        opts["allowNewItems"] = allowNewItems
     # call yafowil factory
     return factory(
-        '#field:text',
+        "#field:text",
         value=value,
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'text.class_add': 'pat-select2',
-            'text.data': {
-                'pat-select2': opts
-            },
-            'persist_writer': AjaxSelectPersistWriter(field)
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "text.class_add": "pat-select2",
+            "text.data": {"pat-select2": opts},
+            "persist_writer": AjaxSelectPersistWriter(field),
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(SelectFieldWidget)
@@ -518,41 +519,40 @@ def select_field_widget_factory(context, field):
     # ``SelectFieldWidget`` inherits from ``plone.app.widgets.base.SelectWidget``.
     # widget options
     widget = field.widget
-    separator = widget.params.get('separator', ';')
+    separator = widget.params.get("separator", ";")
     # noValueToken = widget.params.get('noValueToken', u'')
     # noValueMessage = widget.params.get('noValueMessage', u'')
-    multiple = widget.params.get('multiple', None)
-    orderable = widget.params.get('orderable', False)
+    multiple = widget.params.get("multiple", None)
+    orderable = widget.params.get("orderable", False)
     required = field.required
     # pattern options
     opts = dict()
     if multiple or ICollection.providedBy(field.schemafield):
-        multiple = opts['multiple'] = True
+        multiple = opts["multiple"] = True
     # ISequence represents an orderable collection
     if orderable or ISequence.providedBy(field.schemafield):
-        opts['orderable'] = True
+        opts["orderable"] = True
     if multiple:
-        opts['separator'] = separator
+        opts["separator"] = separator
     # Allow to clear field value if it is not required
     if not required:
-        opts['allowClear'] = True
+        opts["allowClear"] = True
     # vocabulary for selection
     vocab = lookup_vocabulary(context, field)
     # call yafowil factory
     return factory(
-        '#field:select',
+        "#field:select",
         value=value_or_default(context, field),
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'vocabulary': vocab,
-            'select.class_add': 'pat-select2',
-            'select.data': {
-                'pat-select2': opts
-            }
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "vocabulary": vocab,
+            "select.class_add": "pat-select2",
+            "select.data": {"pat-select2": opts},
         },
-        mode=field.mode)
+        mode=field.mode,
+    )
 
 
 @widget_factory(RelatedItemsFieldWidget)
@@ -562,9 +562,9 @@ def related_items_field_widget_factory(context, field):
     # Pattern options logic taken from ``plone.app.z3cform.widget.RelatedItemsWidget``.
     # widget options
     widget = field.widget
-    separator = widget.params.get('separator', ';')
-    vocabulary_view = widget.params.get('vocabulary_view', '@@getVocabulary')
-    vocabulary_name = widget.params.get('vocabulary', 'plone.app.vocabularies.Catalog')
+    separator = widget.params.get("separator", ";")
+    vocabulary_view = widget.params.get("vocabulary_view", "@@getVocabulary")
+    vocabulary_name = widget.params.get("vocabulary", "plone.app.vocabularies.Catalog")
     # orderable = widget.params.get('orderable', False)
     vocabulary_override = False
     schemafield = None
@@ -573,22 +573,22 @@ def related_items_field_widget_factory(context, field):
     elif ICollection.providedBy(field.schemafield):
         schemafield = field.schemafield.value_type
     if (
-        not vocabulary_name and
-        schemafield is not None and
-        getattr(schemafield, 'vocabularyName', None)
+        not vocabulary_name
+        and schemafield is not None
+        and getattr(schemafield, "vocabularyName", None)
     ):
         vocabulary_name = field.vocabularyName
         vocabulary_override = True
     # field value
     value = value_or_default(context, field)
-    value = separator.join([IUUID(o.to_object) for o in value]) if value else ''
+    value = separator.join([IUUID(o.to_object) for o in value]) if value else ""
     # pattern options
     opts = dict()
     if IChoice.providedBy(field.schemafield):
-        opts['maximumSelectionSize'] = 1
+        opts["maximumSelectionSize"] = 1
     # XXX: check where original implementation gets ``mode`` and ``basePath``
     #      from. probably ``widget.params``
-    root_search_mode = opts.get('mode', None) and 'basePath' not in opts
+    root_search_mode = opts.get("mode", None) and "basePath" not in opts
     opts = dict_merge(
         get_relateditems_options(
             context,
@@ -603,37 +603,35 @@ def related_items_field_widget_factory(context, field):
     if root_search_mode:
         # Delete default basePath option in search mode, when no basePath
         # was explicitly set.
-        del opts['basePath']
-    if not vocabulary_override \
-            and schemafield \
-            and getattr(schemafield, 'vocabulary', None):
+        del opts["basePath"]
+    if (
+        not vocabulary_override
+        and schemafield
+        and getattr(schemafield, "vocabulary", None)
+    ):
         # widget vocab takes precedence over field
         form_url = context.REQUEST.getURL()
         # e.g. 'form.widgets.IDublinCore.subjects'
         # XXX: taken from the z3c form implementation, actually a hack
         #      getSource would need to be overwritten with an own implementation
         # XXX: check how getSource refers to field name
-        widget_name = 'form.widgets.{}.{}'.format(
-            field.schemafield.name,
-            field.name
-        )
-        source_url = '{0:s}/++widget++{1:s}/@@getSource'.format(
+        widget_name = "form.widgets.{}.{}".format(field.schemafield.name, field.name)
+        source_url = "{0:s}/++widget++{1:s}/@@getSource".format(
             form_url,
             widget_name,
         )
-        opts['vocabularyUrl'] = source_url
+        opts["vocabularyUrl"] = source_url
     # call yafowil factory
     return factory(
-        '#field:text',
+        "#field:text",
         value=value,
         props={
-            'label': field.label,
-            'help': field.help,
-            'required': field.required,
-            'text.class_add': 'pat-relateditems',
-            'text.data': {
-                'pat-relateditems': opts
-            },
-            'persist_writer': RelatedItemsPersistWriter(field)
+            "label": field.label,
+            "help": field.help,
+            "required": field.required,
+            "text.class_add": "pat-relateditems",
+            "text.data": {"pat-relateditems": opts},
+            "persist_writer": RelatedItemsPersistWriter(field),
         },
-        mode=field.mode)
+        mode=field.mode,
+    )

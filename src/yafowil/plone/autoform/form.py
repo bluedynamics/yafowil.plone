@@ -53,6 +53,7 @@ import copy
 # plone.dexterity.utils related
 ###############################################################################
 
+
 def createContent(portal_type, suppressNotify=False, **kw):
     """Same function as ``plone.dexterity.utils.createContent`` except
     ``suppressNotify`` keyword argument in signature.
@@ -103,10 +104,9 @@ def checkContentConstraints(container, child):
     container_fti = container.getTypeInfo()
     fti = getUtility(IDexterityFTI, name=child.portal_type)
     if not fti.isConstructionAllowed(container):
-        raise Unauthorized('Cannot create {}'.format(child.portal_type))
-    if container_fti is not None \
-            and not container_fti.allowType(child.portal_type):
-        msg = 'Disallowed subobject type: {}'.format(child.portal_type)
+        raise Unauthorized("Cannot create {}".format(child.portal_type))
+    if container_fti is not None and not container_fti.allowType(child.portal_type):
+        msg = "Disallowed subobject type: {}".format(child.portal_type)
         raise ValueError(msg)
 
 
@@ -115,12 +115,12 @@ def checkContentConstraints(container, child):
 ###############################################################################
 
 AUTOFORM_BEHAVIOR = {
-    'yafowil.autoform',
-    'yafowil.plone.autoform.behavior.IYafowilFormBehavior'
+    "yafowil.autoform",
+    "yafowil.plone.autoform.behavior.IYafowilFormBehavior",
 }
 AUTOFORM_IMMEDIATE_BEHAVIOR = {
-    'yafowil.autoform.immediatecreate',
-    'yafowil.plone.autoform.behavior.IYafowilImmediateCreateBehavior'
+    "yafowil.autoform.immediatecreate",
+    "yafowil.plone.autoform.behavior.IYafowilImmediateCreateBehavior",
 }
 
 
@@ -130,7 +130,7 @@ class DefaultAddView(DefaultAddViewBase):
     """
 
     def __init__(self, context, request, ti):
-        behaviors = set(ti.getProperty('behaviors'))
+        behaviors = set(ti.getProperty("behaviors"))
         self.is_yafowil_form = bool(
             (AUTOFORM_BEHAVIOR | AUTOFORM_IMMEDIATE_BEHAVIOR) & behaviors
         )
@@ -170,10 +170,9 @@ class DefaultAddView(DefaultAddViewBase):
         # Yafowil autoforms behave differently from autoforms based on z3zform
         # here. We're convinced that having the correct context a form is
         # supposed to be rendered on is the way a form engine must work.
-        add_context = createContent(
-            self.ti.getId(),
-            suppressNotify=True
-        ).__of__(aq_inner(self.context))
+        add_context = createContent(self.ti.getId(), suppressNotify=True).__of__(
+            aq_inner(self.context)
+        )
         # add dummy id to add context, otherwise adding of folderish items
         # will fail
         add_context.id = self.ti.getId()
@@ -185,6 +184,7 @@ class DefaultAddView(DefaultAddViewBase):
 ###############################################################################
 # yafowil base autoform
 ###############################################################################
+
 
 def wrap_callables(context, dct):
     # recursively wrap callables into ContextAwareCallable
@@ -200,78 +200,69 @@ def wrap_callables(context, dct):
 
 @plumbing(CSRFProtectionBehavior)
 class BaseAutoForm(BaseForm):
-    """Yafowil base autoform.
-    """
+    """Yafowil base autoform."""
+
     ti = None
-    form_name = ''
+    form_name = ""
 
     @property
     def action_triggered(self):
-        """Flag whether form action has been triggered.
-        """
-        actions = [
-            self.form['controls']['save'],
-            self.form['controls']['cancel']
-        ]
+        """Flag whether form action has been triggered."""
+        actions = [self.form["controls"]["save"], self.form["controls"]["cancel"]]
         for action in actions:
-            if self.request.get('action.{0}'.format(action.dottedpath)):
+            if self.request.get("action.{0}".format(action.dottedpath)):
                 return True
         return False
 
     def get_schemata(self):
-        """Return all schemata to generate form fields for.
-        """
+        """Return all schemata to generate form fields for."""
         raise NotImplementedError(
-            '``BaseAutoForm`` does not implement ``get_schemata``'
+            "``BaseAutoForm`` does not implement ``get_schemata``"
         )
 
     def prepare(self):
         form_class = (
-            'rowlike pat-formunloadalert enableFormTabbing pat-autotoc '
-            'view-name-add-Folder autotabs'
+            "rowlike pat-formunloadalert enableFormTabbing pat-autotoc "
+            "view-name-add-Folder autotabs"
         )
         # XXX: make pat autotoc dedicated blueprint
-        pat_autotoc = 'levels: legend; section: fieldset; className: autotabs'
+        pat_autotoc = "levels: legend; section: fieldset; className: autotabs"
 
         # XXX: no default persist writer required on widget data
         def noop_persist_writer(model, writer=None, recursiv=True):
             pass
+
         self.form = form = factory(
-            'form',
+            "form",
             name=self.form_name,
             props={
-                'action': self.form_action,
-                'class': form_class,
-                'data': {
-                    'pat-autotoc': pat_autotoc
-                },
-                'persist_writer': noop_persist_writer
-            })
+                "action": self.form_action,
+                "class": form_class,
+                "data": {"pat-autotoc": pat_autotoc},
+                "persist_writer": noop_persist_writer,
+            },
+        )
         # resolve schema and add fieldsets to form
         fieldset_definitions = resolve_schemata(self.get_schemata())
         # form order definitions
         order_defs = list()
         for idx, fieldset_definition in enumerate(fieldset_definitions):
-            fieldset_class = 'autotoc-section'
+            fieldset_class = "autotoc-section"
             if idx == 0:
-                fieldset_class += ' active'
+                fieldset_class += " active"
             fieldset = form[fieldset_definition.name] = factory(
-                'fieldset',
-                props={
-                    'legend': fieldset_definition.label,
-                    'class': fieldset_class
-                })
+                "fieldset",
+                props={"legend": fieldset_definition.label, "class": fieldset_class},
+            )
             # add fields to fieldset
             for field_definition in fieldset_definition:
                 # XXX: consider schema/behavior name in field name?
                 field_name = field_definition.name
                 factory_cb = directives.tgv_cache.get_factory_callable(
-                    field_definition.schema,
-                    field_name
+                    field_definition.schema, field_name
                 )
                 factory_kw = directives.tgv_cache.get_factory(
-                    field_definition.schema,
-                    field_name
+                    field_definition.schema, field_name
                 )
                 # check if factory_callable directive called for field
                 if factory_cb:
@@ -279,73 +270,66 @@ class BaseAutoForm(BaseForm):
                 # check if factory directive called for field
                 elif factory_kw:
                     factory_kw = copy.deepcopy(factory_kw)
-                    blueprints = factory_kw.pop('blueprints')
+                    blueprints = factory_kw.pop("blueprints")
                     wrap_callables(self.context, factory_kw)
                     form_field = fieldset[field_name] = factory(
-                        blueprints,
-                        **factory_kw
+                        blueprints, **factory_kw
                     )
                 # if no directive called for field, use widget_factory
                 else:
                     form_field = fieldset[field_name] = widget_factory.widget_for(
-                        self.context,
-                        field_definition
+                        self.context, field_definition
                     )
-                if not form_field.attrs.get('persist_writer'):
+                if not form_field.attrs.get("persist_writer"):
                     writer = YafowilAutoformPersistWriter(field_definition)
-                    form_field.attrs['persist_writer'] = writer
+                    form_field.attrs["persist_writer"] = writer
                 # remember order definition for field if defined
                 order_def = directives.tgv_cache.get_order(
-                    field_definition.schema,
-                    field_name
+                    field_definition.schema, field_name
                 )
                 if order_def:
-                    order_defs.append((
-                        fieldset_definition.name,
-                        field_name,
-                        order_def
-                    ))
-        form['controls'] = factory(
-            'div',
+                    order_defs.append((fieldset_definition.name, field_name, order_def))
+        form["controls"] = factory(
+            "div",
             props={
-                'class': 'formControls',
+                "class": "formControls",
                 # 'structural': True, # -> does not work on div
-            }
+            },
         )
-        form['controls']['save'] = factory(
-            'submit',
+        form["controls"]["save"] = factory(
+            "submit",
             props={
-                'action': 'save',
-                'expression': True,
-                'handler': self.save,
-                'next': self.next,
-                'class': 'submit-widget button-field context',
-            }
+                "action": "save",
+                "expression": True,
+                "handler": self.save,
+                "next": self.next,
+                "class": "submit-widget button-field context",
+            },
         )
-        form['controls']['cancel'] = factory(
-            'submit',
+        form["controls"]["cancel"] = factory(
+            "submit",
             props={
-                'action': 'cancel',
-                'expression': True,
-                'skip': True,
-                'next': self.cancel,
-                'class': 'submit-widget button-field standalone',
-            }
+                "action": "cancel",
+                "expression": True,
+                "skip": True,
+                "next": self.cancel,
+                "class": "submit-widget button-field standalone",
+            },
         )
         # resolve field order
         for fieldset_name, field_name, order_def in order_defs:
             source_fieldset = target_fieldset = form[fieldset_name]
-            if order_def['fieldset']:
-                target_fieldset = form[order_def['fieldset']]
-            if order_def['before']:
+            if order_def["fieldset"]:
+                target_fieldset = form[order_def["fieldset"]]
+            if order_def["before"]:
                 form_field = source_fieldset.detach(field_name)
-                anchor_field = target_fieldset[order_def['before']]
+                anchor_field = target_fieldset[order_def["before"]]
                 target_fieldset.insertbefore(form_field, anchor_field)
-            elif order_def['after']:
+            elif order_def["after"]:
                 form_field = source_fieldset.detach(field_name)
-                anchor_field = target_fieldset[order_def['after']]
+                anchor_field = target_fieldset[order_def["after"]]
                 target_fieldset.insertafter(form_field, anchor_field)
-            elif order_def['fieldset']:
+            elif order_def["fieldset"]:
                 form_field = source_fieldset.detach(field_name)
                 target_fieldset[field_name] = form_field
         # call form modifiers
@@ -355,17 +339,17 @@ class BaseAutoForm(BaseForm):
 
     def save(self, widget, data):
         raise NotImplementedError(
-            'Abstract ``BaseAutoForm`` does not implement ``save``'
+            "Abstract ``BaseAutoForm`` does not implement ``save``"
         )
 
     def next(self, request):
         raise NotImplementedError(
-            'Abstract ``BaseAutoForm`` does not implement ``next``'
+            "Abstract ``BaseAutoForm`` does not implement ``next``"
         )
 
     def cancel(self, request):
         raise NotImplementedError(
-            'Abstract ``BaseAutoForm`` does not implement ``cancel``'
+            "Abstract ``BaseAutoForm`` does not implement ``cancel``"
         )
 
 
@@ -373,10 +357,11 @@ class BaseAutoForm(BaseForm):
 # yafowil autoform addform
 ###############################################################################
 
+
 class AddAutoForm(BaseAutoForm, ContentForm):
-    """Yafowil add form.
-    """
-    form_name = 'addform'
+    """Yafowil add form."""
+
+    form_name = "addform"
 
     def __init__(self, context, request, ti):
         setattr(request, FORM_SCOPE_HOSTILE_ATTR, FORM_SCOPE_ADD)
@@ -385,11 +370,11 @@ class AddAutoForm(BaseAutoForm, ContentForm):
 
     @property
     def form_title(self):
-        return 'Add {}'.format(self.ti.Title())
+        return "Add {}".format(self.ti.Title())
 
     def form_action(self, widget, data):
-        action_resource = u'++add++{tid}'.format(tid=self.ti.getId())
-        return u'%s/%s' % (aq_parent(self.context).absolute_url(), action_resource)
+        action_resource = "++add++{tid}".format(tid=self.ti.getId())
+        return "%s/%s" % (aq_parent(self.context).absolute_url(), action_resource)
 
     def get_schemata(self):
         return iterSchemataForType(self.ti.getId())
@@ -406,7 +391,7 @@ class AddAutoForm(BaseAutoForm, ContentForm):
         # that the created type has the right portal type. It is possible
         # to re-define a type through the web that uses the factory from an
         # existing type, but wants a unique portal_type!
-        if hasattr(content, '_setPortalTypeName'):
+        if hasattr(content, "_setPortalTypeName"):
             content._setPortalTypeName(self.ti.getId())
         # Acquisition wrap temporarily to satisfy things like vocabularies
         # depending on tools
@@ -423,25 +408,20 @@ class AddAutoForm(BaseAutoForm, ContentForm):
         # remember content id for redirection
         self.new_content_id = content.id
         # set status message
-        IStatusMessage(self.request).addStatusMessage(
-            _dx(u"Item created"), "info"
-        )
+        IStatusMessage(self.request).addStatusMessage(_dx("Item created"), "info")
 
     def next(self, request):
         container = aq_parent(self.context)
-        next_url = u'{}/{}'.format(
-            container.absolute_url(),
-            self.new_content_id
-        )
+        next_url = "{}/{}".format(container.absolute_url(), self.new_content_id)
         if self.ti.immediate_view:
-            next_url = u'{}/{}'.format(next_url, self.ti.immediate_view)
+            next_url = "{}/{}".format(next_url, self.ti.immediate_view)
         self.request.response.redirect(next_url)
 
     def cancel(self, request):
         container = aq_parent(self.context)
         notify(AddCancelledEvent(container))
         IStatusMessage(self.request).addStatusMessage(
-            _dx(u"Add New Item operation cancelled"), "info"
+            _dx("Add New Item operation cancelled"), "info"
         )
         self.request.response.redirect(container.absolute_url())
 
@@ -450,23 +430,23 @@ class AddAutoForm(BaseAutoForm, ContentForm):
 # yafowil autoform editform
 ###############################################################################
 
+
 class EditAutoForm(BaseAutoForm, ContentForm):
-    """Yafowil edit form.
-    """
-    form_name = 'editform'
-    action_resource = u'edit'
+    """Yafowil edit form."""
+
+    form_name = "editform"
+    action_resource = "edit"
 
     def __init__(self, context, request):
         setattr(request, FORM_SCOPE_HOSTILE_ATTR, FORM_SCOPE_EDIT)
         super(EditAutoForm, self).__init__(context, request)
-        self.ti = getToolByName(
-            self.context,
-            'portal_types'
-        ).getTypeInfo(context.portal_type)
+        self.ti = getToolByName(self.context, "portal_types").getTypeInfo(
+            context.portal_type
+        )
 
     @property
     def form_title(self):
-        return 'Edit {}'.format(self.ti.Title())
+        return "Edit {}".format(self.ti.Title())
 
     def get_schemata(self):
         return iterSchemata(self.context)
@@ -479,44 +459,35 @@ class EditAutoForm(BaseAutoForm, ContentForm):
     def save(self, widget, data):
         data.write(self.context)
         notify(EditFinishedEvent(self.context))
-        IStatusMessage(self.request).addStatusMessage(
-            _dx(u"Changes saved"), "info"
-        )
+        IStatusMessage(self.request).addStatusMessage(_dx("Changes saved"), "info")
 
     def next(self, request):
         next_url = self.context.absolute_url()
         portal_type = self.context.portal_type
         registry = getUtility(IRegistry)
-        use_view_action = registry.get(
-            'plone.types_use_view_action_in_listings',
-            []
-        )
+        use_view_action = registry.get("plone.types_use_view_action_in_listings", [])
         if portal_type in use_view_action:
-            next_url = u'{}/view'.format(next_url)
+            next_url = "{}/view".format(next_url)
         self.request.response.redirect(next_url)
 
     def cancel(self, request):
         notify(EditCancelledEvent(self.context))
-        IStatusMessage(self.request).addStatusMessage(
-            _dx(u"Edit cancelled"), "info"
-        )
+        IStatusMessage(self.request).addStatusMessage(_dx("Edit cancelled"), "info")
         self.request.response.redirect(self.context.absolute_url())
 
 
 class ImmediateAddAutoForm(EditAutoForm):
 
-    form_name = 'addform'
-    action_resource = u'immediateadd'
-    success_message = _(u"New content saved")
+    form_name = "addform"
+    action_resource = "immediateadd"
+    success_message = _("New content saved")
 
     @property
     def form_title(self):
-        return 'Add {}'.format(self.ti.Title())
+        return "Add {}".format(self.ti.Title())
 
     def prepare(self):
-        if (
-            getattr(self.context, "yafowil_immediatecreate", None) != "initial"
-        ):
+        if getattr(self.context, "yafowil_immediatecreate", None) != "initial":
             url = self.context.absolute_url() + "/edit"
             url = addTokenToUrl(url)
             raise Redirect(url)
@@ -535,24 +506,17 @@ class ImmediateAddAutoForm(EditAutoForm):
         self.new_content_id = chooser.chooseName(None, self.context)
         api.content.rename(obj=self.context, new_id=self.new_content_id)
         notify(EditFinishedEvent(self.context))
-        IStatusMessage(self.request).addStatusMessage(
-            _dx(u"Item created"), "info"
-        )
+        IStatusMessage(self.request).addStatusMessage(_dx("Item created"), "info")
 
     def next(self, request):
         container = aq_parent(self.context)
-        next_url = u'{}/{}'.format(
-            container.absolute_url(),
-            self.new_content_id
-        )
+        next_url = "{}/{}".format(container.absolute_url(), self.new_content_id)
         if self.ti.immediate_view:
-            next_url = u'{}/{}'.format(next_url, self.ti.immediate_view)
+            next_url = "{}/{}".format(next_url, self.ti.immediate_view)
         self.request.response.redirect(next_url)
 
     def cancel(self, request):
-        api.portal.show_message(
-            _dx(u"Add New Item operation cancelled"), self.request
-        )
+        api.portal.show_message(_dx("Add New Item operation cancelled"), self.request)
         notify(EditCancelledEvent(self.context))
         parent = aq_parent(self.context)
         api.content.delete(obj=self.context)
@@ -564,12 +528,13 @@ class ImmediateAddAutoForm(EditAutoForm):
 # yafowil autoform displayform
 ###############################################################################
 
+
 class DisplayAutoForm(BaseAutoForm):
-    """Yafowil display form.
-    """
-    form_name = 'displayform'
-    action_resource = u''
-    display_fieldsets = ['default']
+    """Yafowil display form."""
+
+    form_name = "displayform"
+    action_resource = ""
+    display_fieldsets = ["default"]
     skip_fields = []
 
     def __init__(self, context, request):
@@ -582,7 +547,7 @@ class DisplayAutoForm(BaseAutoForm):
     def prepare(self):
         super(DisplayAutoForm, self).prepare()
         origin_form = self.form
-        self.form = form = factory('div', name=self.form_name)
+        self.form = form = factory("div", name=self.form_name)
         for fieldset in origin_form.values():
             if fieldset.name not in self.display_fieldsets:
                 continue
@@ -590,4 +555,4 @@ class DisplayAutoForm(BaseAutoForm):
                 if widget.name in self.skip_fields:
                     continue
                 form[widget.name] = widget
-                widget.mode = 'display'
+                widget.mode = "display"

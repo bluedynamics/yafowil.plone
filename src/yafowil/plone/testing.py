@@ -18,19 +18,17 @@ class YafowilLayer(PloneSandboxLayer):
         self.loadZCML(package=yafowil.plone)
 
     def setUpPloneSite(self, portal):
-        applyProfile(portal, 'yafowil.plone:default')
+        applyProfile(portal, "yafowil.plone:default")
 
 
 YAFOWIL_PLONE_FIXTURE = YafowilLayer()
 
 
 YAFOWIL_PLONE_INTEGRATION_TESTING = IntegrationTesting(
-    bases=(YAFOWIL_PLONE_FIXTURE,),
-    name='YafowilLayer:IntegrationTesting'
+    bases=(YAFOWIL_PLONE_FIXTURE,), name="YafowilLayer:IntegrationTesting"
 )
 
 
 YAFOWIL_PLONE_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(YAFOWIL_PLONE_FIXTURE,),
-    name='YafowilLayer:FunctionalTesting'
+    bases=(YAFOWIL_PLONE_FIXTURE,), name="YafowilLayer:FunctionalTesting"
 )

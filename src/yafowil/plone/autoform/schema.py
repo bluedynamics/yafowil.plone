@@ -11,6 +11,7 @@ from plone.supermodel.utils import mergedTaggedValueList
 from Products.CMFPlone import PloneMessageFactory as _
 from zope.dottedname.resolve import resolve
 from zope.schema import getFieldNamesInOrder
+
 import six
 
 
@@ -21,7 +22,7 @@ def fqn(schema, name):
     :param name: Name of the field.
     :return: full qualified field name as string.
     """
-    return '{}.{}'.format(schema.__name__, name)
+    return "{}.{}".format(schema.__name__, name)
 
 
 class Fieldset(object):
@@ -74,7 +75,7 @@ class Field(object):
     instances via ``yafowil.base.factory``.
     """
 
-    def __init__(self, name, schema, widget=None, mode='edit', is_behavior=False):
+    def __init__(self, name, schema, widget=None, mode="edit", is_behavior=False):
         """Create field.
 
         :param name: Name of the field.
@@ -137,16 +138,13 @@ def resolve_fieldset(fieldsets, schema_fieldset):
     # case new fieldset
     if name not in fieldsets:
         fieldset = fieldsets[name] = Fieldset(
-            name=name,
-            label=label,
-            description=description,
-            order=order
+            name=name, label=label, description=description, order=order
         )
     # case fieldset exists
     else:
         fieldset = fieldsets[name]
         # case label changes
-        if (label != fieldset.label and label != fieldset.name):
+        if label != fieldset.label and label != fieldset.name:
             fieldset.label = label
         # case description changes
         if description is not None:
@@ -169,14 +167,11 @@ def resolve_widget(schema_widget):
         return None
     # case ParameterizedWidget instance
     if isinstance(schema_widget, ParameterizedWidget):
-        return Widget(
-            factory=schema_widget.widget_factory,
-            params=schema_widget.params
-        )
+        return Widget(factory=schema_widget.widget_factory, params=schema_widget.params)
     # case dotted path to widget class
     if isinstance(schema_widget, six.string_types):
         return Widget(factory=resolve(schema_widget))
-    raise RuntimeError('Unknown widget: {0}'.format(schema_widget))
+    raise RuntimeError("Unknown widget: {0}".format(schema_widget))
 
 
 def collect_fields_order(order, schema, main_schema):
@@ -195,14 +190,14 @@ def collect_fields_order(order, schema, main_schema):
             continue
         o_def = list(o_def)
         # handle related field notation
-        if o_def[2] != '*':
+        if o_def[2] != "*":
             # field is from the same schema, its name can be abbreviated by
             # a leading dot
-            if o_def[2].startswith('.'):
+            if o_def[2].startswith("."):
                 o_def[2] = fqn(schema, o_def[2][1:])
             # field is is used without a prefix, its is looked up from the
             # main schema
-            elif o_def[2].find('.') == -1:
+            elif o_def[2].find(".") == -1:
                 o_def[2] = fqn(main_schema, o_def[2])
         # store order definition
         order[fqn(schema, o_def[0])] = o_def[1:]
@@ -223,13 +218,13 @@ def order_fieldset(order, fieldset):
             continue
         direction = o_def[0]
         relative_to = o_def[1]
-        if direction == 'before':
-            if relative_to == '*':
+        if direction == "before":
+            if relative_to == "*":
                 ref = data.values()[0]
             else:
                 ref = data.get(relative_to)
         else:
-            if relative_to == '*':
+            if relative_to == "*":
                 ref = data.values()[-1]
             else:
                 ref = data.get(relative_to)
@@ -238,24 +233,20 @@ def order_fieldset(order, fieldset):
             # XXX: log warning
             continue
         field = data.pop(field_fqn)
-        if direction == 'before':
-            if relative_to == '*':
+        if direction == "before":
+            if relative_to == "*":
                 data.insertfirst(field_fqn, field)
             else:
                 data.insertbefore(relative_to, field_fqn, field)
         else:
-            if relative_to == '*':
+            if relative_to == "*":
                 data.insertlast(field_fqn, field)
             else:
                 data.insertafter(relative_to, field_fqn, field)
 
 
 # aliases from plone autoform widget modes to yafowil widget modes
-mode_aliases = {
-    'input': 'edit',
-    'display': 'display',
-    'hidden': 'skip'
-}
+mode_aliases = {"input": "edit", "display": "display", "hidden": "skip"}
 
 
 def resolve_schemata(schemata):
@@ -269,9 +260,8 @@ def resolve_schemata(schemata):
     # fieldset definitions
     fieldsets = odict()
     # create default fieldset, not resolved by plone.autoform
-    fieldsets['default'] = Fieldset(
-        name='default',
-        label=_('label_schema_default', default='Default')
+    fieldsets["default"] = Fieldset(
+        name="default", label=_("label_schema_default", default="Default")
     )
     # contains fields order annotated with plone.autoform.directives
     order = odict()
@@ -302,8 +292,8 @@ def resolve_schemata(schemata):
                 name=field_name,
                 schema=schema,
                 widget=resolve_widget(widgets.get(field_name)),
-                mode=modes.get(field_name, 'edit'),
-                is_behavior=is_behavior
+                mode=modes.get(field_name, "edit"),
+                is_behavior=is_behavior,
             )
         # collect fieldsets from schema and add related fields
         schema_fieldsets = mergedTaggedValueList(schema, FIELDSETS_KEY)
@@ -312,11 +302,11 @@ def resolve_schemata(schemata):
             for field_name in schema_fieldset.fields:
                 fieldset.add(fields.pop(field_name))
         # add remaining fields to default fieldset
-        fieldset = fieldsets['default']
+        fieldset = fieldsets["default"]
         for field in fields.values():
             fieldset.add(field)
     # order fields in each fieldset
     for fieldset in fieldsets.values():
         order_fieldset(order, fieldset)
     # return sorted fieldset
-    return sorted(fieldsets.values(), key=attrgetter('order'))
+    return sorted(fieldsets.values(), key=attrgetter("order"))

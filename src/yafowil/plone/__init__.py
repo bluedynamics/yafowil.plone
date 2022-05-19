@@ -6,8 +6,8 @@ import logging
 import os
 
 
-_ = MessageFactory('yafowil.plone')
-logger = logging.getLogger('yafowil.plone')
+_ = MessageFactory("yafowil.plone")
+logger = logging.getLogger("yafowil.plone")
 
 
 @entry_point(order=25)
@@ -17,5 +17,5 @@ def register():
 
 @entry_point(order=25)
 def configure():
-    if not os.environ.get('TESTRUN_MARKER'):
+    if not os.environ.get("TESTRUN_MARKER"):
         config.configure()
