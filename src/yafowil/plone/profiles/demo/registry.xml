@@ -1,6 +1,13 @@
 <registry>
 
   <!-- yafowil.widget.ace -->
+  <record name="yafowil.widget.ace.dependencies">
+    <field type="plone.registry.field.Bool">
+      <title>ACE widget dependencies resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
   <record name="yafowil.widget.ace.common">
     <field type="plone.registry.field.Bool">
       <title>ACE widget common resources</title>
