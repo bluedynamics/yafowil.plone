@@ -55,8 +55,6 @@ class Resources(BrowserView):
     """Browser view for concatenating and delivering resources defined in
     YAFOWIL resource groups.
 
-    This code is inspired by resource delivery views in collective.js.jqueryui.
-
     Plone 5 only.
     """
 
