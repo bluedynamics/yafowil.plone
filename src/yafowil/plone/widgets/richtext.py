@@ -1,3 +1,4 @@
+from Products.Five import BrowserView
 from plone.app.widgets.base import dict_merge
 from yafowil.base import factory
 from yafowil.common import generic_extractor
@@ -90,3 +91,19 @@ factory.defaults["plonerichtext.mimetype_selector_class"] = "plonerichtext"
 factory.defaults["plonerichtext.pattern_name"] = "pat-textareamimetypeselector"
 
 factory.defaults["plonerichtext.pattern_options"] = {}
+
+
+##############################################################################
+# View for fetching tinymce pattern options
+#
+# Used by default yafowil richtext widget
+##############################################################################
+
+class TinyMCEPatternOptions(BrowserView):
+
+    def __call__(self):
+        pattern_options = getMultiAdapter(
+            (self.context, self.request, self),
+            name="plone_settings"
+        ).tinymce()["data-pat-tinymce"]
+        return pattern_options

@@ -83,6 +83,12 @@
     class=".resources.YafowilCSS"
     permission="zope2.View" />
 
+  <browser:page
+    for="*"
+    name="yafowil.tinymce.options"
+    class=".widgets.richtext.TinyMCEPatternOptions"
+    permission="zope2.View" />
+
   <include
     package="plone.app.caching"
     zcml:condition="installed plone.app.caching"/>
