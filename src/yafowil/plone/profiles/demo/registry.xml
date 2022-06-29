@@ -1,14 +1,13 @@
 <registry>
 
-  <!-- yafowil.plone.jqueryui -->
-  <record name="yafowil.plone.jqueryui">
+  <!-- yafowil.widget.ace -->
+  <record name="yafowil.widget.ace.dependencies">
     <field type="plone.registry.field.Bool">
-      <title>jQuery UI Dpendencies</title>
+      <title>ACE widget dependencies resources</title>
     </field>
     <value>True</value>
   </record>
 
-  <!-- yafowil.widget.ace -->
   <record name="yafowil.widget.ace.common">
     <field type="plone.registry.field.Bool">
       <title>ACE widget common resources</title>
@@ -70,6 +69,7 @@
   </record>
 
   <!-- yafowil.widget.dynatree -->
+  <!--
   <record name="yafowil.widget.dynatree.dependencies">
     <field type="plone.registry.field.Bool">
       <title>Dynatree widget dependency resources</title>
@@ -83,6 +83,7 @@
     </field>
     <value>True</value>
   </record>
+  -->
 
   <!-- yafowil.widget.image -->
   <record name="yafowil.widget.image.common">
@@ -193,5 +194,35 @@
     <value>False</value>
   </record>
   -->
+
+  <!-- yafowil.widget.color -->
+  <record name="yafowil.widget.color.dependencies">
+    <field type="plone.registry.field.Bool">
+      <title>Color widget dependency resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <record name="yafowil.widget.color.common">
+    <field type="plone.registry.field.Bool">
+      <title>Color widget common resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <!-- yafowil.widget.tiptap -->
+  <record name="yafowil.widget.tiptap.dependencies">
+    <field type="plone.registry.field.Bool">
+      <title>Tiptap widget dependency resources</title>
+    </field>
+    <value>True</value>
+  </record>
+
+  <record name="yafowil.widget.tiptap.common">
+    <field type="plone.registry.field.Bool">
+      <title>Tiptap widget common resources</title>
+    </field>
+    <value>True</value>
+  </record>
 
 </registry>

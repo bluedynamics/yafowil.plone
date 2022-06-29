@@ -35,10 +35,12 @@
     <i18n:registerTranslations directory="locales" />
   </configure>
 
+  <!--
   <configure package="yafowil.widget.recaptcha"
              zcml:condition="installed yafowil.widget.recaptcha">
     <i18n:registerTranslations directory="locales" />
   </configure>
+  -->
 
   <!-- Hide profiles/products from Quick Installer -->
   <utility factory=".setuphandlers.HiddenProfiles" name="yafowil.plone" />
@@ -79,6 +81,12 @@
     for="*"
     name="yafowil.plone.css"
     class=".resources.YafowilCSS"
+    permission="zope2.View" />
+
+  <browser:page
+    for="*"
+    name="yafowil.tinymce.options"
+    class=".widgets.richtext.TinyMCEPatternOptions"
     permission="zope2.View" />
 
   <include

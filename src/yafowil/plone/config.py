@@ -35,6 +35,7 @@ js = [{
 }]
 
 
+
 ###############################################################################
 # configure factory
 ###############################################################################
@@ -49,6 +50,7 @@ def configure():
     # selection
     #factory.defaults['select.label_radio_class'] = 'radioType'
     #factory.defaults['select.label_checkbox_class'] = 'checkboxType'
+
 
 
 ###############################################################################

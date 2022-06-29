@@ -55,8 +55,6 @@ class Resources(BrowserView):
     """Browser view for concatenating and delivering resources defined in
     YAFOWIL resource groups.
 
-    This code is inspired by resource delivery views in collective.js.jqueryui.
-
     Plone 5 only.
     """
 
@@ -68,8 +66,7 @@ class Resources(BrowserView):
         self.request.response.setHeader("Content-Type", self._mimetype)
         return self.get_resources_content(enabled_resources(self._resource_type))
 
-    def get_resources_content(self, resources):
-        data = StringIO()
+    def read_resources_content(self, data, resources):
         data.write(self._header_template % (self._resource_type))
         data.write("\n")
         for resource in resources:
@@ -84,12 +81,27 @@ class Resources(BrowserView):
             content = safe_unicode(content)
             data.write(content)
             data.write("\n")
+
+    def get_resources_content(self, resources):
+        data = StringIO()
+        self.read_resources_content(data, resources)
         return data.getvalue()
 
 
 class YafowilJS(Resources):
     _resource_type = "js"
     _mimetype = "application/javascript"
+
+    def get_resources_content(self, resources):
+        data = StringIO()
+        data.write('var mockup_require = require;\n')
+        data.write('var mockup_define = define;\n')
+        data.write('require = undefined;\n')
+        data.write('define = undefined;\n')
+        self.read_resources_content(data, resources)
+        data.write('require = mockup_require;\n')
+        data.write('define = mockup_define;\n')
+        return data.getvalue()
 
 
 class YafowilCSS(Resources):

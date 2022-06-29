@@ -1,13 +1,11 @@
-.. image:: https://travis-ci.com/bluedynamics/yafowil.plone.svg?branch=master
-    :target: https://travis-ci.com/bluedynamics/yafowil.plone
-
 `YAFOWIL <http://pypi.python.org/pypi/yafowil>`_ is a form library for Python.
 This is its **Plone Integration** package
+
 
 Overview
 ========
 
-*yafowil.plone* offers different levels of integration for Plone:
+**yafowil.plone** offers different levels of integration for Plone:
 
 - wraps the Zope Request to fullfill YAFOWIL expectations
 - combines and registers CSS and JavScript Resources
@@ -25,7 +23,6 @@ Overview
 
 Functionality
 =============
-
 
 Resources Integration with GenericSetup
 ---------------------------------------
@@ -99,7 +96,7 @@ This package ships with base forms to be extended.
 The following form base classes are available:
 
 **yafowil.plone.form.BaseForm**
-    does not define a ```__call__``` method: define a template in ZCML or a     ```__call__``` method. It provides a method named ```render_form``` which processes and renders the form.
+    does not define a ```__call__``` method: define a template in ZCML or a ``__call__`` method. It provides a method named ```render_form``` which processes and renders the form.
 
 **yafowil.plone.form.Form**
     renders the naked form on ``__call__``.
@@ -180,7 +177,6 @@ wrapper template ```myform.yaml```:
       </body>
     </html>
 
-
 When not using one of the BaseForms, the **CSS/JS resources for YAFOWIL are not loaded** automatically.
 
 Add the following lines in order to load it:
@@ -196,7 +192,8 @@ Add the following lines in order to load it:
     def __init__(self, context, request):
         super(MyViewWithYafowil, self).__init__(context, request)
         add_bundle_on_request(request, 'yafowil')
-        
+
+
 CSRF Protection
 ---------------
 
@@ -220,11 +217,13 @@ Autoform
 ========
 
 **EXPERIMENTAL**:
+
 Autoform features are not feature complete yet and can be considered as *late alpha/early beta* in YAFOWL 4.x.
 We plan to move it to a stable state in the 4.x series.
 With lots of care, it can be used in production.
 
 YAFOWIL can be used as an drop-in replacement for the ``z3c.form`` based and ``plone.autoform`` generated forms.
+
 
 Installation
 ------------
@@ -232,6 +231,7 @@ Installation
 There is a profile called *YAFOWIL Autoform* (in XML: ``yafowil.plone:autoform``).
 By installing the profile, all needed to enable YAFOWIL rendered forms is installed.
 To finally activate autoform rendering for a content-type, one of the provided YAFOWIL Autoform behaviors has to be activated on the content-type.
+
 
 Basic Functionality
 -------------------
@@ -281,9 +281,6 @@ Contributors
 ============
 
 - Jens W. Klein <jens [at] bluedynamics [dot] com>
-
 - Peter Holzer <hpeter [at] agitator [dot] com>
-
 - Benjamin Stefaner <bs [at] kleinundpartner [dot] at>
-
 - Robert Niederreiter <rnix [at] squarewave [dot] at>

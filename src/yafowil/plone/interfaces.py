@@ -5,5 +5,5 @@ class IYafowilLayer(IDefaultBrowserLayer):
     """YAFOWIL related browser layer."""
 
 
-class IYafowilDemoLayer(IYafowilLayer):
+class IYafowilDemoLayer(IDefaultBrowserLayer):
     """YAFOWIL demos related browser layer."""
