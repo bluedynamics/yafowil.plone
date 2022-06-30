@@ -15,6 +15,9 @@ History
   ``plonerichtext`` blueprint.
   [rnix]
 
+- Fix `IObjectEvent` and `ObjectEvent` imports
+  [avoinea]
+
 
 4.0.0a3 (2019-07-31)
 --------------------
