@@ -2,7 +2,7 @@
 History
 =======
 
-4.0.0a4 (unreleased)
+4.0.0a4 (2022-09-28)
 --------------------
 
 - Style Bool-Widget as usual in Plone.
