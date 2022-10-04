@@ -5,7 +5,8 @@ History
 4.0.0a5 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Fix MutableMapping import for Python 3.10.
+  [fredvd]
 
 
 4.0.0a4 (2022-09-28)
