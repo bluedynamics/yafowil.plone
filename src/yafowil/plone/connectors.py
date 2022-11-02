@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from collections import MutableMapping
+from collections.abc import MutableMapping
 from zope.i18n import translate
 from zope.i18nmessageid import Message
 from ZPublisher.HTTPRequest import FileUpload
