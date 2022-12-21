@@ -5,6 +5,9 @@ History
 4.0.0a5 (unreleased)
 --------------------
 
+- Fix "ReferenceError: require is not defined" error.
+  [alecghica]
+
 - Fix MutableMapping import for Python 3.10.
   [fredvd]
 
