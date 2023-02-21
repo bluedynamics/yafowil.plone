@@ -5,6 +5,9 @@ History
 4.0.0a5 (unreleased)
 --------------------
 
+- Exclude all buildout config files from source distributions.
+  [thet]
+
 - Fix MutableMapping import for Python 3.10.
   [fredvd]
 
