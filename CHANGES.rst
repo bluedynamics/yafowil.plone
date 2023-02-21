@@ -2,7 +2,7 @@
 History
 =======
 
-4.0.0a5 (unreleased)
+4.0.0a5 (2023-02-21)
 --------------------
 
 - Exclude all buildout config files from source distributions.
