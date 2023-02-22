@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from collections.abc import MutableMapping
 from zope.i18n import translate
 from zope.i18nmessageid import Message
@@ -7,6 +8,11 @@ from ZPublisher.HTTPRequest import HTTPRequest
 
 import six
 
+# Python 3.10
+try:
+    from collections import MutableMapping
+except ImportError:
+    from collections.abc import MutableMapping
 
 class Zope2RequestAdapter(MutableMapping):
     coding = "utf-8"

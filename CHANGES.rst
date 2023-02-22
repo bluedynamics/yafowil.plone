@@ -2,7 +2,7 @@
 History
 =======
 
-4.0.0a5 (unreleased)
+4.0.0a6 (unreleased)
 --------------------
 
 - remove requireJS from JavaScript to make it compatible with Plone 6, drop Plone 5 support
@@ -10,6 +10,16 @@ History
 
 - fix MutableMapping import for Python 3.10
   [MrTango]
+
+
+4.0.0a5 (2023-02-21)
+--------------------
+
+- Exclude all buildout config files from source distributions.
+  [thet]
+
+- Fix MutableMapping import for Python 3.10.
+  [fredvd]
 
 
 4.0.0a4 (2022-09-28)
