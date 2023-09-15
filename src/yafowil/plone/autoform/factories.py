@@ -3,7 +3,6 @@ from Acquisition import aq_parent
 from node.utils import UNSET
 from plone.app.textfield import RichText
 from plone.app.widgets.base import dict_merge
-from plone.app.widgets.utils import get_ajaxselect_options
 from plone.app.widgets.utils import get_relateditems_options
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.app.z3cform.widget import DateFieldWidget
@@ -12,9 +11,7 @@ from plone.app.z3cform.widget import RelatedItemsFieldWidget
 from plone.app.z3cform.widget import RichTextFieldWidget
 from plone.app.z3cform.widget import SelectFieldWidget
 from plone.formwidget.recurrence.z3cform.widget import RecurrenceFieldWidget
-from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IUUID
-from Products.CMFCore.utils import getToolByName
 from yafowil.base import factory
 from yafowil.plone.autoform import FORM_SCOPE_ADD
 from yafowil.plone.autoform import FORM_SCOPE_DISPLAY
@@ -27,7 +24,6 @@ from z3c.form.browser.checkbox import SingleCheckBoxFieldWidget
 from z3c.form.browser.text import TextFieldWidget
 from z3c.form.browser.textlines import TextLinesFieldWidget
 from z3c.relationfield.schema import RelationList
-from zope.component import getUtility
 from zope.component import queryUtility
 from zope.schema import ASCIILine
 from zope.schema import Bool
@@ -441,60 +437,11 @@ def ajax_select_field_widget_factory(context, field):
     # widget options
     widget = field.widget
     separator = widget.params.get("separator", ";")
-    orderable = widget.params.get("orderable", False)
-    vocabulary_view = widget.params.get("vocabulary_view", "@@getVocabulary")
-    vocabulary_name = widget.params["vocabulary"]
     value = value_or_default(context, field)
     value = separator.join(value) if value else ""
     # pattern options
-    opts = dict()
-    schemafield = None
-    if IChoice.providedBy(field.schemafield):
-        opts["maximumSelectionSize"] = 1
-        schemafield = field.schemafield
-    elif ICollection.providedBy(field.schemafield):
-        schemafield = field.schemafield.value_type
-    if IChoice.providedBy(schemafield):
-        opts["allowNewItems"] = "false"
-    opts = dict_merge(
-        get_ajaxselect_options(
-            context,
-            value,
-            separator,
-            vocabulary_name,
-            vocabulary_view,
-            field_name=field.name,
-        ),
-        opts,
-    )
-    # get ajax vocabulary
-    if schemafield and getattr(schemafield, "vocabulary", None):
-        # e.g. 'form.widgets.IDublinCore.subjects'
-        # XXX: taken from the z3c form implementation, actually a hack
-        #      getSource would need to be overwritten with an own implementation
-        # XXX: check how getSource refers to field name
-        widget_name = "form.widgets.{}.{}".format(field.schemafield.name, field.name)
-        source_url = "{0:s}/++widget++{1:s}/@@getSource".format(
-            context.REQUEST.getURL(), widget_name
-        )
-        opts["vocabularyUrl"] = source_url
-    # ISequence represents an orderable collection
-    if ISequence.providedBy(field.schemafield) or orderable:
-        opts["orderable"] = True
-    # hardcoded security check hack for keywords.
-    # XXX: needs to be generalized
-    if vocabulary_name == "plone.app.vocabularies.Keywords":
-        membership = getToolByName(context, "portal_membership")
-        user = membership.getAuthenticatedMember()
-        registry = getUtility(IRegistry)
-        roles_allowed_to_add_keywords = registry.get(
-            "plone.roles_allowed_to_add_keywords", []
-        )
-        roles = set(user.getRolesInContext(context))
-        allowNewItems = "false"
-        if roles.intersection(roles_allowed_to_add_keywords):
-            allowNewItems = "true"
-        opts["allowNewItems"] = allowNewItems
+    base_args = widget._base_args()
+    opts = base_args["pattern_options"]
     # call yafowil factory
     return factory(
         "#field:text",
