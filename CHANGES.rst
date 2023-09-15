@@ -5,6 +5,26 @@ History
 5.0.0a1 (unreleased)
 --------------------
 
+- remove requireJS from JavaScript to make it compatible with Plone 6, drop Plone 5 support
+  [MrTango]
+
+- fix MutableMapping import for Python 3.10
+  [MrTango]
+
+
+4.0.0a5 (2023-02-21)
+--------------------
+
+- Exclude all buildout config files from source distributions.
+  [thet]
+
+- Fix MutableMapping import for Python 3.10.
+  [fredvd]
+
+
+4.0.0a4 (2022-09-28)
+--------------------
+
 - Fixed IObjectEvent and ObjectEvent import (issue https://github.com/bluedynamics/yafowil.plone/issues/32)
   [gogobd]
 
@@ -20,6 +40,9 @@ History
 - Use ``plone.app.widgets.base.dict_merge`` to update pattern options in
   ``plonerichtext`` blueprint.
   [rnix]
+
+- Fix `IObjectEvent` and `ObjectEvent` imports
+  [avoinea]
 
 
 4.0.0a3 (2019-07-31)

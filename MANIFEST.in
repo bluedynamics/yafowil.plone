@@ -1,4 +1,4 @@
 include *.rst
-exclude *.txt plone-*.cfg base.cfg
+exclude *.txt plone-*.cfg base.cfg versions.cfg
 graft src
 global-exclude *pyc *.pyo
