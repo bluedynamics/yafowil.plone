@@ -11,6 +11,9 @@ History
 - fix MutableMapping import for Python 3.10
   [MrTango]
 
+- refactor ``ajaxselect_options`` with refactored widget code.
+  [petschki]
+
 
 4.0.0a5 (2023-02-21)
 --------------------
