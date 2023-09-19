@@ -6,7 +6,7 @@
       i18n:domain="Example">
 
   <body>
-  
+
     <metal:main fill-slot="main">
       <tal:main-macro metal:define-macro="main">
         <ul>
@@ -20,13 +20,15 @@
             </li>
           </tal:loop>
         </ul>
-        <div tal:condition="view/example_name">
-             <div tal:repeat="form view/forms"
-                  tal:content="structure form">form</div>
-        </div>
+        <tal:if tal:condition="view/example_name">
+            <tal:loop tal:repeat="form view/forms">
+               <hr />
+               <div tal:replace="structure form">form</div>
+            </tal:loop>
+          </tal:if>
       </tal:main-macro>
     </metal:main>
-  
+
   </body>
 
 </html>

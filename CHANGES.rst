@@ -2,7 +2,7 @@
 History
 =======
 
-4.0.0a6 (unreleased)
+5.0.0a1 (unreleased)
 --------------------
 
 - remove requireJS from JavaScript to make it compatible with Plone 6, drop Plone 5 support
@@ -10,6 +10,9 @@ History
 
 - fix MutableMapping import for Python 3.10
   [MrTango]
+
+- refactor ``ajaxselect_options`` with refactored widget code.
+  [petschki]
 
 
 4.0.0a5 (2023-02-21)
@@ -24,6 +27,12 @@ History
 
 4.0.0a4 (2022-09-28)
 --------------------
+
+- Fixed IObjectEvent and ObjectEvent import (issue https://github.com/bluedynamics/yafowil.plone/issues/32)
+  [gogobd]
+
+- Switch to Bootstrap 5
+  [agitator]
 
 - Style Bool-Widget as usual in Plone.
   [jensens]
