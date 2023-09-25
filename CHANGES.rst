@@ -2,7 +2,7 @@
 History
 =======
 
-5.0.0a1 (unreleased)
+5.0.0a1 (2023-09-25)
 --------------------
 
 - remove requireJS from JavaScript to make it compatible with Plone 6, drop Plone 5 support
