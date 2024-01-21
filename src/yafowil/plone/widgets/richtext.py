@@ -1,5 +1,5 @@
 from Products.Five import BrowserView
-from plone.app.widgets.base import dict_merge
+from plone.app.z3cform.utils import dict_merge
 from yafowil.base import factory
 from yafowil.common import generic_extractor
 from yafowil.common import generic_required_extractor
