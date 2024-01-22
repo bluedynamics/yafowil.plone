@@ -3,8 +3,7 @@ from __future__ import absolute_import
 from datetime import date
 from datetime import datetime
 from node.utils import UNSET
-from plone.app.widgets.utils import get_date_options
-from plone.app.widgets.utils import get_datetime_options
+from plone.app.z3cform.widgets.datetime import get_date_options
 from Products.CMFPlone.utils import safe_callable
 from yafowil.base import factory
 from yafowil.base import fetch_value
@@ -54,7 +53,6 @@ def datetime_extractor(widget, data):
 def datetime_edit_renderer(widget, data):
     request = data.request.zrequest
     if attr_value("include_time", widget, data):
-        opts = get_datetime_options(request)
         value = fetch_value(widget, data)
         if value:
             value = (
@@ -64,7 +62,6 @@ def datetime_edit_renderer(widget, data):
         else:
             value = ""
     else:
-        opts = get_date_options(request)
         value = fetch_value(widget, data)
         if value:
             value = ("{value.year:}-{value.month:02}-{value.day:02}").format(
@@ -72,6 +69,7 @@ def datetime_edit_renderer(widget, data):
             )
         else:
             value = ""
+    opts = get_date_options(request)
     if attr_value("required", widget, data):
         opts["clear"] = False
     widget.attrs["data"] = {"pat-pickadate": opts}

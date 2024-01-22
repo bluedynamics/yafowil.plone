@@ -5,19 +5,20 @@ History
 5.0.0a2 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Use plone.app.z3cform instead plone.app.widgets.
+  [thet]
 
 
 5.0.0a1 (2023-09-25)
 --------------------
 
-- remove requireJS from JavaScript to make it compatible with Plone 6, drop Plone 5 support
+- Remove requireJS from JavaScript to make it compatible with Plone 6, drop Plone 5 support
   [MrTango]
 
-- fix MutableMapping import for Python 3.10
+- Fix MutableMapping import for Python 3.10
   [MrTango]
 
-- refactor ``ajaxselect_options`` with refactored widget code.
+- Refactor ``ajaxselect_options`` with refactored widget code.
   [petschki]
 
 
