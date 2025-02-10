@@ -9,15 +9,6 @@ from zExceptions import NotFound
 import yafowil.loader  # noqa  # loads registry
 
 
-try:
-    # plone 5 only
-    from Products.CMFPlone.resources import add_bundle_on_request
-except ImportError:
-
-    def add_bundle_on_request(request, name):
-        pass
-
-
 class ExampleResponseView(BrowserView):
     def __call__(self):
         route = self.route(self.request["URL"])
@@ -27,9 +18,6 @@ class ExampleResponseView(BrowserView):
 
 
 class ExampleView(BrowserView):
-    def __init__(self, context, request):
-        super(ExampleView, self).__init__(context, request)
-        add_bundle_on_request(request, "yafowil")
 
     @property
     def example_names(self):

@@ -49,7 +49,7 @@
     name="default"
     title="YAFOWIL Form Library"
     directory="profiles/default"
-    description="YYet Another Form Widget Library - Basic Integration for Plone."
+    description="Yet Another Form Widget Library - Basic Integration for Plone."
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
   <genericsetup:registerProfile

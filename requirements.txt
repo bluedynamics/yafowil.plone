@@ -1,2 +1,4 @@
-plone.reload
 plone.app.caching
+plone.classicui
+plone.distribution
+plone.reload

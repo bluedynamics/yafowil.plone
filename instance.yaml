@@ -2,5 +2,5 @@ default_context:
     initial_user_name: 'admin'
     initial_user_password: 'admin'
 
-    zcml_package_includes: plone.reload, yafowil.plone, yafowil.plone.examples
+    zcml_package_includes: plone.distribution, plone.classicui, plone.reload, yafowil.plone, yafowil.plone.examples
     db_storage: direct
