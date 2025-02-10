@@ -1,56 +1,7 @@
 from yafowil.base import factory
-from yafowil import bootstrap
+from yafowil.bootstrap import configure_factory
 from yafowil.plone.connectors import plone_preprocessor
-
-import os
-
-
-###############################################################################
-# plone specific resources
-###############################################################################
-
-resourcedir = os.path.join(os.path.dirname(__file__), 'resources')
-css = [{
-    'group': 'yafowil.plone.common',
-    'resource': 'yafowil-fontello.css',
-    'order': 10,
-}, {
-    'group': 'yafowil.plone.jqueryui',
-    'resource': 'jqueryui/jquery-ui-1.10.3.custom.css',
-    'order': 10,
-}]
-
-js = [{
-    'group': 'yafowil.plone.jqueryui',
-    'resource': 'jquery.migrate-1.2.1.min.js',
-    'order': 5,
-}, {
-    'group': 'yafowil.plone.jqueryui',
-    'resource': 'jqueryui/jquery-ui-1.10.3.custom.min.js',
-    'order': 10,
-}, {
-    'group': 'yafowil.plone.common',
-    'resource': 'widgets.js',
-    'order': 30,
-}]
-
-
-
-###############################################################################
-# configure factory
-###############################################################################
-
-def configure():
-    # configure bootstrap 5
-    bootstrap.configure_factory('bootstrap5')
-
-    # set theme
-    factory.theme = 'bootstrap'
-
-    # selection
-    #factory.defaults['select.label_radio_class'] = 'radioType'
-    #factory.defaults['select.label_checkbox_class'] = 'checkboxType'
-
+from yafowil.plone.resources import resources
 
 
 ###############################################################################
@@ -94,9 +45,13 @@ def register_macros():
 def register():
     from yafowil.plone import widgets  # noqa: E501
     factory.register_global_preprocessors([plone_preprocessor])
-    factory.register_theme('bootstrap', 'yafowil.plone', resourcedir, css=css, js=js)
+    factory.register_resources(
+        ['bootstrap5'],
+        'yafowil.plone',
+        resources
+    )
 
 
 def configure():
-    bootstrap.configure_factory('bootstrap5')
+    configure_factory('bootstrap5')
     # register_macros()

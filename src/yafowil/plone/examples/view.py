@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Products.CMFPlone.resources import add_bundle_on_request
 from Products.Five import BrowserView
 from yafowil.base import factory
 from yafowil.controller import Controller
@@ -18,6 +19,9 @@ class ExampleResponseView(BrowserView):
 
 
 class ExampleView(BrowserView):
+    def __init__(self, context, request):
+        super(ExampleView, self).__init__(context, request)
+        add_bundle_on_request(request, "yafowil")
 
     @property
     def example_names(self):

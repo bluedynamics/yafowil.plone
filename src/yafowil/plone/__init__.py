@@ -1,3 +1,4 @@
+from . import resources  # noqa
 from yafowil.plone import config
 from yafowil.utils import entry_point
 from zope.i18nmessageid import MessageFactory
