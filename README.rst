@@ -284,3 +284,7 @@ Contributors
 - Peter Holzer <hpeter [at] agitator [dot] com>
 - Benjamin Stefaner <bs [at] kleinundpartner [dot] at>
 - Robert Niederreiter <rnix [at] squarewave [dot] at>
+
+
+Create Plone/Zope configuration from https://github.com/plone/cookiecutter-zope-instance to ./instance
+Generated password for initial user 'admin' is: g)wT2q(kNFA!wHS

@@ -1,0 +1,2 @@
+plone.reload
+plone.app.caching
