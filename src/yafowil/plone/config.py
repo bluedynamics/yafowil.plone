@@ -20,7 +20,7 @@ def configure_defaults():
 def register_macros():
     # form macro
     factory.register_macro('form', 'form', {
-        'form.class': (
+        'form.class_add': (
             'enableUnloadProtection enableAutoFocus '
             'enableFormTabbing edit-form'
         ),
@@ -28,12 +28,7 @@ def register_macros():
 
     # field macro
     factory.register_macro('field', 'field:plonelabel:error', {
-        'field.class': 'field',
-        'field.error_class': 'error',
-        'error.class': 'fieldErrorBox',
-        'error.message_class': 'error',
-        'error.render_empty': True,
-        'error.position': 'before',
+        'field.class_add': 'field mb-3',
     })
 
     # array macro
@@ -67,4 +62,4 @@ def register():
 def configure():
     configure_factory('bootstrap5')
     configure_defaults()
-    # register_macros()
+    register_macros()

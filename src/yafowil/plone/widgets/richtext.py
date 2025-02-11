@@ -9,6 +9,7 @@ from yafowil.utils import attr_value
 from yafowil.utils import cssid
 from yafowil.utils import managedprops
 from zope.component import getMultiAdapter
+from .utils import context_value
 
 import json
 
@@ -31,7 +32,8 @@ def richtext_edit_renderer(widget, data):
     optiontags = []
     for mimetype in ["text/html", "text/x-web-textile"]:
         optiontags.append(data.tag("option", mimetype))
-    context = attr_value("context", widget, data)
+    context = context_value(widget, data)
+    context = widget.attrs['context']
     if context is None:
         raise ValueError("Richtext blueprint needs a context to work")
     pattern_options = getMultiAdapter(

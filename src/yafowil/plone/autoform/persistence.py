@@ -36,7 +36,7 @@ class RichtextPersistWriter(YafowilAutoformPersistWriter):
             mimeType=mime_type,
             outputMimeType=output_mime_type,
         )
-        super(RichtextPersistWriter, self).__call__(model, target, value)
+        super().__call__(model, target, value)
 
 
 class AjaxSelectPersistWriter(YafowilAutoformPersistWriter):
@@ -46,10 +46,10 @@ class AjaxSelectPersistWriter(YafowilAutoformPersistWriter):
         else:
             seperator = self.field.widget.params.get("separator", ";")
             value = tuple(value.split(seperator))
-        super(AjaxSelectPersistWriter, self).__call__(model, target, value)
+        super().__call__(model, target, value)
 
 
-class RelatedItemsPersistWriter(YafowilAutoformPersistWriter):
+class RelationPersistWriter(YafowilAutoformPersistWriter):
     def __call__(self, model, target, value):
         if not value:
             value = list()
@@ -64,4 +64,4 @@ class RelatedItemsPersistWriter(YafowilAutoformPersistWriter):
                 to_id = intids.getId(uuidToObject(item))
                 rels.append(RelationValue(to_id))
             value = rels
-        super(RelatedItemsPersistWriter, self).__call__(model, target, value)
+        super().__call__(model, target, value)

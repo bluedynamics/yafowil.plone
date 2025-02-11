@@ -12,6 +12,7 @@ from yafowil.utils import managedprops
 from z3c.relationfield.relation import RelationValue
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
+from .utils import context_value
 
 
 @managedprops("separator", "multivalued")
@@ -45,7 +46,7 @@ def relation_extractor(widget, data):
     "root_search_mode",
 )
 def relation_edit_renderer(widget, data):
-    context = attr_value("context", widget, data)
+    context = context_value(widget, data)
     if context is None:
         raise ValueError("Relation blueprint needs a context to work")
     separator = attr_value("separator", widget, data)
@@ -106,9 +107,7 @@ factory.register(
 )
 
 
-factory.doc["blueprint"][
-    "relation"
-] = """\
+factory.doc["blueprint"]["relation"] = """\
 Relation blueprint.
 """
 

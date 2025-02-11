@@ -1,7 +1,6 @@
 `YAFOWIL <http://pypi.python.org/pypi/yafowil>`_ is a form library for Python.
 This is its **Plone Integration** package
 
-
 Overview
 ========
 
@@ -9,53 +8,18 @@ Overview
 
 - wraps the Zope Request to fullfill YAFOWIL expectations
 - combines and registers CSS and JavScript Resources
-- a YAFOWIL theme for the widgets
-- macros following Plone default markup for fields, labels, ...
+- macros following Plone default markup for fields, labels, etc
 - Plone specific widgets
 - l10n/i18n integration
 - base forms for use in views (Python and YAML based)
-- autoform features (still experimental):
+- autoform features (experimental):
   - generates forms from zope.schema and schema annotations
   - works as drop-in replacement for z3c.form
   - full add/edit lifecycle for Plone content forms.
   - optional immediate content create feature on add
 
-
 Functionality
 =============
-
-Resources Integration with GenericSetup
----------------------------------------
-
-Addon widgets may provide custom javascripts, CSS, images and so on.
-
-This package registers the directories containing these assets as resource directories.
-Thus they can be accessed from the webbrowser.
-The registration schema is ``++resource++MODULENAME/...``.
-
-The "YAFOWIL Form Library" GenericSetup profile registers all resources related to so called "resource groups" in the CSS and Javascript registries.
-
-**This resource groups must be enabled explicitly(!).**
-The resource groups configuration happens via the portal registry.
-
-You need to provide a Generic setup profile containing a ``registry.xml`` with the resource groups configuration, e.g.:
-
-.. code:: XML
-
-    <!-- yafowil.widget.array -->
-    <record name="yafowil.widget.array.common">
-      <field type="plone.registry.field.Bool">
-        <title>Array widget common resources</title>
-      </field>
-      <value>True</value>
-    </record>
-
-The record ``name`` maps to the YAFOWIL resource group name.
-
-Take a look into ``registry.xml`` of the ``yafowil.plone:profiles/demoresources`` profile for more examples.
-
-The YAFOWIL autoform profile registers a bunch of addons and may be used a a reference.
-
 
 Integration with Translation
 ----------------------------
@@ -63,14 +27,15 @@ Integration with Translation
 The package adds an translation method for Zope2 i18n messages.
 It's added using by defining a global preprocessor
 
-
 Request wrapper
 ---------------
 
 This package registers a global preprocessor for YAFOWIL.
-It wraps the Zope2 request by an own request instance providing the behavior expected by YAFOWIL.
+It wraps the Zope2 request by an own request instance providing the behavior
+expected by YAFOWIL.
 
-File Uploads provided by Zope2 as ``ZPublisher.HTTPRequest.Fileupload`` objects are turned into a python ``dict`` with the keys:
+File Uploads provided by Zope2 as ``ZPublisher.HTTPRequest.Fileupload`` objects
+are turned into a python ``dict`` with the keys:
 
 **file**
     file-like object to read data from
@@ -87,7 +52,6 @@ File Uploads provided by Zope2 as ``ZPublisher.HTTPRequest.Fileupload`` objects 
 **original**
     keeps the original ``ZPublisher.HTTPRequest.Fileupload`` object
 
-
 Base Forms
 ----------
 
@@ -96,14 +60,18 @@ This package ships with base forms to be extended.
 The following form base classes are available:
 
 **yafowil.plone.form.BaseForm**
-    does not define a ```__call__``` method: define a template in ZCML or a ``__call__`` method. It provides a method named ```render_form``` which processes and renders the form.
+    does not define a ```__call__``` method: define a template in ZCML or a
+    ``__call__`` method. It provides a method named ```render_form``` which
+    processes and renders the form.
 
 **yafowil.plone.form.Form**
     renders the naked form on ``__call__``.
 
 **yafowil.plone.form.YAMLBaseForm**
     similar to ``BaseForm`` above.
-    Expects properties ``form_template`` pointing to a YAML file and ``message_factory`` providing the message factory used for YAML message strings.
+    Expects properties ``form_template`` pointing to a YAML file and
+    ``message_factory`` providing the message factory used for YAML message
+    strings.
 
 **yafowil.plone.form.YAMLForm**
     similar to ``YAMLBaseForm`` renders the naked YAML form on ``__call__``.
@@ -145,7 +113,7 @@ Convenience code for creating YAML forms:
 Form classes inherit from ``Products.Five.BrowserPage``, thus they
 must be registered via ZCML ``browser:page`` directive:
 
-.. code:: XML
+.. code:: xml
 
     <browser:page
       for="*"
@@ -159,7 +127,7 @@ Forms build with this base form classes need a template in
 order to insert such a form in a layout. It must be called inside a
 wrapper template ```myform.yaml```:
 
-.. code:: XML
+.. code:: xml
 
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
           xmlns:tal="http://xml.zope.org/namespaces/tal"
@@ -177,71 +145,68 @@ wrapper template ```myform.yaml```:
       </body>
     </html>
 
-When not using one of the BaseForms, the **CSS/JS resources for YAFOWIL are not loaded** automatically.
+When not using one of the BaseForms, the
+**CSS/JS resources for YAFOWIL are not loaded** automatically.
 
 Add the following lines in order to load it:
 
-.. code:: Python
+.. code:: python
 
     from Products.CMFPlone.resources import add_bundle_on_request
 
-    ...
-
     class MyViewWithYafowil(BrowserView):
 
-    def __init__(self, context, request):
-        super(MyViewWithYafowil, self).__init__(context, request)
-        add_bundle_on_request(request, 'yafowil')
-
+        def __init__(self, context, request):
+            super(MyViewWithYafowil, self).__init__(context, request)
+            add_bundle_on_request(request, 'yafowil')
 
 CSRF Protection
 ---------------
 
-To write into the database in Plone a CSRF protection authenticator key must be provided as a hidden form field.
-This can be done by adding a plumbing behavior to the forms created as above.
+To write into the database in Plone a CSRF protection authenticator key must
+be provided as a hidden form field. This can be done by adding a plumbing
+behavior to the forms created as above.
 
 .. code:: Python
  
     from plumber import plumbing
     from yafowil.plone.form import BaseForm
     from yafowil.plone.form import CSRFProtectionBehavior
-    
-    ...
-    
+
     @plumbing(CSRFProtectionBehavior)
     class ImportForm(BaseForm):
         """Form with CSRF protection"""
-
 
 Autoform
 ========
 
 **EXPERIMENTAL**:
 
-Autoform features are not feature complete yet and can be considered as *late alpha/early beta* in YAFOWL 4.x.
-We plan to move it to a stable state in the 4.x series.
-With lots of care, it can be used in production.
+Autoform features are not feature complete.
 
-YAFOWIL can be used as an drop-in replacement for the ``z3c.form`` based and ``plone.autoform`` generated forms.
-
+YAFOWIL can be used as an drop-in replacement for the ``z3c.form`` based and
+``plone.autoform`` generated forms.
 
 Installation
 ------------
 
 There is a profile called *YAFOWIL Autoform* (in XML: ``yafowil.plone:autoform``).
 By installing the profile, all needed to enable YAFOWIL rendered forms is installed.
-To finally activate autoform rendering for a content-type, one of the provided YAFOWIL Autoform behaviors has to be activated on the content-type.
-
+To finally activate autoform rendering for a content-type, one of the provided
+YAFOWIL Autoform behaviors has to be activated on the content-type.
 
 Basic Functionality
 -------------------
 
-YAFOWIL offers a layer to read ``z3c.form`` ``zope.schema`` annotations and build forms from this information.
+YAFOWIL offers a layer to read ``z3c.form`` ``zope.schema`` annotations and
+build forms from this information.
 
-Furthermore it offers an own ``zope.schema`` annotations named ``factory`` and ``factory_callable`` to build rich custom YAFOWIL forms without any ``z3c.form`` references.
+Furthermore it offers an own ``zope.schema`` annotations named ``factory``
+and ``factory_callable`` to build rich custom YAFOWIL forms without any
+``z3c.form`` references.
 
-Examples can be found within the `bda.plone.yafowil_autoform_example behavior <https://github.com/bluedynamics/bda.plone.yafowil_autoform_example/blob/master/src/bda/plone/yafowil_autoform_example/behaviors.py>`_
-
+Examples can be found within the
+`bda.plone.yafowil_autoform_example behavior <https://github.com/bluedynamics/bda.plone.yafowil_autoform_example/blob/master/src/bda/plone/yafowil_autoform_example/behaviors.py>`_
 
 Usage as z3c.form drop-in replacement
 -------------------------------------
@@ -251,15 +216,17 @@ There are two behaviors available.
 ``YAFOWIL forms from content-type schemas``
     Basic configuration with almost same behavior as ``z3c.form`` rendered types.
     Main difference: All widgets and processing is done through YAFOWIL.
-    Also, a temporary non-persistent add-context is created and used (opposed to the container as add context in Dexterity).
+    Also, a temporary non-persistent add-context is created and used (opposed
+    to the container as add context in Dexterity).
 
 ``YAFOWIL forms from content-type schemas with persistent add context``
-    Work the same as the basic one above, but a persistent add context is created.
-    I.e., this enables users to upload content in a container just created by the add form.
-    On cancel the persistent object is removed.
-    To enable removal of stalled content (because user closed browser or similar) an index is added to track the state of the content.
-    This immediate creation feature is similar to the one in (but completely independent from) the addon ``collective.immediatecreate``.
-
+    Work the same as the basic one above, but a persistent add context is
+    created. I.e., this enables users to upload content in a container just
+    created by the add form. On cancel the persistent object is removed.
+    To enable removal of stalled content (because user closed browser or
+    similar) an index is added to track the state of the content. This
+    immediate creation feature is similar to the one in (but completely
+    independent from) the addon ``collective.immediatecreate``.
 
 Detailed Documentation
 ======================
@@ -268,14 +235,13 @@ If you're interested to dig deeper:
 The `detailed YAFOWIL documentation <http://yafowil.info>`_ is available.
 Read it and learn how to create your example application with YAFOWIL.
 
-
 Source Code
 ===========
 
-The sources are in a GIT DVCS with its main branches at `github <http://github.com/bluedynamics/yafowil.plone>`_.
+The sources are in a GIT DVCS with its main branches at
+`github <http://github.com/bluedynamics/yafowil.plone>`_.
 
-We'd be happy to see many forks and pull-requests to make YAFOWIL even better.
-
+We'd be happy to see many forks and pull-requests.
 
 Contributors
 ============
@@ -284,7 +250,3 @@ Contributors
 - Peter Holzer <hpeter [at] agitator [dot] com>
 - Benjamin Stefaner <bs [at] kleinundpartner [dot] at>
 - Robert Niederreiter <rnix [at] squarewave [dot] at>
-
-
-Create Plone/Zope configuration from https://github.com/plone/cookiecutter-zope-instance to ./instance
-Generated password for initial user 'admin' is: g)wT2q(kNFA!wHS

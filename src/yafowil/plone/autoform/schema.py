@@ -12,8 +12,6 @@ from Products.CMFPlone import PloneMessageFactory as _
 from zope.dottedname.resolve import resolve
 from zope.schema import getFieldNamesInOrder
 
-import six
-
 
 def fqn(schema, name):
     """Helper function for full qualified field names.
@@ -169,7 +167,7 @@ def resolve_widget(schema_widget):
     if isinstance(schema_widget, ParameterizedWidget):
         return Widget(factory=schema_widget.widget_factory, params=schema_widget.params)
     # case dotted path to widget class
-    if isinstance(schema_widget, six.string_types):
+    if isinstance(schema_widget, str):
         return Widget(factory=resolve(schema_widget))
     raise RuntimeError("Unknown widget: {0}".format(schema_widget))
 
