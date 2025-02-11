@@ -9,19 +9,14 @@
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="yafowil.plone">
 
-  <!-- register demo examples -->
+  <!-- demo examples -->
   <include package=".examples" />
 
-  <!--yafowil autoforms -->
+  <!-- autoforms -->
   <include package=".autoform" />
 
-  <!-- register translations -->
+  <!-- translations -->
   <configure package="yafowil.i18n">
-    <i18n:registerTranslations directory="locales" />
-  </configure>
-
-  <configure package="yafowil.widget.image"
-             zcml:condition="installed yafowil.widget.image">
     <i18n:registerTranslations directory="locales" />
   </configure>
 
@@ -35,13 +30,22 @@
     <i18n:registerTranslations directory="locales" />
   </configure>
 
-  <!--
-  <configure package="yafowil.widget.recaptcha"
-             zcml:condition="installed yafowil.widget.recaptcha">
+  <configure package="yafowil.widget.cron"
+             zcml:condition="installed yafowil.widget.cron">
     <i18n:registerTranslations directory="locales" />
   </configure>
-  -->
 
+  <configure package="yafowil.widget.color"
+             zcml:condition="installed yafowil.widget.color">
+    <i18n:registerTranslations directory="locales" />
+  </configure>
+
+  <configure package="yafowil.widget.image"
+             zcml:condition="installed yafowil.widget.image">
+    <i18n:registerTranslations directory="locales" />
+  </configure>
+
+  <!-- GS profiles -->
   <genericsetup:registerProfile
     name="default"
     title="YAFOWIL Form Library"
@@ -50,24 +54,18 @@
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
   <genericsetup:registerProfile
-    name="demo"
-    title="YAFOWIL Form Library Demo"
-    directory="profiles/demo"
-    description="Yet Another Form Widget Library - Demo Setup."
-    provides="Products.GenericSetup.interfaces.EXTENSION" />
-
-  <genericsetup:registerProfile
     name="autoform"
     title="YAFOWIL Autoform"
     directory="profiles/autoform"
-    description="Yet Another Form Widget Library - Plone Autoform Integrationas z3c.form frop-in replacement for content types."
+    description="Yet Another Form Widget Library - Plone Autoform Integrationas z3c.form drop-in replacement for content types."
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
-  <!-- yafowil resource directories -->
+  <!-- resource directories -->
   <include package="." file="meta.zcml" />
 
   <yafowil:resources />
 
+  <!-- resource bundle views -->
   <browser:page
     for="*"
     name="yafowil.plone.js"
@@ -78,12 +76,6 @@
     for="*"
     name="yafowil.plone.css"
     class=".resources.YafowilCSS"
-    permission="zope2.View" />
-
-  <browser:page
-    for="*"
-    name="yafowil.tinymce.options"
-    class=".widgets.richtext.TinyMCEPatternOptions"
     permission="zope2.View" />
 
   <include
@@ -99,5 +91,12 @@
     zcml:condition="installed plone.app.caching"
     ruleset="plone.stableResource"
     for=".resources.YafowilCSS"/>
+
+  <!-- plone widget integrations -->
+  <browser:page
+    for="*"
+    name="yafowil.tinymce.options"
+    class=".widgets.richtext.TinyMCEPatternOptions"
+    permission="zope2.View" />
 
 </configure>

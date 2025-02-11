@@ -3,15 +3,17 @@ from zope.i18n import translate
 from zope.i18nmessageid import Message
 from ZPublisher.HTTPRequest import FileUpload
 from ZPublisher.HTTPRequest import HTTPRequest
-
-import six
+from node.utils import UNSET
+from zope.globalrequest import getRequest
 
 
 class Zope2RequestAdapter(MutableMapping):
     coding = "utf-8"
 
     def __init__(self, request):
-        if isinstance(request, self.__class__):
+        if request is UNSET:
+            self.zrequest = getRequest()
+        elif isinstance(request, self.__class__):
             # for some rare cases this makes sense
             self.zrequest = request.zrequest
         else:
@@ -34,7 +36,7 @@ class Zope2RequestAdapter(MutableMapping):
         # XXX: check whether coding is defined on request and ensure proper
         #      decoding
         # XXX: form tag must set accept-charset to ensure proper encoding
-        if isinstance(value, six.text_type):
+        if isinstance(value, str):
             return value
         return value.decode(self.coding)
 
@@ -42,16 +44,18 @@ class Zope2RequestAdapter(MutableMapping):
         return self.zrequest.form.keys()
 
     def __setitem__(self, key, item):
+        # XXX: KeyError would be more appropriate
         raise AttributeError("read only, __setitem__ is not supported")
 
     def __delitem__(self, key):
+        # XXX: KeyError would be more appropriate
         raise AttributeError("read only, __delitem__ is not supported")
 
     def __len__(self):
         return len(self.zrequest.form)
 
     def __iter__(self):
-        return six.iterkeys(self.zrequest.form.keys())
+        return iter(self.keys())
 
 
 class ZopeTranslation(object):
