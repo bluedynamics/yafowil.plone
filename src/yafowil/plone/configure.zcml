@@ -63,6 +63,11 @@
     description="Yet Another Form Widget Library - Plone Autoform Integrationas z3c.form frop-in replacement for content types."
     provides="Products.GenericSetup.interfaces.EXTENSION" />
 
+  <!-- yafowil resource directories -->
+  <include package="." file="meta.zcml" />
+
+  <yafowil:resources />
+
   <browser:page
     for="*"
     name="yafowil.plone.js"

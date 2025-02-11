@@ -8,12 +8,24 @@ from yafowil.plone.resources import resources
 # register macros
 ###############################################################################
 
+def configure_defaults():
+    # yafowil.widget.ace
+    factory.defaults['ace.basepath'] = '/++resource++yafowil.widget.ace/ace'
+
+
+###############################################################################
+# register macros
+###############################################################################
+
 def register_macros():
     # form macro
     factory.register_macro('form', 'form', {
-        'form.class': 'enableUnloadProtection enableAutoFocus '
-                      'enableFormTabbing edit-form',
+        'form.class': (
+            'enableUnloadProtection enableAutoFocus '
+            'enableFormTabbing edit-form'
+        ),
     })
+
     # field macro
     factory.register_macro('field', 'field:plonelabel:error', {
         'field.class': 'field',
@@ -23,14 +35,18 @@ def register_macros():
         'error.render_empty': True,
         'error.position': 'before',
     })
+
     # array macro
     factory.register_macro('array', 'array', {})
+
     # array field macro
     factory.register_macro('arrayfield', 'field:plonelabel:error', {})
+
     # relation as array entry macro
     factory.register_macro('arrayrelation', 'relation', {
         'relation.pattern_name': 'array-relateditems'
     })
+
     # richtext as array entry macro
     factory.register_macro('arrayrichtext', 'plonerichtext', {
         'plonerichtext.mimetype_selector_class': 'plonearrayrichtext',
@@ -45,13 +61,10 @@ def register_macros():
 def register():
     from yafowil.plone import widgets  # noqa: E501
     factory.register_global_preprocessors([plone_preprocessor])
-    factory.register_resources(
-        ['bootstrap5'],
-        'yafowil.plone',
-        resources
-    )
+    factory.register_resources(['bootstrap5'], 'yafowil.plone', resources)
 
 
 def configure():
     configure_factory('bootstrap5')
+    configure_defaults()
     # register_macros()

@@ -26,6 +26,11 @@ resources.add(wr.ScriptResource(
     depends='jquery-js',
     resource='widgets.js'
 ))
+resources.add(wr.StyleResource(
+    name='yafowil-plone-bootstrap-icons-css',
+    path='yafowil-plone',
+    resource='bootstrap-icons.css'
+))
 
 
 class Resources(BrowserView):
@@ -54,7 +59,7 @@ class YafowilJS(Resources):
 
     @property
     def yafowil_resources(self):
-        yafowil_resources = factory.get_resources()
+        yafowil_resources = factory.get_resources(exclude=['yafowil.bootstrap'])
         return yafowil_resources.scripts
 
 
@@ -64,5 +69,5 @@ class YafowilCSS(Resources):
 
     @property
     def yafowil_resources(self):
-        yafowil_resources = factory.get_resources()
+        yafowil_resources = factory.get_resources(exclude=['yafowil.bootstrap'])
         return yafowil_resources.styles
