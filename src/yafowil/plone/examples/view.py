@@ -58,7 +58,6 @@ class ExampleView(BrowserView):
                     "label": "submit",
                     "action": "save",
                     "handler": lambda widget, data: None,
-                    "class": "submit-widget button-field context",
                 },
             )
             controller = Controller(form, self.request)
