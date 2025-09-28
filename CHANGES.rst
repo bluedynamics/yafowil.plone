@@ -2,8 +2,8 @@
 History
 =======
 
-5.0.0a3 (unreleased)
---------------------
+5.0.0 (2025-09-28)
+------------------
 
 - Add missing dependency plone.api.
   [thet]
