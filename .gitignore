@@ -3,7 +3,6 @@ __pycache__
 *.pyc
 /.coverage
 /.DS_Store
-/.installed.cfg
 /.mxmake/
 /.venv/
 /.vscode/

@@ -2,10 +2,21 @@
 History
 =======
 
-5.0.0a3 (unreleased)
---------------------
+6.0.0 (unreleased)
+------------------
 
-- Nothing changed yet.
+- Refactor package layout to use ``pyproject.toml`` and implicit namespace packages.
+  [rnix]
+
+- Update resource delivery to use webresource.
+  [rnix]
+
+
+5.0.0 (2025-09-28)
+------------------
+
+- Add missing dependency plone.api.
+  [thet]
 
 
 5.0.0a2 (2024-02-29)
