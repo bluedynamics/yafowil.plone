@@ -40,6 +40,15 @@ dependencies = [
     "yafowil>3.99",
 ]
 
+[project.optional-dependencies]
+test = [
+    "coverage",
+    "plone.app.robotframework",
+    "plone.app.testing",
+    "pytest",
+    "zope.pytestlayer",
+]
+
 [project.entry-points."yafowil.plugin"]
 register = "yafowil.plone:register"
 configure = "yafowil.plone:configure"
