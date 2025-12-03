@@ -1,0 +1,86 @@
+[build-system]
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
+[project]
+name = "yafowil.plone"
+version = "5.1.0.dev0"
+description = "Plone Integration with YAFOWIL"
+dynamic = ["readme"]
+requires-python = ">=3.10"
+license = {text = "Simplified BSD"}
+authors = [{name = "Yafowil Contributors", email = "dev@conestack.org"}]
+classifiers = [
+    "Environment :: Web Environment",
+    "Framework :: Plone :: 6.0",
+    "Framework :: Plone :: 6.1",
+    "Framework :: Plone :: 6.2",
+    "Framework :: Plone :: Addon",
+    "Framework :: Plone",
+    "Framework :: Zope",
+    "License :: OSI Approved :: GNU General Public License (GPL)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+dependencies = [
+    "Products.CMFPlone>=6.0",
+    "plone.api",
+    "plone.app.z3cform>=4.1.0",
+    "setuptools>=39.1.0",
+    "webresource>1.2.99",
+    "yafowil.bootstrap>1.99",
+    "yafowil.yaml>2.99",
+    "yafowil>3.99",
+]
+
+[project.entry-points."yafowil.plugin"]
+register = "yafowil.plone:register"
+configure = "yafowil.plone:configure"
+
+[project.entry-points."z3c.autoinclude.plugin"]
+target = "plone"
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/x-rst"
+fragments = [
+    {path = "README.rst"},
+    {text = "\n\n"},
+    {path = "CHANGES.rst"},
+    {text = "\n\n"},
+    {path = "LICENSE.rst"},
+]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/.github/",
+    "/Makefile",
+    "/mx.ini",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/yafowil"]
+
+[tool.pytest.ini_options]
+consider_namespace_packages = true
+addopts = ["--import-mode=importlib"]
+pythonpath = "src"
+
+[tool.isort]
+profile = black
+force_alphabetical_sort = True
+force_single_line = True
+lines_after_imports = 2
+line_length = 88
+not_skip = __init__.py
+use_parentheses = True
+multi_line_output = 3
+
+[tool.zest-releaser]
+create-wheel = true

@@ -2,10 +2,11 @@
 History
 =======
 
-5.0.1 (unreleased)
+5.1.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Refactor package layout to use ``pyproject.toml`` and implicit namespace packages.
+  [rnix]
 
 
 5.0.0 (2025-09-28)
