@@ -1,13 +1,13 @@
-__pycache__
 *.egg-info
 *.pyc
-/.coverage
 /.DS_Store
+/.coverage
 /.mxmake/
-/.venv/
 /.vscode/
 /dist/
 /instance/
 /requirements-mxdev.txt
 /sources/
 /var/
+/venv/
+__pycache__

@@ -70,6 +70,7 @@ fragments = [
 exclude = [
     "/.github/",
     "/Makefile",
+    "/instance.yaml",
     "/mx.ini",
 ]
 
