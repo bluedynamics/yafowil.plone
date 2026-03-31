@@ -2,7 +2,7 @@
 History
 =======
 
-6.0.0 (unreleased)
+6.0.0 (2026-03-31)
 ------------------
 
 - Refactor package layout to use ``pyproject.toml`` and implicit namespace packages.
