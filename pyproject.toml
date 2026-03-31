@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "yafowil.plone"
-version = "6.0.0"
+version = "6.0.1.dev0"
 description = "Plone Integration with YAFOWIL"
 dynamic = ["readme"]
 requires-python = ">=3.10"
