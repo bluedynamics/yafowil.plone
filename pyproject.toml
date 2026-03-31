@@ -28,7 +28,9 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Development Status :: 5 - Production/Stable",
 ]
+keywords = ["yafowil", "plone", "form"]
 dependencies = [
     "Products.CMFPlone>=6.0",
     "plone.api",
@@ -55,6 +57,11 @@ configure = "yafowil.plone:configure"
 
 [project.entry-points."z3c.autoinclude.plugin"]
 target = "plone"
+
+[project.urls]
+Homepage = "https://github.com/bluedynamics/yafowil.plone"
+Repository = "https://github.com/bluedynamics/yafowil.plone"
+Issues = "https://github.com/bluedynamics/yafowil.plone/issues"
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]
 content-type = "text/x-rst"
