@@ -5,7 +5,7 @@ History
 6.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix src url for icons
 
 
 6.0.0 (2026-03-31)
